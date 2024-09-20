@@ -1,0 +1,20 @@
+{
+  "feedbackLevel": "none",
+  "rootNode": 0,
+  "nodes": {
+    "0": {
+      "component": {},
+      "dependencies": {
+        "dotDescription": "$.taskData.dotDescription"
+      },
+      "isCorrect": true,
+      "isValid": true,
+      "name": "Irgendwas",
+      "type": "DOTGraph"
+    }
+  },
+  "edges": {
+    "0": [1]
+  },
+  "layoutSize": "desktop"
+}

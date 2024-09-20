@@ -1,0 +1,179 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "definitions": {
+    "DotGraphComponentData": {
+      "additionalProperties": false,
+      "description": "The DOTGraph-component may hold a static dotDescription in its componentData.",
+      "properties": {
+        "dotDescription": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "JSONPathExpression": {
+      "anyOf": [
+        {
+          "pattern": "^\\$\\..*$",
+          "type": "string"
+        },
+        {
+          "const": "$",
+          "type": "string"
+        }
+      ],
+      "description": "The JSONPathExpression type is used to define a JSONPath expression."
+    },
+    "NestedComponents": {
+      "additionalProperties": false,
+      "description": "Possible nested components of a component.",
+      "type": "object"
+    },
+    "SerialisedMethod": {
+      "additionalProperties": false,
+      "description": "A description of a user-facing method of a component.",
+      "properties": {
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": ["description"],
+      "type": "object"
+    },
+    "SerialisedMethods": {
+      "additionalProperties": {
+        "$ref": "#/definitions/SerialisedMethod"
+      },
+      "description": "A map of method names and their descriptions.",
+      "type": "object"
+    },
+    "SerializedDOTGraphComponent": {
+      "additionalProperties": false,
+      "description": "The SerializedDOTGraphComponent interface is used to define the serialised properties of the DOTGraph component.",
+      "properties": {
+        "component": {
+          "$ref": "#/definitions/DotGraphComponentData",
+          "description": "The data of the component."
+        },
+        "contextMenu": {
+          "additionalProperties": false,
+          "description": "Optional: The context menu of the component.",
+          "properties": {
+            "isOpen": {
+              "description": "Specifies whether the context menu is open.",
+              "type": "boolean"
+            },
+            "usedMethods": {
+              "description": "The methods that will be made available in the context menu.",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "required": ["isOpen", "usedMethods"],
+          "type": "object"
+        },
+        "dependencies": {
+          "$ref": "#/definitions/SerializedDOTGraphDependencies",
+          "description": "The dependencies of the component."
+        },
+        "isCorrect": {
+          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
+          "type": "boolean"
+        },
+        "isValid": {
+          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
+          "type": "boolean"
+        },
+        "methods": {
+          "$ref": "#/definitions/SerialisedMethods",
+          "description": "The methods of the component."
+        },
+        "name": {
+          "description": "The name of the component. Will be displayed in the component header in CARPET.",
+          "type": "string"
+        },
+        "nestedComponents": {
+          "$ref": "#/definitions/NestedComponents",
+          "description": "Optional: Nested components of the component."
+        },
+        "type": {
+          "const": "DOTGraph",
+          "description": "The type of the component.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "component",
+        "dependencies",
+        "isCorrect",
+        "isValid",
+        "name",
+        "type"
+      ],
+      "type": "object"
+    },
+    "SerializedDOTGraphDependencies": {
+      "additionalProperties": false,
+      "description": "The DOTGraph-component requires a valid dotDescription to display.",
+      "properties": {
+        "dotDescription": {
+          "$ref": "#/definitions/JSONPathExpression"
+        }
+      },
+      "required": ["dotDescription"],
+      "type": "object"
+    },
+    "TaskData": {
+      "additionalProperties": {},
+      "type": "object"
+    }
+  },
+  "properties": {
+    "edges": {
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[0-9]+$": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "feedbackLevel": {
+      "enum": [
+        "correctness",
+        "none",
+        "unpromptedFeedback",
+        "unpromptedHints",
+        "validity"
+      ],
+      "type": "string"
+    },
+    "layoutSize": {
+      "enum": ["desktop", "phone", "tablet"],
+      "type": "string"
+    },
+    "nodes": {
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[0-9]+$": {
+          "$ref": "#/definitions/SerializedDOTGraphComponent"
+        }
+      },
+      "type": "object"
+    },
+    "rootNode": {
+      "type": "number"
+    },
+    "taskData": {
+      "$ref": "#/definitions/TaskData"
+    }
+  },
+  "required": ["edges", "feedbackLevel", "layoutSize", "nodes", "rootNode"],
+  "type": "object"
+}
