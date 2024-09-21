@@ -5,7 +5,7 @@ import serialisedTaskSchema from "../schemas/zodSchemas/SerialisedTaskSchema";
 // TODO: Import all the types from the carpet-component-library in a bundle (maybe expose in the carpet-component-library?)
 import type { SerializedDOTGraphComponent } from "carpet-component-library";
 
-import ExampleTask from "../SerialisedTasks/Example.SeralisedTask.json";
+import ExampleTask from "../SerialisedTasks/Example.carpet.json";
 
 export type Components = SerializedDOTGraphComponent | undefined;
 
@@ -38,7 +38,6 @@ export const useApplicationStore = defineStore("applicationStore", () => {
   const tasks = computed(() => {
     const tasks: { [taskName: string]: SerialisedTask } = {
       Example: serialisedTaskSchema.parse(ExampleTask),
-      Example2: serialisedTaskSchema.parse(ExampleTask),
     };
 
     return tasks;

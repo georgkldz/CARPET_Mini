@@ -13,7 +13,7 @@ const routes: RouteRecordRaw[] = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "task" */ "/src/components/LOOM/LOOM.vue"),
+      import(/* webpackChunkName: "task" */ "pages/TaskPage.vue"),
   },
 
   // Always leave this as last one,

@@ -8,7 +8,7 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "json.schemas": [
     {
-      "fileMatch": ["/*.SeralisedTask.json"],
+      "fileMatch": ["/*.carpet.json"],
       "url": "./src/schemas/JSONSchemas/SerialisedTaskSchema.schema.json"
     }
   ]
