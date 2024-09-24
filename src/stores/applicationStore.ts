@@ -9,8 +9,15 @@ import type { SerializedDOTGraphComponent } from "carpet-component-library";
 import ExampleTask from "../SerialisedTasks/Example.carpet.json";
 const staticTasks = { Example: serialisedTaskSchema.parse(ExampleTask) };
 
+/**
+ * The available tasks in the current application.
+ */
 export type AvailableTasks = keyof typeof staticTasks;
 
+// TODO: Bundle and expose component types in the carpet-component-library
+/**
+ * All available components that can be used in the task graph.
+ */
 export type Components = SerializedDOTGraphComponent;
 
 export interface SerialisedComponents {
