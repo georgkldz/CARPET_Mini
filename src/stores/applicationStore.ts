@@ -18,13 +18,14 @@ export interface SerialisedComponents {
 }
 
 export type LayoutSizes = "phone" | "tablet" | "desktop";
-export type Layout = Array<{
-  id: number;
-  x: number;
-  y: number;
-  height: number;
-  width: number;
-}>;
+export type Layout = {
+  [id: number]: {
+    x: number;
+    y: number;
+    height: number;
+    width: number;
+  };
+};
 
 export type Layouts = {
   [layoutSize in LayoutSizes]: Layout;
@@ -96,6 +97,8 @@ export const useApplicationStore = defineStore("applicationStore", () => {
    */
   const tasks: Ref<Record<AvailableTasks, SerialisedTask>> = ref(staticTasks);
 
+  const SNAP_GRID: Ref<[x: number, y: number]> = ref([30, 30]);
+
   const leftDrawerOpen = ref(false);
   const toggleLeftDrawer = () => {
     leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -112,5 +115,6 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     darkMode,
     toggleDarkMode,
     tasks,
+    SNAP_GRID,
   };
 });

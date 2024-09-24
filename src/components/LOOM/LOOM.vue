@@ -9,7 +9,7 @@
       :min-zoom="0.1"
       :max-zoom="10"
       :snap-to-grid="true"
-      :snap-grid="SNAP_GRID"
+      :snap-grid="applicationStore.SNAP_GRID"
       :fit-view-on-init="true"
     >
       <Background pattern-color="#aaa" :gap="30" />
@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { VueFlow, useVueFlow } from "@vue-flow/core";
+import { VueFlow } from "@vue-flow/core";
 
 import { Background } from "@vue-flow/background";
 import { MiniMap } from "@vue-flow/minimap";
@@ -37,10 +37,7 @@ import type { LayoutSizes } from "src/stores/applicationStore";
 import { useApplicationStore } from "src/stores/applicationStore";
 import { useTaskGraphStore } from "src/stores/taskGraphStore";
 
-const SNAP_GRID: [x: number, y: number] = [30, 30];
-
 const applicationStore = useApplicationStore();
-applicationStore.darkMode;
 
 const taskGraphStore = useTaskGraphStore();
 
@@ -59,10 +56,10 @@ const componentContainers = computed(() => {
   const layouts = currentNode.value.layouts;
   const layout = layouts[layoutSize as LayoutSizes];
 
-  return Object.values(layout).reduce((containers, component) => {
-    const { id, x, y, height, width } = component;
+  return Object.entries(layout).reduce((containers, [id, component]) => {
+    const { x, y, height, width } = component;
 
-    const [xModifier, yModifier] = SNAP_GRID;
+    const [xModifier, yModifier] = applicationStore.SNAP_GRID;
 
     return [
       ...containers,
@@ -80,40 +77,7 @@ const componentContainers = computed(() => {
   }, [] as Array<ComponentContainer>);
 });
 
-const { onInit, onNodeDragStop, onConnect, addEdges } = useVueFlow();
-
-/**
- * This is a Vue Flow event-hook which can be listened to from anywhere you call the composable, instead of only on the main component
- * Any event that is available as `@event-name` on the VueFlow component is also available as `onEventName` on the composable and vice versa
- *
- * onInit is called when the VueFlow viewport is initialized
- */
-onInit((vueFlowInstance) => {
-  // instance is the same as the return of `useVueFlow`
-  vueFlowInstance.fitView();
-});
-
-/**
- * onNodeDragStop is called when a node is done being dragged
- *
- * Node drag events provide you with:
- * 1. the event object
- * 2. the nodes array (if multiple nodes are dragged)
- * 3. the node that initiated the drag
- * 4. any intersections with other nodes
- */
-onNodeDragStop(({ event, nodes, node }) => {
-  console.log("Node Drag Stop", { event, nodes, node });
-});
-
-/**
- * onConnect is called when a new connection is created.
- *
- * You can add additional properties to your new edge (like a type or label) or block the creation altogether by not calling `addEdges`
- */
-onConnect((connection) => {
-  addEdges(connection);
-});
+// TODO: Implement tracking of Pane handling (see https://vueflow.dev/guide/utils/instance.html)
 </script>
 
 <style scoped>

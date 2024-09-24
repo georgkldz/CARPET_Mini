@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import type { StateTree } from "pinia";
-// import { computed } from "vue";
+// import { toRefs } from "vue";
 import { useApplicationStore } from "./applicationStore";
 import type { AvailableTasks } from "./applicationStore";
 import type { SerialisedTask } from "./applicationStore";
@@ -80,13 +80,16 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     setProperty(payload: StoreSetterPayload) {
       const { path, value } = payload;
       const splitPath = JSONPath.toPathArray(path).slice(1);
-      const subState = this.$state as StateTree;
+      let subState = this.$state as StateTree;
       for (let depth = 0; depth < splitPath.length; depth++) {
         if (depth === splitPath.length - 1) {
+          // only update the value if it is different
           if (subState[splitPath[depth]] != value) {
             subState[splitPath[depth]] = value;
           }
-        } else subState.value = subState[splitPath[depth]];
+        } else {
+          subState = subState[splitPath[depth]];
+        }
       }
 
       /**

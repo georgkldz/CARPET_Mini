@@ -5,6 +5,7 @@
 
 import { configure } from "quasar/wrappers";
 import { fileURLToPath } from "node:url";
+import vueDevTools from "vite-plugin-vue-devtools";
 
 export default configure((ctx) => {
   return {
@@ -58,6 +59,10 @@ export default configure((ctx) => {
 
       // extendViteConf(viteConf) {
       // },
+      extendViteConf(viteConf) {
+        viteConf.plugins = viteConf.plugins || [];
+        viteConf.plugins.push(vueDevTools());
+      },
       // viteVuePluginOptions: {},
 
       vitePlugins: [

@@ -1,6 +1,6 @@
 {
   "name": "carpet",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "CARPET",
   "productName": "CARPET",
   "author": "Paul Christ",
@@ -46,6 +46,7 @@
     "prettier": "^3.0.3",
     "typescript": "~5.5.3",
     "vite-plugin-checker": "^0.7.2",
+    "vite-plugin-vue-devtools": "^7.4.6",
     "vue-tsc": "2.0.29"
   },
   "engines": {
