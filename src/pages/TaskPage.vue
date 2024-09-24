@@ -8,7 +8,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, watch } from "vue";
+import {
+  computed,
+  onMounted,
+  watch,
+  onBeforeUnmount,
+  onBeforeMount,
+} from "vue";
 import { useRoute } from "vue-router";
 import LOOM from "src/components/LOOM/LOOM.vue";
 import LoadingSpinner from "src/components/LoadingSpinner.vue";
@@ -18,13 +24,7 @@ const taskStore = useTaskGraphStore();
 const { getProperty } = taskStore;
 
 const route = useRoute();
-const currentNode = computed(() => getProperty("currentNode"));
-
-// const isDecisionNode = computed(() => {
-//   const edges = getProperty(`edges__${currentNode.value}`);
-//   if (edges) return edges.length > 1;
-//   return false;
-// });
+const currentNode = getProperty("$.currentNode");
 
 const isLoading = computed(() => taskStore.isLoading);
 
@@ -33,40 +33,42 @@ const isLoading = computed(() => taskStore.isLoading);
  * This is due to the router not rerendering the component on the same route.
  * See: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Reacting-to-Params-Changes
  */
-onMounted(() => {
+onBeforeMount(() => {
   taskStore.setCurrentTask(route.params.taskName as string);
+  taskStore.fetchTaskGraph();
 });
 watch(
   () => route.params.taskName,
   (newTaskName) => {
     taskStore.setCurrentTask(newTaskName as string);
+    taskStore.fetchTaskGraph();
   },
 );
 
-// const throttle = 50;
-// let last = new Date().getTime();
-// const trackMouse = (event: MouseEvent) => {
-//   event.preventDefault();
-//   const now = new Date().getTime();
+const throttle = 50;
+let last = new Date().getTime();
+const trackMouse = (event: MouseEvent) => {
+  event.preventDefault();
+  const now = new Date().getTime();
 
-//   // update only n milliseconds to not freeze the app
-//   if (now - last < throttle) return;
+  // update only every n milliseconds to not freeze the app
+  if (now - last < throttle) return;
 
-//   store.dispatch("trackMouse", {
-//     x: event.pageX,
-//     y: event.pageY,
-//     timestamp: now,
-//   });
+  taskStore.trackMouse({
+    x: event.pageX,
+    y: event.pageY,
+    timestamp: now,
+  });
 
-//   last = now;
-// };
-// onMounted(() => {
-//   document.addEventListener("mousemove", trackMouse);
-// });
+  last = now;
+};
+onMounted(() => {
+  document.addEventListener("mousemove", trackMouse);
+});
 
-// onBeforeUnmount(() => {
-//   document.removeEventListener("mousemove", trackMouse);
-// });
+onBeforeUnmount(() => {
+  document.removeEventListener("mousemove", trackMouse);
+});
 </script>
 
 <style scoped>

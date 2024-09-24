@@ -1,9 +1,9 @@
 import { defineStore } from "pinia";
 import type { StateTree } from "pinia";
-import { computed, ref, toRefs } from "vue";
-import type { Ref, ComputedRef } from "vue";
+// import { computed } from "vue";
 import { useApplicationStore } from "./applicationStore";
-import type { SerialisedTask, TaskData } from "./applicationStore";
+import type { AvailableTasks } from "./applicationStore";
+import type { SerialisedTask } from "./applicationStore";
 import { JSONPath } from "jsonpath-plus";
 
 import type {
@@ -26,59 +26,61 @@ export interface CARPETStoreAPI extends StoreAPI {
   [key: string]: any;
 }
 
-export const useTaskGraphStore = defineStore(
-  "taskGraphStore",
-  (): CARPETStoreAPI => {
-    const applicationStore = useApplicationStore();
+export interface TaskGraphState extends SerialisedTask {
+  currentTask: string | null;
+  isLoading: boolean;
+  currentNode: number | null;
+  previousNode: number | null;
+  replayLog: EventLog;
+}
 
-    const currentTask: Ref<string | null> = ref(null);
-    const setCurrentTask = (taskName: string) => {
-      currentTask.value = taskName;
-    };
+export type TaskGraphStateKey = keyof TaskGraphState;
 
-    const task: ComputedRef<SerialisedTask> = computed(() => {
-      return applicationStore.tasks[currentTask.value ?? ""] ?? null;
-    });
-
-    const isLoading = ref(false);
-    const toggleLoading = () => {
-      isLoading.value = !isLoading.value;
-    };
-
-    const currentNode: Ref<number | null> = ref(null);
-    const previousNode: Ref<number | null> = ref(null);
-
-    const taskData: Ref<TaskData> = ref({});
-    const replayLog: Ref<EventLog> = ref({
+/**
+ * The taskGraphStore has to be defined with the Options-API, as `this.$state` is not available for actions in the Setup-API.
+ * Acces to `this.$state` is required to manipulate the store state via `setProperty` from any component.
+ */
+export const useTaskGraphStore = defineStore("taskGraphStore", {
+  state: (): TaskGraphState => ({
+    currentTask: null,
+    isLoading: false,
+    currentNode: null,
+    previousNode: null,
+    taskData: {},
+    replayLog: {
       interactionEvents: [],
       mouseEvents: [],
       panningEvents: [],
       zoomingEvents: [],
       metaData: {},
-    });
-
-    /**
-     * The getProperty function is used to get a value from the task.
-     * @param path JSONPath expression
-     * @returns Any
-     */
-    const getProperty = (path: JSONPathExpression) => {
+    },
+    feedbackLevel: "none",
+    layoutSize: "desktop",
+    rootNode: 0,
+    nodes: {},
+    edges: {},
+  }),
+  getters: {
+    getPropertyFromPath: (state) => (path: JSONPathExpression) => {
       if (typeof path !== "string") {
         throw new Error(`Path is not a string: ${path}`);
       }
-      const result = JSONPath({ path: path, json: task });
+      const result = JSONPath({ path: path, json: state });
       if (result.length === 1) return result[0];
       else return result;
-    };
-
-    /**
-     * The setProperty function is used to mutate a value in the task.
-     * @param payload StoreSetterPayload
-     */
-    const setProperty = (payload: StoreSetterPayload) => {
+    },
+    getCurrentNode: (state) => {
+      return state.nodes[state.currentNode as number];
+    },
+  },
+  actions: {
+    setCurrentTask(taskName: string) {
+      this.currentTask = taskName;
+    },
+    setProperty(payload: StoreSetterPayload) {
       const { path, value } = payload;
       const splitPath = JSONPath.toPathArray(path).slice(1);
-      const subState = task.value as StateTree;
+      const subState = this.$state as StateTree;
       for (let depth = 0; depth < splitPath.length; depth++) {
         if (depth === splitPath.length - 1) {
           if (subState[splitPath[depth]] != value) {
@@ -86,20 +88,42 @@ export const useTaskGraphStore = defineStore(
           }
         } else subState.value = subState[splitPath[depth]];
       }
-    };
 
-    return {
-      ...toRefs(task),
-      toggleLoading,
-      currentTask,
-      setCurrentTask,
-      isLoading,
-      currentNode,
-      previousNode,
-      taskData,
-      replayLog,
-      getProperty,
-      setProperty,
-    };
+      /**
+       * Log the state change in development mode.
+       */
+      process.env.NODE_ENV === "development" && console.log(path, value);
+    },
+    /**
+     * Required helper functions, as it is not possible to define getters that receive arguments.
+     * This is due to getters being simply computed properties.
+     * By returning a function from a getter, we can achieve the same functionality, but at the cost of not being able to cache the computed properties.
+     * See https://pinia.vuejs.org/core-concepts/getters.html#Passing-arguments-to-getters.
+     * @param path JSONPathExpression
+     * @returns ComputedRef<any>
+     */
+    getProperty(path: JSONPathExpression) {
+      return this.getPropertyFromPath(path);
+    },
+    fetchTaskGraph() {
+      const applicationStore = useApplicationStore();
+      const tasks = applicationStore.tasks;
+      const currentTask = tasks[this.currentTask as AvailableTasks];
+      /**
+       * Set properites of currentTask via setProperty to include them in the EventLog.
+       */
+      for (const [key, value] of Object.entries(currentTask)) {
+        this.setProperty({ path: `$.${key}`, value: value });
+      }
+      this.setProperty({ path: "$.currentNode", value: currentTask.rootNode });
+    },
+
+    trackMouse(mouseEvent: { x: number; y: number; timestamp: number }) {
+      this.replayLog.mouseEvents.push(mouseEvent);
+    },
+
+    toggleLoading() {
+      this.isLoading = !this.isLoading;
+    },
   },
-);
+});

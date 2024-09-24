@@ -1,65 +1,86 @@
 <template>
   <div class="loom">
     <VueFlow
-      :nodes="nodes"
-      :edges="edges"
-      :class="{ dark }"
+      :nodes="componentContainers"
+      :edges="[]"
+      :class="applicationStore.darkMode ? 'dark' : ''"
       class="basic-flow"
       :default-viewport="{ zoom: 1.0 }"
-      :min-zoom="0.2"
-      :max-zoom="4"
+      :min-zoom="0.1"
+      :max-zoom="10"
       :snap-to-grid="true"
-      :snap-grid="[30, 30]"
+      :snap-grid="SNAP_GRID"
+      :fit-view-on-init="true"
     >
       <Background pattern-color="#aaa" :gap="30" />
-
+      <ControlBar />
       <MiniMap />
 
-      <Controls position="top-left">
-        <ControlButton title="Reset Transform" @click="resetTransform">
-          <Icon name="reset" />
-        </ControlButton>
-
-        <ControlButton title="Shuffle Node Positions" @click="updatePos">
-          <Icon name="update" />
-        </ControlButton>
-
-        <ControlButton title="Toggle Dark Mode" @click="toggleDarkMode">
-          <Icon v-if="dark" name="sun" />
-          <Icon v-else name="moon" />
-        </ControlButton>
-
-        <ControlButton title="Log `toObject`" @click="logToObject">
-          <Icon name="log" />
-        </ControlButton>
-      </Controls>
+      <template #node-ThreadContainer="props">
+        <ThreadContainer :data="props.data" />
+      </template>
     </VueFlow>
   </div>
 </template>
 
 <script setup lang="ts">
 import { VueFlow, useVueFlow } from "@vue-flow/core";
+
 import { Background } from "@vue-flow/background";
-import { ControlButton, Controls } from "@vue-flow/controls";
 import { MiniMap } from "@vue-flow/minimap";
-import { initialEdges, initialNodes } from "./initial-elements.ts";
-import Icon from "./FlowIcon.vue";
+import ControlBar from "./ControlBar.vue";
+import { computed } from "vue";
 
-import { ref } from "vue";
+import ThreadContainer from "./ThreadContainer.vue";
 
+import type { LayoutSizes } from "src/stores/applicationStore";
+import { useApplicationStore } from "src/stores/applicationStore";
 import { useTaskGraphStore } from "src/stores/taskGraphStore";
+
+const SNAP_GRID: [x: number, y: number] = [30, 30];
+
+const applicationStore = useApplicationStore();
+applicationStore.darkMode;
+
 const taskGraphStore = useTaskGraphStore();
-console.log(taskGraphStore);
 
-const { onInit, onNodeDragStop, onConnect, addEdges, setViewport, toObject } =
-  useVueFlow();
+const layoutSize = taskGraphStore.layoutSize;
 
-const nodes = ref(initialNodes);
+interface ComponentContainer {
+  id: string;
+  position: { x: number; y: number };
+  data: object;
+  type: string;
+}
 
-const edges = ref(initialEdges);
+const currentNode = computed(() => taskGraphStore.getCurrentNode);
 
-// our dark mode toggle flag
-const dark = ref(false);
+const componentContainers = computed(() => {
+  const layouts = currentNode.value.layouts;
+  const layout = layouts[layoutSize as LayoutSizes];
+
+  return Object.values(layout).reduce((containers, component) => {
+    const { id, x, y, height, width } = component;
+
+    const [xModifier, yModifier] = SNAP_GRID;
+
+    return [
+      ...containers,
+      {
+        id: id.toString(),
+        position: { x: x * xModifier, y: y * yModifier },
+        data: {
+          height: height * yModifier,
+          width: width * xModifier,
+          componentId: id,
+        },
+        type: "ThreadContainer",
+      },
+    ];
+  }, [] as Array<ComponentContainer>);
+});
+
+const { onInit, onNodeDragStop, onConnect, addEdges } = useVueFlow();
 
 /**
  * This is a Vue Flow event-hook which can be listened to from anywhere you call the composable, instead of only on the main component
@@ -93,42 +114,6 @@ onNodeDragStop(({ event, nodes, node }) => {
 onConnect((connection) => {
   addEdges(connection);
 });
-
-/**
- * To update a node or multiple nodes, you can
- * 1. Mutate the node objects *if* you're using `v-model`
- * 2. Use the `updateNode` method (from `useVueFlow`) to update the node(s)
- * 3. Create a new array of nodes and pass it to the `nodes` ref
- */
-function updatePos() {
-  nodes.value = nodes.value.map((node) => {
-    return {
-      ...node,
-      position: {
-        x: Math.random() * 400,
-        y: Math.random() * 400,
-      },
-    };
-  });
-}
-
-/**
- * toObject transforms your current graph data to an easily persist-able object
- */
-function logToObject() {
-  console.log(toObject());
-}
-
-/**
- * Resets the current viewport transformation (zoom & pan)
- */
-function resetTransform() {
-  setViewport({ x: 0, y: 0, zoom: 1 });
-}
-
-function toggleDarkMode() {
-  dark.value = !dark.value;
-}
 </script>
 
 <style scoped>
@@ -199,5 +184,10 @@ function toggleDarkMode() {
 
 .basic-flow.dark .vue-flow__edge-text {
   fill: #fffffb;
+}
+
+.vue-flow__minimap {
+  border: 1px solid #333;
+  border-radius: 4px;
 }
 </style>

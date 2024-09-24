@@ -4,6 +4,10 @@
 
 <script setup lang="ts">
 import MainLayout from "./layouts/MainLayout/MainLayout.vue";
+import "@vue-flow/core/dist/style.css";
+
+import "carpet-component-library/style.css";
+
 defineOptions({
   name: "App",
 });
@@ -25,5 +29,10 @@ body,
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
 }
 </style>

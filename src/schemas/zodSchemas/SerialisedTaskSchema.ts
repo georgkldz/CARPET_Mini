@@ -36,14 +36,16 @@ export default z
           }
         }
       }),
-    feedbackLevel: z.enum([
-      "correctness",
-      "none",
-      "unpromptedFeedback",
-      "unpromptedHints",
-      "validity",
-    ]),
-    layoutSize: z.enum(["desktop", "phone", "tablet"]),
+    feedbackLevel: z
+      .enum([
+        "correctness",
+        "none",
+        "unpromptedFeedback",
+        "unpromptedHints",
+        "validity",
+      ])
+      .optional(),
+    layoutSize: z.any().optional(),
     nodes: z.record(z.union([z.any(), z.never()])).superRefine((value, ctx) => {
       for (const key in value) {
         let evaluated = false;
@@ -76,7 +78,7 @@ export default z
         }
       }
     }),
-    rootNode: z.number(),
+    rootNode: z.number().optional(),
     taskData: z.any().optional(),
   })
   .strict();

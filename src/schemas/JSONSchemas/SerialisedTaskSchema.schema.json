@@ -1,179 +1,445 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "additionalProperties": false,
-  "definitions": {
-    "DotGraphComponentData": {
-      "additionalProperties": false,
-      "description": "The DOTGraph-component may hold a static dotDescription in its componentData.",
-      "properties": {
-        "dotDescription": {
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "JSONPathExpression": {
-      "anyOf": [
-        {
-          "pattern": "^\\$\\..*$",
-          "type": "string"
-        },
-        {
-          "const": "$",
-          "type": "string"
-        }
-      ],
-      "description": "The JSONPathExpression type is used to define a JSONPath expression."
-    },
-    "NestedComponents": {
-      "additionalProperties": false,
-      "description": "Possible nested components of a component.",
-      "type": "object"
-    },
-    "SerialisedMethod": {
-      "additionalProperties": false,
-      "description": "A description of a user-facing method of a component.",
-      "properties": {
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": ["description"],
-      "type": "object"
-    },
-    "SerialisedMethods": {
-      "additionalProperties": {
-        "$ref": "#/definitions/SerialisedMethod"
-      },
-      "description": "A map of method names and their descriptions.",
-      "type": "object"
-    },
-    "SerializedDOTGraphComponent": {
-      "additionalProperties": false,
-      "description": "The SerializedDOTGraphComponent interface is used to define the serialised properties of the DOTGraph component.",
-      "properties": {
-        "component": {
-          "$ref": "#/definitions/DotGraphComponentData",
-          "description": "The data of the component."
-        },
-        "contextMenu": {
-          "additionalProperties": false,
-          "description": "Optional: The context menu of the component.",
-          "properties": {
-            "isOpen": {
-              "description": "Specifies whether the context menu is open.",
-              "type": "boolean"
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
+    "definitions": {
+        "DotGraphComponentData": {
+            "additionalProperties": false,
+            "description": "The DOTGraph-component may hold a static dotDescription in its componentData.",
+            "properties": {
+                "dotDescription": {
+                    "type": "string"
+                }
             },
-            "usedMethods": {
-              "description": "The methods that will be made available in the context menu.",
-              "items": {
-                "type": "string"
-              },
-              "type": "array"
-            }
-          },
-          "required": ["isOpen", "usedMethods"],
-          "type": "object"
+            "type": "object"
         },
-        "dependencies": {
-          "$ref": "#/definitions/SerializedDOTGraphDependencies",
-          "description": "The dependencies of the component."
+        "Hints": {
+            "additionalProperties": false,
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "current": {
+                    "type": "number"
+                },
+                "descriptions": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "active",
+                "current",
+                "descriptions"
+            ],
+            "type": "object"
         },
-        "isCorrect": {
-          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
-          "type": "boolean"
+        "JSONPathExpression": {
+            "anyOf": [
+                {
+                    "pattern": "^\\$\\..*$",
+                    "type": "string"
+                },
+                {
+                    "const": "$",
+                    "type": "string"
+                }
+            ],
+            "description": "The JSONPathExpression type is used to define a JSONPath expression."
         },
-        "isValid": {
-          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
-          "type": "boolean"
+        "LayoutSizes": {
+            "enum": [
+                "desktop",
+                "phone",
+                "tablet"
+            ],
+            "type": "string"
         },
-        "methods": {
-          "$ref": "#/definitions/SerialisedMethods",
-          "description": "The methods of the component."
+        "Layouts": {
+            "additionalProperties": false,
+            "properties": {
+                "desktop": {
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "height": {
+                                "type": "number"
+                            },
+                            "id": {
+                                "type": "number"
+                            },
+                            "width": {
+                                "type": "number"
+                            },
+                            "x": {
+                                "type": "number"
+                            },
+                            "y": {
+                                "type": "number"
+                            }
+                        },
+                        "required": [
+                            "height",
+                            "id",
+                            "width",
+                            "x",
+                            "y"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "array"
+                },
+                "phone": {
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "height": {
+                                "type": "number"
+                            },
+                            "id": {
+                                "type": "number"
+                            },
+                            "width": {
+                                "type": "number"
+                            },
+                            "x": {
+                                "type": "number"
+                            },
+                            "y": {
+                                "type": "number"
+                            }
+                        },
+                        "required": [
+                            "height",
+                            "id",
+                            "width",
+                            "x",
+                            "y"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "array"
+                },
+                "tablet": {
+                    "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                            "height": {
+                                "type": "number"
+                            },
+                            "id": {
+                                "type": "number"
+                            },
+                            "width": {
+                                "type": "number"
+                            },
+                            "x": {
+                                "type": "number"
+                            },
+                            "y": {
+                                "type": "number"
+                            }
+                        },
+                        "required": [
+                            "height",
+                            "id",
+                            "width",
+                            "x",
+                            "y"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "desktop",
+                "phone",
+                "tablet"
+            ],
+            "type": "object"
         },
-        "name": {
-          "description": "The name of the component. Will be displayed in the component header in CARPET.",
-          "type": "string"
+        "Modal": {
+            "additionalProperties": false,
+            "properties": {
+                "content": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "body": {
+                            "type": "string"
+                        },
+                        "footer": {
+                            "additionalProperties": false,
+                            "properties": {
+                                "buttons": {
+                                    "items": {
+                                        "additionalProperties": false,
+                                        "properties": {
+                                            "label": {
+                                                "type": "string"
+                                            },
+                                            "parameters": {
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "route": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "route"
+                                                ],
+                                                "type": "object"
+                                            },
+                                            "type": {
+                                                "enum": [
+                                                    "close",
+                                                    "route"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "label",
+                                            "type"
+                                        ],
+                                        "type": "object"
+                                    },
+                                    "type": "array"
+                                }
+                            },
+                            "required": [
+                                "buttons"
+                            ],
+                            "type": "object"
+                        },
+                        "header": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "body",
+                        "footer",
+                        "header"
+                    ],
+                    "type": "object"
+                },
+                "trigger": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "type": {
+                            "const": "success",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "type"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "content",
+                "trigger"
+            ],
+            "type": "object"
         },
-        "nestedComponents": {
-          "$ref": "#/definitions/NestedComponents",
-          "description": "Optional: Nested components of the component."
+        "NestedComponents": {
+            "additionalProperties": false,
+            "description": "Possible nested components of a component.",
+            "type": "object"
         },
-        "type": {
-          "const": "DOTGraph",
-          "description": "The type of the component.",
-          "type": "string"
+        "SerialisedMethod": {
+            "additionalProperties": false,
+            "description": "A description of a user-facing method of a component.",
+            "properties": {
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "description"
+            ],
+            "type": "object"
+        },
+        "SerialisedMethods": {
+            "additionalProperties": {
+                "$ref": "#/definitions/SerialisedMethod"
+            },
+            "description": "A map of method names and their descriptions.",
+            "type": "object"
+        },
+        "SerialisedNode": {
+            "additionalProperties": false,
+            "properties": {
+                "components": {
+                    "additionalProperties": false,
+                    "patternProperties": {
+                        "^[0-9]+$": {
+                            "$ref": "#/definitions/SerializedDOTGraphComponent"
+                        }
+                    },
+                    "type": "object"
+                },
+                "hints": {
+                    "$ref": "#/definitions/Hints"
+                },
+                "isCorrect": {
+                    "type": "boolean"
+                },
+                "isValid": {
+                    "type": "boolean"
+                },
+                "layouts": {
+                    "$ref": "#/definitions/Layouts"
+                },
+                "modal": {
+                    "items": {
+                        "$ref": "#/definitions/Modal"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "components",
+                "layouts"
+            ],
+            "type": "object"
+        },
+        "SerializedDOTGraphComponent": {
+            "additionalProperties": false,
+            "description": "The SerializedDOTGraphComponent interface is used to define the serialised properties of the DOTGraph component.",
+            "properties": {
+                "component": {
+                    "$ref": "#/definitions/DotGraphComponentData",
+                    "description": "The data of the component."
+                },
+                "contextMenu": {
+                    "additionalProperties": false,
+                    "description": "Optional: The context menu of the component.",
+                    "properties": {
+                        "isOpen": {
+                            "description": "Specifies whether the context menu is open.",
+                            "type": "boolean"
+                        },
+                        "usedMethods": {
+                            "description": "The methods that will be made available in the context menu.",
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "required": [
+                        "isOpen",
+                        "usedMethods"
+                    ],
+                    "type": "object"
+                },
+                "dependencies": {
+                    "$ref": "#/definitions/SerializedDOTGraphDependencies",
+                    "description": "The dependencies of the component."
+                },
+                "isCorrect": {
+                    "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
+                    "type": "boolean"
+                },
+                "isValid": {
+                    "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
+                    "type": "boolean"
+                },
+                "methods": {
+                    "$ref": "#/definitions/SerialisedMethods",
+                    "description": "The methods of the component."
+                },
+                "name": {
+                    "description": "The name of the component. Will be displayed in the component header in CARPET.",
+                    "type": "string"
+                },
+                "nestedComponents": {
+                    "$ref": "#/definitions/NestedComponents",
+                    "description": "Optional: Nested components of the component."
+                },
+                "type": {
+                    "const": "DOTGraph",
+                    "description": "The type of the component.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "component",
+                "dependencies",
+                "isCorrect",
+                "isValid",
+                "name",
+                "type"
+            ],
+            "type": "object"
+        },
+        "SerializedDOTGraphDependencies": {
+            "additionalProperties": false,
+            "description": "The DOTGraph-component requires a valid dotDescription to display.",
+            "properties": {
+                "dotDescription": {
+                    "$ref": "#/definitions/JSONPathExpression"
+                }
+            },
+            "required": [
+                "dotDescription"
+            ],
+            "type": "object"
+        },
+        "TaskData": {
+            "additionalProperties": {},
+            "type": "object"
         }
-      },
-      "required": [
-        "component",
-        "dependencies",
-        "isCorrect",
-        "isValid",
-        "name",
-        "type"
-      ],
-      "type": "object"
     },
-    "SerializedDOTGraphDependencies": {
-      "additionalProperties": false,
-      "description": "The DOTGraph-component requires a valid dotDescription to display.",
-      "properties": {
-        "dotDescription": {
-          "$ref": "#/definitions/JSONPathExpression"
-        }
-      },
-      "required": ["dotDescription"],
-      "type": "object"
-    },
-    "TaskData": {
-      "additionalProperties": {},
-      "type": "object"
-    }
-  },
-  "properties": {
-    "edges": {
-      "additionalProperties": false,
-      "patternProperties": {
-        "^[0-9]+$": {
-          "items": {
+    "properties": {
+        "edges": {
+            "additionalProperties": false,
+            "patternProperties": {
+                "^[0-9]+$": {
+                    "items": {
+                        "type": "number"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "feedbackLevel": {
+            "enum": [
+                "correctness",
+                "none",
+                "unpromptedFeedback",
+                "unpromptedHints",
+                "validity"
+            ],
+            "type": "string"
+        },
+        "layoutSize": {
+            "$ref": "#/definitions/LayoutSizes"
+        },
+        "nodes": {
+            "additionalProperties": false,
+            "patternProperties": {
+                "^[0-9]+$": {
+                    "$ref": "#/definitions/SerialisedNode"
+                }
+            },
+            "type": "object"
+        },
+        "rootNode": {
             "type": "number"
-          },
-          "type": "array"
+        },
+        "taskData": {
+            "$ref": "#/definitions/TaskData"
         }
-      },
-      "type": "object"
     },
-    "feedbackLevel": {
-      "enum": [
-        "correctness",
-        "none",
-        "unpromptedFeedback",
-        "unpromptedHints",
-        "validity"
-      ],
-      "type": "string"
-    },
-    "layoutSize": {
-      "enum": ["desktop", "phone", "tablet"],
-      "type": "string"
-    },
-    "nodes": {
-      "additionalProperties": false,
-      "patternProperties": {
-        "^[0-9]+$": {
-          "$ref": "#/definitions/SerializedDOTGraphComponent"
-        }
-      },
-      "type": "object"
-    },
-    "rootNode": {
-      "type": "number"
-    },
-    "taskData": {
-      "$ref": "#/definitions/TaskData"
-    }
-  },
-  "required": ["edges", "feedbackLevel", "layoutSize", "nodes", "rootNode"],
-  "type": "object"
+    "required": [
+        "edges",
+        "nodes"
+    ],
+    "type": "object"
 }
+
