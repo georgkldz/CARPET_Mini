@@ -1,3 +1,7 @@
+# Nützliche Links für das Projekt
+[Anforderungen der Kunden](https://catalpa-gitlab.fernuni-hagen.de/ks/fapra/fachpraktikum-2024/beta/CARPET/-/wikis/Kundengespr%C3%A4che)
+[Projektmitglieder](https://catalpa-gitlab.fernuni-hagen.de/ks/fapra/fachpraktikum-2024/beta/CARPET/-/wikis/Kontaktdaten-und-%C3%BCbliche-Arbeitszeiten-der-Team-Mitglieder)
+
 # CARPET
 
 CARPET ("graphiCal Assessment inteRPreter and attemPtEd solution Tracker") is a framework to support technology-enhanced items (TEI), with specialized interactions for collecting response data. These include interactions and responses beyond traditional selected-response or constructed-response, which are usually implemented according to the [QTI standard](https://www.1edtech.org/standards/qti/index#QTI3).
