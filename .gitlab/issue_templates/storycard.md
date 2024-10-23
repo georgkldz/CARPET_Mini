@@ -1,9 +1,6 @@
 **Datum:** <Datum>
 <!-- Bitte das Datum des Erstellens des Issues angeben -->
 
-**Zeitliche Schätzung:** <Zeit>
-<!-- Bitte die geschätzte Zeit in Stunden angeben -->
-
 ## Story
 <!-- Bitte hier die User Story einfügen -->
 Als [Rolle] möchte ich [Ziel/Wunsch], um [Nutzen/Grund].
