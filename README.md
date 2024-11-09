@@ -1,8 +1,8 @@
 # Nützliche Links für das Projekt
+
 [Anforderungen der Kunden](https://catalpa-gitlab.fernuni-hagen.de/ks/fapra/fachpraktikum-2024/beta/CARPET/-/wikis/Kundengespr%C3%A4che)
 
 [Projektmitglieder](https://catalpa-gitlab.fernuni-hagen.de/ks/fapra/fachpraktikum-2024/beta/CARPET/-/wikis/Kontaktdaten-und-%C3%BCbliche-Arbeitszeiten-der-Team-Mitglieder)
-
 
 # CARPET
 

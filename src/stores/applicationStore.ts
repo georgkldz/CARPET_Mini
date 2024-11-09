@@ -3,8 +3,9 @@ import { ref } from "vue";
 import type { Ref } from "vue";
 import serialisedTaskSchema from "../schemas/zodSchemas/SerialisedTaskSchema";
 
-// TODO: Import all the types from the carpet-component-library in a bundle (maybe expose in the carpet-component-library?)
 import type { SerializedDOTGraphComponent } from "carpet-component-library";
+// import type { SerializedCustomComponents } from "../components/index";
+import type { SerializedBasicInputFieldComponent } from "../components/BasicInputField/BasicInputField";
 
 import ExampleTask from "../SerialisedTasks/Example.carpet.json";
 const staticTasks = { Example: serialisedTaskSchema.parse(ExampleTask) };
@@ -14,14 +15,10 @@ const staticTasks = { Example: serialisedTaskSchema.parse(ExampleTask) };
  */
 export type AvailableTasks = keyof typeof staticTasks;
 
-// TODO: Bundle and expose component types in the carpet-component-library
-/**
- * All available components that can be used in the task graph.
- */
-export type Components = SerializedDOTGraphComponent;
-
 export interface SerialisedComponents {
-  [id: number]: Components;
+  [id: number]:
+    | SerializedDOTGraphComponent
+    | SerializedBasicInputFieldComponent;
 }
 
 export type LayoutSizes = "phone" | "tablet" | "desktop";
@@ -102,7 +99,7 @@ export const useApplicationStore = defineStore("applicationStore", () => {
    * (Mocked) Getter for reading all serialised tasks from the file system.
    * @returns A dictionary of tasks, where the key is the task name and the value is the serialised task.
    */
-  const tasks: Ref<Record<AvailableTasks, SerialisedTask>> = ref(staticTasks);
+  const tasks = ref(staticTasks);
 
   const SNAP_GRID: Ref<[x: number, y: number]> = ref([30, 30]);
 

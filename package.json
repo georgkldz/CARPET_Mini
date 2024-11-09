@@ -11,7 +11,8 @@
     "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
     "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
-    "build": "quasar build"
+    "build": "quasar build",
+    "build:schema": "typescript-json-schema ./src/stores/applicationStore.ts \"SerialisedTask\" --ignoreErrors  --noExtraProps --required --out ./src/schemas/JSONSchemas/SerialisedTaskSchema.schema.json && json-schema-to-zod -i ./src/schemas/JSONSchemas/SerialisedTaskSchema.schema.json -o ./src/schemas/zodSchemas/SerialisedTaskSchema.ts && prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore"
   },
   "dependencies": {
     "@hpcc-js/wasm": "^2.22.1",
@@ -23,7 +24,7 @@
     "@vue-flow/node-resizer": "^1.4.0",
     "@vue-flow/node-toolbar": "^1.1.0",
     "axios": "^1.2.1",
-    "carpet-component-library": "^0.0.8",
+    "carpet-component-library": "^0.0.10",
     "jsonpath-plus": "^9.0.0",
     "pinia": "^2.0.11",
     "quasar": "^2.16.0",

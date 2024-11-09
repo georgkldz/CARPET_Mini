@@ -2,14 +2,76 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "additionalProperties": false,
   "definitions": {
+    "BasicComparisonOperators": {
+      "enum": ["!=", "<", "<=", "=", "==", ">", ">="],
+      "type": "string"
+    },
+    "BasicInputFieldComponentData": {
+      "additionalProperties": false,
+      "description": "The InputField-component may hold a static input field value in its componentData.",
+      "properties": {
+        "fieldConfiguration": {
+          "$ref": "#/definitions/FieldConfiguration"
+        },
+        "fieldValue": {
+          "type": ["string", "number"]
+        }
+      },
+      "required": ["fieldConfiguration", "fieldValue"],
+      "type": "object"
+    },
+    "BasicInputFieldValidationConfiguration": {
+      "additionalProperties": false,
+      "description": "Validation strategy that compares static values to the value of the input field.",
+      "properties": {
+        "comparisons": {
+          "items": {
+            "$ref": "#/definitions/ComparisonConfiguration"
+          },
+          "type": "array"
+        }
+      },
+      "required": ["comparisons"],
+      "type": "object"
+    },
+    "ComparisonConfiguration": {
+      "additionalProperties": false,
+      "description": "Configuration for basic comparison operations with static values.",
+      "properties": {
+        "operator": {
+          "$ref": "#/definitions/BasicComparisonOperators"
+        },
+        "value": {
+          "type": ["string", "number"]
+        }
+      },
+      "required": ["operator", "value"],
+      "type": "object"
+    },
     "DotGraphComponentData": {
       "additionalProperties": false,
       "description": "The DOTGraph-component may hold a static dotDescription in its componentData.",
       "properties": {
         "dotDescription": {
+          "description": "The dotDescription is a string, that holds the Graphviz-DOT description of the graph.",
           "type": "string"
         }
       },
+      "type": "object"
+    },
+    "FieldConfiguration": {
+      "additionalProperties": false,
+      "description": "The FieldConfiguration defines the properties of the BasicInputField component.",
+      "properties": {
+        "placeholder": {
+          "type": "string"
+        },
+        "type": {
+          "enum": ["email", "number", "password", "text"],
+          "type": "string"
+        }
+      },
+      "required": ["type"],
       "type": "object"
     },
     "Hints": {
@@ -225,7 +287,14 @@
           "additionalProperties": false,
           "patternProperties": {
             "^[0-9]+$": {
-              "$ref": "#/definitions/SerializedDOTGraphComponent"
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SerializedDOTGraphComponent"
+                },
+                {
+                  "$ref": "#/definitions/SerializedBasicInputFieldComponent"
+                }
+              ]
             }
           },
           "type": "object"
@@ -250,6 +319,88 @@
         }
       },
       "required": ["components", "layouts"],
+      "type": "object"
+    },
+    "SerializedBasicInputFieldComponent": {
+      "additionalProperties": false,
+      "description": "The SerializedBasicInputFieldComponent interface is used to define the serialised properties of the BasicInputField component.",
+      "properties": {
+        "component": {
+          "$ref": "#/definitions/BasicInputFieldComponentData",
+          "description": "The data of the component."
+        },
+        "contextMenu": {
+          "additionalProperties": false,
+          "description": "Optional: The context menu of the component.",
+          "properties": {
+            "isOpen": {
+              "description": "Specifies whether the context menu is open.",
+              "type": "boolean"
+            },
+            "usedMethods": {
+              "description": "The methods that will be made available in the context menu.",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "required": ["isOpen", "usedMethods"],
+          "type": "object"
+        },
+        "dependencies": {
+          "$ref": "#/definitions/SerializedBasicInputFieldDependencies",
+          "description": "The dependencies of the component."
+        },
+        "isCorrect": {
+          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
+          "type": "boolean"
+        },
+        "isValid": {
+          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
+          "type": "boolean"
+        },
+        "methods": {
+          "$ref": "#/definitions/SerialisedMethods",
+          "description": "The methods of the component."
+        },
+        "name": {
+          "description": "The name of the component. Will be displayed in the component header in CARPET.",
+          "type": "string"
+        },
+        "nestedComponents": {
+          "$ref": "#/definitions/NestedComponents",
+          "description": "Optional: Nested components of the component."
+        },
+        "type": {
+          "const": "BasicInputField",
+          "description": "The type of the component.",
+          "type": "string"
+        },
+        "validationConfiguration": {
+          "$ref": "#/definitions/BasicInputFieldValidationConfiguration",
+          "description": "The validation configuration of the component."
+        }
+      },
+      "required": [
+        "component",
+        "dependencies",
+        "isCorrect",
+        "isValid",
+        "name",
+        "type",
+        "validationConfiguration"
+      ],
+      "type": "object"
+    },
+    "SerializedBasicInputFieldDependencies": {
+      "additionalProperties": false,
+      "description": "The InputField-component may receive a path to a reference value for the initialization of the input field value.",
+      "properties": {
+        "referenceValue": {
+          "$ref": "#/definitions/JSONPathExpression"
+        }
+      },
       "type": "object"
     },
     "SerializedDOTGraphComponent": {
@@ -307,6 +458,11 @@
           "const": "DOTGraph",
           "description": "The type of the component.",
           "type": "string"
+        },
+        "validationConfiguration": {
+          "description": "The validation configuration of the component.",
+          "properties": {},
+          "type": "object"
         }
       },
       "required": [
@@ -315,7 +471,8 @@
         "isCorrect",
         "isValid",
         "name",
-        "type"
+        "type",
+        "validationConfiguration"
       ],
       "type": "object"
     },
@@ -324,7 +481,8 @@
       "description": "The DOTGraph-component requires a valid dotDescription to display.",
       "properties": {
         "dotDescription": {
-          "$ref": "#/definitions/JSONPathExpression"
+          "$ref": "#/definitions/JSONPathExpression",
+          "description": "The dotDescription is a JSONPathExpression, that points to the dotDescription of the DOTGraph-component."
         }
       },
       "required": ["dotDescription"],

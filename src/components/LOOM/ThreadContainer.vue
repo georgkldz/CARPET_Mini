@@ -1,11 +1,50 @@
+<template>
+  <div
+    class="threadContainer nowheel"
+    :id="`componentContainer-${props.data.componentId}`"
+    :style="{
+      width: `${props.data.width}px`,
+      height: `${props.data.height}px`,
+    }"
+  >
+    <div class="threadContainer__header">
+      {{ serialisedComponent.name }}
+    </div>
+    <div class="threadContainer__body nodrag">
+      <component
+        class="nodrag"
+        :is="serialisedComponent.type"
+        :componentID="props.data.componentId"
+        :storeObject="{
+          store: taskGraphStore,
+          getProperty: taskGraphStore.getProperty,
+          setProperty: taskGraphStore.setProperty,
+        }"
+        :componentPath="`$.nodes.${currentNodeId}.components.${props.data.componentId}`"
+      ></component>
+    </div>
+
+    <NodeResizer
+      :min-width="minWidth"
+      :min-height="minHeight"
+      :lineStyle="{ display: 'none' }"
+      @resize="resizeHandler"
+      @resizeEnd="resizeHandler"
+    />
+  </div>
+</template>
+
 <script lang="ts" setup>
 import { NodeResizer, OnResizeStart } from "@vue-flow/node-resizer";
 import "@vue-flow/node-resizer/dist/style.css";
 import type { NodeProps, NodeDragEvent } from "@vue-flow/core";
 import { useTaskGraphStore } from "src/stores/taskGraphStore";
+import type { Layout } from "src/stores/applicationStore";
 import { useApplicationStore } from "src/stores/applicationStore";
 import { useVueFlow } from "@vue-flow/core";
 import { unref } from "vue";
+import BasicInputField from "src/components/BasicInputField/BasicInputField.vue";
+BasicInputField;
 
 interface Data {
   componentId: number;
@@ -44,20 +83,75 @@ const resizeHandler = (e: OnResizeStart) => {
   });
 };
 
-const { onNodeDrag, onNodeDragStop } = useVueFlow();
+const lastValidPosition: { x: number | undefined; y: number | undefined } = {
+  x: undefined,
+  y: undefined,
+};
+const { onNodeDragStart, onNodeDrag, onNodeDragStop } = useVueFlow();
 const nodeDragHandler = (event: NodeDragEvent) => {
-  const { x, y } = event.node.position;
+  let { x, y } = event.node.position;
+  const { height, width } = event.node.dimensions;
+  const { id } = event.node;
+  const collision = collisionDetection(
+    x / xModifier,
+    y / yModifier,
+    width / xModifier,
+    height / yModifier,
+    id,
+  );
+  if (collision.hasOccured) {
+    x = event.node.position.x =
+      <number>collision.lastValidPosition.x * xModifier;
+    y = event.node.position.y =
+      <number>collision.lastValidPosition.y * yModifier;
+    return;
+  }
   taskGraphStore.setProperty({
-    path: `$.nodes.${currentNodeId}.layouts.${taskGraphStore.layoutSize}.${props.data.componentId}.x`,
+    path: `$.nodes.${currentNodeId}.layouts.${taskGraphStore.layoutSize}.${id}.x`,
     value: x / xModifier,
   });
   taskGraphStore.setProperty({
-    path: `$.nodes.${currentNodeId}.layouts.${taskGraphStore.layoutSize}.${props.data.componentId}.y`,
+    path: `$.nodes.${currentNodeId}.layouts.${taskGraphStore.layoutSize}.${id}.y`,
     value: y / yModifier,
   });
 };
+onNodeDragStart(nodeDragHandler);
 onNodeDrag(nodeDragHandler);
 onNodeDragStop(nodeDragHandler);
+
+const collisionDetection = (
+  targetX: number,
+  targetY: number,
+  draggedComponentWidth: number,
+  draggedComponentHeight: number,
+  currentId: string,
+) => {
+  const layout: Layout = taskGraphStore.getProperty(
+    `$.nodes.${currentNodeId}.layouts.${taskGraphStore.layoutSize}`,
+  );
+  for (const [id, component] of Object.entries(layout)) {
+    // skip position of currently dragged component
+    if (id === currentId) continue;
+    const { x, y, width, height } = component;
+    const padding = 1;
+    const lowerBoundX = x - padding;
+    const upperBoundX = x + width + padding;
+    const lowerBoundY = y - padding;
+    const upperBoundY = y + height + padding;
+    if (
+      targetX + draggedComponentWidth > lowerBoundX &&
+      targetX < upperBoundX &&
+      targetY + draggedComponentHeight > lowerBoundY &&
+      targetY < upperBoundY
+    ) {
+      // set the last valid position of the dragged component
+      return { hasOccured: true, lastValidPosition };
+    }
+    lastValidPosition["x"] = targetX;
+    lastValidPosition["y"] = targetY;
+  }
+  return { hasOccured: false, lastValidPosition: { x: targetX, y: targetY } };
+};
 
 // TODO: Implement configurable Handles/Ports (for connecting Containers via edges)
 // import type { CSSProperties } from "vue";
@@ -69,45 +163,7 @@ onNodeDragStop(nodeDragHandler);
 //   bottom: "10px",
 //   top: "auto",
 // };
-
-// TODO: Implement collision detection and container overlap prevention
 </script>
-
-<template>
-  <div
-    class="threadContainer nowheel"
-    :id="`componentContainer-${props.data.componentId}`"
-    :style="{
-      width: `${props.data.width}px`,
-      height: `${props.data.height}px`,
-    }"
-  >
-    <div class="threadContainer__header">
-      {{ serialisedComponent.name }}
-    </div>
-    <div class="threadContainer__body nodrag">
-      <component
-        class="nodrag"
-        :is="serialisedComponent.type"
-        :componentID="props.data.componentId"
-        :storeObject="{
-          store: taskGraphStore,
-          getProperty: taskGraphStore.getProperty,
-          setProperty: taskGraphStore.setProperty,
-        }"
-        :componentPath="`$.nodes.${currentNodeId}.components.${props.data.componentId}`"
-      ></component>
-    </div>
-
-    <NodeResizer
-      :min-width="minWidth"
-      :min-height="minHeight"
-      :lineStyle="{ display: 'none' }"
-      @resize="resizeHandler"
-      @resizeEnd="resizeHandler"
-    />
-  </div>
-</template>
 
 <style>
 .threadContainer {
