@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { Ref } from "vue";
+import axios, { AxiosError} from "axios";
 import serialisedTaskSchema from "../schemas/zodSchemas/SerialisedTaskSchema";
 
 import type { SerializedDOTGraphComponent } from "carpet-component-library";
@@ -94,7 +95,11 @@ export interface SerialisedTask {
   taskData?: TaskData;
 }
 
+
 export const useApplicationStore = defineStore("applicationStore", () => {
+  const userId = ref<string | null>(null);
+  const isAuthenticated = ref(false);
+
   /**
    * (Mocked) Getter for reading all serialised tasks from the file system.
    * @returns A dictionary of tasks, where the key is the task name and the value is the serialised task.
@@ -112,6 +117,36 @@ export const useApplicationStore = defineStore("applicationStore", () => {
   const toggleDarkMode = () => {
     darkMode.value = !darkMode.value;
   };
+  const login = async (payload: { email: string; password: string }) => {
+    try {
+      const response = await axios.post("http://localhost:3000/login", payload);
+      userId.value = response.data.userId; // `.value` bei `ref` erforderlich
+      isAuthenticated.value = true;
+      console.log("Login erfolgreich! BenutzerID ist " + userId.value);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        // Verwende AxiosError-Typisierung anstelle von `any`
+        const axiosError = error as AxiosError<{ message: string }>;
+        const errorMessage =
+          axiosError.response?.data?.message || "Login fehlgeschlagen.";
+        throw new Error(errorMessage);
+      }
+      // Allgemeiner Fehler
+      throw new Error("Ein unbekannter Fehler ist aufgetreten.");
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await axios.post("http://localhost:3000/logout");
+      userId.value = null;
+      isAuthenticated.value = false;
+      console.log("Logout erfolgreich!");
+    } catch (error) {
+      console.error("Fehler beim Logout:", error instanceof Error ? error.message : error);
+      throw new Error("Logout fehlgeschlagen.");
+    }
+  };
 
   return {
     leftDrawerOpen,
@@ -120,5 +155,9 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     toggleDarkMode,
     tasks,
     SNAP_GRID,
+    userId,
+    isAuthenticated,
+    login,
+    logout,
   };
 });

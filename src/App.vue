@@ -1,19 +1,27 @@
 <template>
-  <MainLayout> </MainLayout>
+  <div>
+    <!-- Bedingte Anzeige: LoginScreen oder MainLayout -->
+    <LoginScreen v-if="!appStore.isAuthenticated" />
+    <MainLayout v-else />
+  </div>
 </template>
 
 <script setup lang="ts">
-import MainLayout from "./layouts/MainLayout/MainLayout.vue";
-import "@vue-flow/core/dist/style.css";
+import {useApplicationStore} from "stores/applicationStore.ts";
+import MainLayout from "layouts/MainLayout/MainLayout.vue";
+import LoginScreen from "components/Login/LoginScreen.vue";
 
+import "@vue-flow/core/dist/style.css";
 import "carpet-component-library/style.css";
 
 defineOptions({
   name: "App",
 });
+const appStore = useApplicationStore();
 </script>
 
 <style>
+/* Bestehendes Styling bleibt unverändert */
 html,
 body,
 #app {

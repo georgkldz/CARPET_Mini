@@ -22,6 +22,12 @@
             "y": 20,
             "width": 4,
             "height": 4
+          },
+          "3": {
+            "x": 20,
+            "y": 30,
+            "width": 4,
+            "height": 4
           }
         },
         "phone": {
@@ -101,6 +107,24 @@
           "isValid": false,
           "name": "Eingabefeld",
           "type": "BasicInputField"
+        },
+        "3": {
+          "component": {
+            "fieldConfiguration": {
+              "type": "text"
+            },
+            "fieldValue": "Hallo"
+          },
+          "validationConfiguration": {
+            "comparisons": [{ "value": 5, "operator": "==" }]
+          },
+          "dependencies": {
+            "referenceValue": "$.taskData.startText"
+          },
+          "isCorrect": false,
+          "isValid": false,
+          "name": "Eingabefeld",
+          "type": "BasicInputField"
         }
       }
     }
@@ -111,6 +135,7 @@
   "layoutSize": "desktop",
   "taskData": {
     "dotDescription": "digraph G { bgcolor=transparent  a->b; b->c; c->a; }",
-    "inputValue": 3
+    "inputValue": 3,
+    "startText": "Hallo Welt"
   }
 }
