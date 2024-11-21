@@ -57,19 +57,25 @@ const syntaxError = ref<string | null>(null); // Fehlerzustand
 const friendlyErrorMessage = computed(() =>
   syntaxError.value ? "Bitte gib eine korrekte LaTeX-Formel ein!" : null
 );
+watch(
+  () => latexContent.value,
+  (newValue) => {
+    try {
+      renderToString(newValue || "", { throwOnError: true });
+      syntaxError.value = null; // Kein Fehler
+    } catch (error) {
+      syntaxError.value = error instanceof Error ? error.message : "Syntaxfehler";
+    }
+  }
+);
 
 // Echtzeit-Rendering des LaTeX-Inhalts
 const renderedLatex = computed(() => {
-  try {
-    return latexContent.value
-      ? renderToString(latexContent.value, { throwOnError: true })
-      : "";
-  } catch (error) {
-    // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-    syntaxError.value = error instanceof Error ? error.message : "Fehler beim Rendern";
-    return "";
-  }
+  return latexContent.value
+    ? renderToString(latexContent.value, { throwOnError: true })
+    : "";
 });
+
 
 // Initialisierung und Synchronisierung
 onMounted(() => {
