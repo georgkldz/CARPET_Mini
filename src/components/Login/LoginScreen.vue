@@ -30,7 +30,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { useApplicationStore} from "stores/applicationStore.ts";
+import { useApplicationStore } from "stores/applicationStore.ts";
 
 export default defineComponent({
   name: "LoginScreen",
@@ -55,7 +55,7 @@ export default defineComponent({
         } else {
           error.value = "Ein unbekannter Fehler ist aufgetreten.";
         }
-      }finally {
+      } finally {
         loading.value = false;
       }
     };

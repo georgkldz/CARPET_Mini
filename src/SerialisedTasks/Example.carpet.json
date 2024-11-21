@@ -28,6 +28,12 @@
             "y": 30,
             "width": 4,
             "height": 4
+          },
+          "4": {
+            "x": 26,
+            "y": 30,
+            "width": 15,
+            "height": 15
           }
         },
         "phone": {
@@ -125,6 +131,16 @@
           "isValid": false,
           "name": "Eingabefeld",
           "type": "BasicInputField"
+        },
+        "4": {
+          "component": {},
+          "dependencies": {
+          },
+          "validationConfiguration": {},
+          "isCorrect": true,
+          "isValid": true,
+          "name": "Latex",
+          "type": "LatexInput"
         }
       }
     }

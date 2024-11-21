@@ -54,7 +54,7 @@ const syntaxError = ref<string | null>(null); // Fehlerstatus
 
 // Benutzerfreundliche Fehlermeldung
 const friendlyErrorMessage = computed(() =>
-  syntaxError.value ? "Bitte gib eine korrekte LaTeX-Formel ein!" : null
+  syntaxError.value ? "Bitte gib eine korrekte LaTeX-Formel ein!" : null,
 );
 
 // Echtzeit-Rendering des LaTeX-Inhalts
@@ -66,9 +66,10 @@ watch(
       katex.renderToString(newValue || "", { throwOnError: true });
       syntaxError.value = null; // Kein Fehler
     } catch (error) {
-      syntaxError.value = error instanceof Error ? error.message : "Syntaxfehler";
+      syntaxError.value =
+        error instanceof Error ? error.message : "Syntaxfehler";
     }
-  }
+  },
 );
 
 // Echtzeit-Rendering des LaTeX-Inhalts
@@ -97,14 +98,11 @@ onMounted(() => {
 });
 
 // Beobachten von externen Änderungen an modelValue
-watch(
-  modelValue,
-  (newValue) => {
-    if (newValue !== latexContent.value) {
-      latexContent.value = newValue || ""; // Synchronisierung mit dem lokalen Zustand
-    }
+watch(modelValue, (newValue) => {
+  if (newValue !== latexContent.value) {
+    latexContent.value = newValue || ""; // Synchronisierung mit dem lokalen Zustand
   }
-);
+});
 
 // Benutzerinteraktionen
 const onUserInput = () => {
@@ -130,7 +128,6 @@ const handlePreviewClick = () => {
   showEditor.value = true;
 };
 </script>
-
 
 <style>
 .latex-editor {

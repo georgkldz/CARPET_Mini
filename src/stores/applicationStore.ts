@@ -1,12 +1,13 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { Ref } from "vue";
-import axios, { AxiosError} from "axios";
+import axios, { AxiosError } from "axios";
 import serialisedTaskSchema from "../schemas/zodSchemas/SerialisedTaskSchema";
 
 import type { SerializedDOTGraphComponent } from "carpet-component-library";
-// import type { SerializedCustomComponents } from "../components/index";
+//import type { SerializedCustomComponents } from "../components/index";
 import type { SerializedBasicInputFieldComponent } from "../components/BasicInputField/BasicInputField";
+import { SerializedLatexInputComponent } from "components/LatexInput/LatexInput.ts";
 
 import ExampleTask from "../SerialisedTasks/Example.carpet.json";
 const staticTasks = { Example: serialisedTaskSchema.parse(ExampleTask) };
@@ -19,7 +20,8 @@ export type AvailableTasks = keyof typeof staticTasks;
 export interface SerialisedComponents {
   [id: number]:
     | SerializedDOTGraphComponent
-    | SerializedBasicInputFieldComponent;
+    | SerializedBasicInputFieldComponent
+    | SerializedLatexInputComponent;
 }
 
 export type LayoutSizes = "phone" | "tablet" | "desktop";
@@ -95,7 +97,6 @@ export interface SerialisedTask {
   taskData?: TaskData;
 }
 
-
 export const useApplicationStore = defineStore("applicationStore", () => {
   const userId = ref<string | null>(null);
   const isAuthenticated = ref(false);
@@ -143,7 +144,10 @@ export const useApplicationStore = defineStore("applicationStore", () => {
       isAuthenticated.value = false;
       console.log("Logout erfolgreich!");
     } catch (error) {
-      console.error("Fehler beim Logout:", error instanceof Error ? error.message : error);
+      console.error(
+        "Fehler beim Logout:",
+        error instanceof Error ? error.message : error,
+      );
       throw new Error("Logout fehlgeschlagen.");
     }
   };

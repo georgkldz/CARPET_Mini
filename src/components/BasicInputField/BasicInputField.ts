@@ -123,7 +123,7 @@ export class BasicInputFieldComponent extends BaseComponent<
   ) {
     switch (operator) {
       case "=":
-        return userValue = referenceValue;
+        return (userValue = referenceValue);
       case "==":
         return userValue == referenceValue;
       case "!=":

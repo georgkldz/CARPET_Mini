@@ -33,11 +33,9 @@ export declare interface SerializedLatexInputDependencies
 /**
  * The LatexInput-component may utilize a reference value for the initialization of the input field value.
  */
-export declare interface LatexInputDependencies
-  extends ComponentDependencies {
+export declare interface LatexInputDependencies extends ComponentDependencies {
   referenceValue?: string | undefined | null;
 }
-
 
 /**
  * The InputField-component may hold a static input field value in its componentData.

@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import {useApplicationStore} from "stores/applicationStore.ts";
+import { useApplicationStore } from "stores/applicationStore.ts";
 import MainLayout from "layouts/MainLayout/MainLayout.vue";
 import LoginScreen from "components/Login/LoginScreen.vue";
 
