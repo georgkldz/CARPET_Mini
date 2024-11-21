@@ -33,7 +33,7 @@
 import { ref, computed, watch, onMounted, toRefs, unref } from "vue";
 import { LatexInputComponent } from "src/components/LatexInput/LatexInput";
 import type { LatexInputProps } from "src/components/LatexInput/LatexInput";
-import { renderToString } from "katex";
+import katex from "katex";
 import "katex/dist/katex.min.css";
 
 // Props aus der CARPET Component Library definieren
@@ -63,7 +63,7 @@ watch(
   () => latexContent.value,
   (newValue) => {
     try {
-      renderToString(newValue || "", { throwOnError: true });
+      katex.renderToString(newValue || "", { throwOnError: true });
       syntaxError.value = null; // Kein Fehler
     } catch (error) {
       syntaxError.value = error instanceof Error ? error.message : "Syntaxfehler";
@@ -74,7 +74,7 @@ watch(
 // Echtzeit-Rendering des LaTeX-Inhalts
 const renderedLatex = computed(() => {
   return latexContent.value
-    ? renderToString(latexContent.value, { throwOnError: true })
+    ? katex.renderToString(latexContent.value, { throwOnError: true })
     : "";
 });
 
@@ -114,7 +114,7 @@ const onUserInput = () => {
 // Funktion zur Syntaxprüfung
 const validateSyntax = () => {
   try {
-    renderToString(latexContent.value || "", { throwOnError: true });
+    katex.renderToString(latexContent.value || "", { throwOnError: true });
     syntaxError.value = null; // Kein Fehler
   } catch (error) {
     syntaxError.value = error instanceof Error ? error.message : "Syntaxfehler";
