@@ -38,7 +38,7 @@ import "katex/dist/katex.min.css";
 
 // Props aus der CARPET Component Library definieren
 const props = defineProps<LatexInputProps>();
-const { storeObject, componentID, componentPath } = toRefs(props);
+const { storeObject, componentID, componentPath, modelValue } = toRefs(props); // modelValue dekonstruieren
 
 // LatexInputComponent-Instanz erstellen
 const component = new LatexInputComponent(
@@ -47,16 +47,18 @@ const component = new LatexInputComponent(
   unref(componentPath),
 );
 
-// Initiale Daten laden
-const dependencies = component.loadDependencies();
-const latexContent = ref<string>(""); // Lokaler Inhalt
-const showEditor = ref(false); // Sichtbarkeit des Eingabefelds steuern
-const syntaxError = ref<string | null>(null); // Fehlerzustand
+// Reaktive Variablen
+const latexContent = ref<string>(modelValue.value || ""); // Initialwert von modelValue
+const showEditor = ref(false); // Steuert die Sichtbarkeit des Editors
+const syntaxError = ref<string | null>(null); // Fehlerstatus
 
 // Benutzerfreundliche Fehlermeldung
 const friendlyErrorMessage = computed(() =>
   syntaxError.value ? "Bitte gib eine korrekte LaTeX-Formel ein!" : null
 );
+
+// Echtzeit-Rendering des LaTeX-Inhalts
+// Watcher für Fehlerprüfung
 watch(
   () => latexContent.value,
   (newValue) => {
@@ -76,12 +78,10 @@ const renderedLatex = computed(() => {
     : "";
 });
 
-
 // Initialisierung und Synchronisierung
 onMounted(() => {
-  // Initialen Wert aus den Abhängigkeiten laden
-  latexContent.value =
-    (dependencies.value.referenceValue as string | undefined) || "";
+  // Initialwert aus den Props laden
+  latexContent.value = modelValue.value || "";
 
   // Syntax validieren
   validateSyntax();
@@ -95,6 +95,16 @@ onMounted(() => {
     });
   });
 });
+
+// Beobachten von externen Änderungen an modelValue
+watch(
+  modelValue,
+  (newValue) => {
+    if (newValue !== latexContent.value) {
+      latexContent.value = newValue || ""; // Synchronisierung mit dem lokalen Zustand
+    }
+  }
+);
 
 // Benutzerinteraktionen
 const onUserInput = () => {
@@ -120,6 +130,7 @@ const handlePreviewClick = () => {
   showEditor.value = true;
 };
 </script>
+
 
 <style>
 .latex-editor {
