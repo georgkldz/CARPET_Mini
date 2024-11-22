@@ -6,7 +6,7 @@
         v-model="latexContent"
         class="editor"
         placeholder="Gib hier LaTeX ein"
-        @input="onUserInput"
+
       ></textarea>
       <button
         class="submit-button"
@@ -19,7 +19,7 @@
 
     <!-- Vorschau-Bereich -->
     <div class="preview" @click="handlePreviewClick">
-      <h2>Vorschau</h2>
+      <h3>Vorschau</h3>
       <div v-if="!showEditor && !latexContent" class="placeholder">
         Latex eingeben, hier klicken
       </div>
@@ -50,42 +50,38 @@ const component = new LatexInputComponent(
 // Reaktive Variablen
 const latexContent = ref<string>(modelValue.value || ""); // Initialwert von modelValue
 const showEditor = ref(false); // Steuert die Sichtbarkeit des Editors
-const syntaxError = ref<string | null>(null); // Fehlerstatus
 
-// Benutzerfreundliche Fehlermeldung
-const friendlyErrorMessage = computed(() =>
-  syntaxError.value ? "Bitte gib eine korrekte LaTeX-Formel ein!" : null,
-);
 
-// Echtzeit-Rendering des LaTeX-Inhalts
-// Watcher für Fehlerprüfung
-watch(
-  () => latexContent.value,
-  (newValue) => {
-    try {
-      katex.renderToString(newValue || "", { throwOnError: true });
-      syntaxError.value = null; // Kein Fehler
-    } catch (error) {
-      syntaxError.value =
-        error instanceof Error ? error.message : "Syntaxfehler";
-    }
-  },
-);
-
-// Echtzeit-Rendering des LaTeX-Inhalts
-const renderedLatex = computed(() => {
-  return latexContent.value
-    ? katex.renderToString(latexContent.value, { throwOnError: true })
-    : "";
+// Computed für die Syntaxprüfung
+const syntaxError = computed(() => {
+  try {
+    katex.renderToString(latexContent.value || "", { throwOnError: true });
+    return null; // Kein Fehler
+  } catch (error) {
+    return error instanceof Error ? error.message : "Syntaxfehler";
+  }
 });
+
+// Computed für das gerenderte LaTeX
+const renderedLatex = computed(() => {
+  return syntaxError.value === null
+    ? katex.renderToString(latexContent.value || "", { throwOnError: true })
+    : ""; // Keine Vorschau bei Fehler
+});
+
+// Computed für die benutzerfreundliche Fehlermeldung
+const friendlyErrorMessage = computed(() =>
+  syntaxError.value ? "Bitte gib eine korrekte LaTeX-Formel ein!" : null
+);
+
+
 
 // Initialisierung und Synchronisierung
 onMounted(() => {
   // Initialwert aus den Props laden
   latexContent.value = modelValue.value || "";
 
-  // Syntax validieren
-  validateSyntax();
+
 
   // Synchronisierung mit dem Store
   watch(latexContent, (newValue) => {
@@ -105,19 +101,11 @@ watch(modelValue, (newValue) => {
 });
 
 // Benutzerinteraktionen
-const onUserInput = () => {
-  validateSyntax();
-};
+// const onUserInput = () => {
+//   validateSyntax();
+// };
 
-// Funktion zur Syntaxprüfung
-const validateSyntax = () => {
-  try {
-    katex.renderToString(latexContent.value || "", { throwOnError: true });
-    syntaxError.value = null; // Kein Fehler
-  } catch (error) {
-    syntaxError.value = error instanceof Error ? error.message : "Syntaxfehler";
-  }
-};
+
 
 // Steuerung des Editors
 const hideEditor = () => {

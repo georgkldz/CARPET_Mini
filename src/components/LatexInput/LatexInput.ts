@@ -9,6 +9,7 @@ import type {
 } from "carpet-component-library";
 import { BaseComponent } from "carpet-component-library";
 import { unref } from "vue";
+import katex from "katex";
 
 /**
  * The LatexInputProps interface is used to define the properties, that are passed from the parent component to the LatexInput component.
@@ -100,6 +101,8 @@ export class LatexInputComponent extends BaseComponent<
    */
   public validate(userValue: string | undefined | null) {
     const isValid = this.isLatexValid(userValue);
+
+    // Store the validation result in the taskGraphStore
     unref(this.storeObject).setProperty({
       path: `${this.serialisedBaseComponentPath}.isValid`,
       value: isValid,
@@ -107,18 +110,23 @@ export class LatexInputComponent extends BaseComponent<
   }
 
   /**
-   * Basic validation to check if the LaTeX content is valid.
-   * For now, this is a placeholder for more complex validation logic.
+   * Validates LaTeX syntax.
    * @param latex The LaTeX string to validate.
-   * @returns True if valid, false otherwise.
+   * @returns True if the syntax is valid, false otherwise.
    */
   private isLatexValid(latex: string | undefined | null): boolean {
-    if (!latex) return false; // Empty strings are invalid
+    if (!latex || latex.trim() === "") return false; // Empty or null strings are invalid
+
     try {
-      // Example validation logic: Must start with a backslash
-      return latex.trim().startsWith("\\");
+      // Use KaTeX to validate the LaTeX string
+      katex.renderToString(latex, { throwOnError: true });
+      console.log("Latex valid");
+      return true; // No errors mean valid syntax
     } catch {
-      return false; // Invalid if an error occurs
+      console.log("Latex false");
+      return false; // Return false if a syntax error is thrown
     }
   }
+
+
 }
