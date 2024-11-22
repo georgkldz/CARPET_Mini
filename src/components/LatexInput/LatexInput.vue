@@ -19,8 +19,7 @@
 
     <!-- Vorschau-Bereich -->
     <div class="preview" @click="handlePreviewClick">
-      <h3>Vorschau</h3>
-      <div v-if="!showEditor && !latexContent" class="placeholder">
+        <div v-if="!showEditor && !latexContent" class="placeholder">
         Latex eingeben, hier klicken
       </div>
       <div v-else v-html="renderedLatex" class="latex-output"></div>
@@ -52,15 +51,16 @@ const latexContent = ref<string>(modelValue.value || ""); // Initialwert von mod
 const showEditor = ref(false); // Steuert die Sichtbarkeit des Editors
 
 
-// Computed für die Syntaxprüfung
-const syntaxError = computed(() => {
-  try {
-    katex.renderToString(latexContent.value || "", { throwOnError: true });
-    return null; // Kein Fehler
-  } catch (error) {
-    return error instanceof Error ? error.message : "Syntaxfehler";
-  }
-});
+// Computed für Syntaxfehler
+const syntaxError = computed(() =>
+  component.getSyntaxError(latexContent.value)
+);
+
+// Computed für die benutzerfreundliche Fehlermeldung
+const friendlyErrorMessage = computed(() =>
+  syntaxError.value ? "Bitte gib eine korrekte LaTeX-Formel ein!" : null
+);
+
 
 // Computed für das gerenderte LaTeX
 const renderedLatex = computed(() => {
@@ -69,18 +69,11 @@ const renderedLatex = computed(() => {
     : ""; // Keine Vorschau bei Fehler
 });
 
-// Computed für die benutzerfreundliche Fehlermeldung
-const friendlyErrorMessage = computed(() =>
-  syntaxError.value ? "Bitte gib eine korrekte LaTeX-Formel ein!" : null
-);
-
-
 
 // Initialisierung und Synchronisierung
 onMounted(() => {
   // Initialwert aus den Props laden
   latexContent.value = modelValue.value || "";
-
 
 
   // Synchronisierung mit dem Store
@@ -99,12 +92,6 @@ watch(modelValue, (newValue) => {
     latexContent.value = newValue || ""; // Synchronisierung mit dem lokalen Zustand
   }
 });
-
-// Benutzerinteraktionen
-// const onUserInput = () => {
-//   validateSyntax();
-// };
-
 
 
 // Steuerung des Editors

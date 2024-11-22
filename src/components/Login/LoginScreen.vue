@@ -84,6 +84,15 @@ export default defineComponent({
 .form-group {
   margin-bottom: 15px;
 }
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+  word-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 label {
   display: block;

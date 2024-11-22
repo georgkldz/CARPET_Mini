@@ -45,21 +45,10 @@ export declare interface LatexInputComponentData extends ComponentData {
   fieldValue: string | undefined | null;
 }
 
-export declare type BasicComparisonOperators =
-  | "="
-  | "=="
-  | "!="
-  | ">"
-  | "<"
-  | ">="
-  | "<=";
-
 /**
  * Configuration for basic comparison operations with static values.
  */
 export declare interface ComparisonConfiguration {
-  value: string | number;
-  operator: BasicComparisonOperators;
 }
 
 /**
@@ -100,33 +89,31 @@ export class LatexInputComponent extends BaseComponent<
    * @param userValue The LaTeX content provided by the user.
    */
   public validate(userValue: string | undefined | null) {
-    const isValid = this.isLatexValid(userValue);
+    const error = this.getSyntaxError(userValue);
+    const isValid = error === null;
 
-    // Store the validation result in the taskGraphStore
     unref(this.storeObject).setProperty({
       path: `${this.serialisedBaseComponentPath}.isValid`,
       value: isValid,
     });
   }
 
+
   /**
-   * Validates LaTeX syntax.
+   * Checks the LaTeX syntax and returns either null or an error message.
    * @param latex The LaTeX string to validate.
-   * @returns True if the syntax is valid, false otherwise.
+   * @returns Null if the syntax is valid, or an error message if it is not.
    */
-  private isLatexValid(latex: string | undefined | null): boolean {
-    if (!latex || latex.trim() === "") return false; // Empty or null strings are invalid
+
+  public getSyntaxError(latex: string | undefined | null): string | null {
+    if (!latex || latex.trim() === "") return "Leerer Input ist ungültig.";
 
     try {
-      // Use KaTeX to validate the LaTeX string
       katex.renderToString(latex, { throwOnError: true });
-      console.log("Latex valid");
-      return true; // No errors mean valid syntax
-    } catch {
-      console.log("Latex false");
-      return false; // Return false if a syntax error is thrown
+      return null; // Kein Fehler
+    } catch (error) {
+      return error instanceof Error ? error.message : "Unbekannter Fehler.";
     }
   }
-
 
 }
