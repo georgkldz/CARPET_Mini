@@ -10,6 +10,7 @@ import type { SerializedBasicInputFieldComponent } from "../components/BasicInpu
 import { SerializedLatexInputComponent } from "components/LatexInput/LatexInput.ts";
 
 import ExampleTask from "../SerialisedTasks/Example.carpet.json";
+import { SerializedLatexInputFieldComponent } from "components/LatexInputField/LatexInputField.ts";
 const staticTasks = { Example: serialisedTaskSchema.parse(ExampleTask) };
 
 /**
@@ -21,7 +22,8 @@ export interface SerialisedComponents {
   [id: number]:
     | SerializedDOTGraphComponent
     | SerializedBasicInputFieldComponent
-    | SerializedLatexInputComponent;
+    | SerializedLatexInputComponent
+    | SerializedLatexInputFieldComponent;
 }
 
 export type LayoutSizes = "phone" | "tablet" | "desktop";

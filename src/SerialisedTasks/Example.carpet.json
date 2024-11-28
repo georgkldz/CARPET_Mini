@@ -33,7 +33,7 @@
             "x": 26,
             "y": 30,
             "width": 10,
-            "height": 10
+            "height": 6
           }
         },
         "phone": {
@@ -140,7 +140,7 @@
           "isCorrect": true,
           "isValid": true,
           "name": "Latex",
-          "type": "LatexInput"
+          "type": "LatexInputField"
         }
       }
     }
