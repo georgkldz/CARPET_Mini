@@ -6,6 +6,7 @@
         v-if="isEditing"
         v-model="latexContent"
         type="text"
+        dense
         outlined
         :placeholder="dynamicPlaceholder"
         label=""
@@ -146,5 +147,10 @@ watch(modelValue, (newValue) => {
   padding: 7px;
   cursor: text;
   min-height: 40px;
+}
+.q-field {
+  height: 40px;
+  line-height: 40px;
+  padding: 0;
 }
 </style>
