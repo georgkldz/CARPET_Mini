@@ -11,7 +11,8 @@
     "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
     "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
-    "build": "quasar build"
+    "build": "quasar build",
+    "build:schema": "typescript-json-schema ./src/stores/applicationStore.ts \"SerialisedTask\" --ignoreErrors  --noExtraProps --required --out ./src/schemas/JSONSchemas/SerialisedTaskSchema.schema.json && json-schema-to-zod -i ./src/schemas/JSONSchemas/SerialisedTaskSchema.schema.json -o ./src/schemas/zodSchemas/SerialisedTaskSchema.ts && prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore"
   },
   "dependencies": {
     "@hpcc-js/wasm": "^2.22.1",

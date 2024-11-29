@@ -1,78 +1,4 @@
-<script lang="ts" setup>
-import { NodeResizer, OnResizeStart } from "@vue-flow/node-resizer";
-import "@vue-flow/node-resizer/dist/style.css";
-import type { NodeProps, NodeDragEvent } from "@vue-flow/core";
-import { useTaskGraphStore } from "src/stores/taskGraphStore";
-import { useApplicationStore } from "src/stores/applicationStore";
-import { useVueFlow } from "@vue-flow/core";
-import { unref } from "vue";
-
-interface Data {
-  componentId: number;
-  width: number;
-  height: number;
-}
-
-interface ThreadContainerProps
-  extends Pick<NodeProps<Data, object, "selectorNode">, "data"> {
-  data: Data;
-}
-
-const props = defineProps<ThreadContainerProps>();
-
-const minHeight = unref(props.data.height);
-const minWidth = unref(props.data.width);
-
-const applicationStore = useApplicationStore();
-const [xModifier, yModifier] = applicationStore.SNAP_GRID;
-
-const taskGraphStore = useTaskGraphStore();
-const currentNodeId = taskGraphStore.currentNode;
-const currentNode = taskGraphStore.getCurrentNode;
-const serialisedComponent = currentNode.components[props.data.componentId];
-
-const resizeHandler = (e: OnResizeStart) => {
-  const { height, width } = e.params;
-
-  taskGraphStore.setProperty({
-    path: `$.nodes.${currentNodeId}.layouts.${taskGraphStore.layoutSize}.${props.data.componentId}.width`,
-    value: width / xModifier,
-  });
-  taskGraphStore.setProperty({
-    path: `$.nodes.${currentNodeId}.layouts.${taskGraphStore.layoutSize}.${props.data.componentId}.height`,
-    value: height / yModifier,
-  });
-};
-
-const { onNodeDrag, onNodeDragStop } = useVueFlow();
-const nodeDragHandler = (event: NodeDragEvent) => {
-  const { x, y } = event.node.position;
-  taskGraphStore.setProperty({
-    path: `$.nodes.${currentNodeId}.layouts.${taskGraphStore.layoutSize}.${props.data.componentId}.x`,
-    value: x / xModifier,
-  });
-  taskGraphStore.setProperty({
-    path: `$.nodes.${currentNodeId}.layouts.${taskGraphStore.layoutSize}.${props.data.componentId}.y`,
-    value: y / yModifier,
-  });
-};
-onNodeDrag(nodeDragHandler);
-onNodeDragStop(nodeDragHandler);
-
-// TODO: Implement configurable Handles/Ports (for connecting Containers via edges)
-// import type { CSSProperties } from "vue";
-// import { Handle, Position } from "@vue-flow/core";
-// const targetHandleStyle: CSSProperties = { background: "#555" };
-// const sourceHandleStyleA: CSSProperties = { ...targetHandleStyle, top: "10px" };
-// const sourceHandleStyleB: CSSProperties = {
-//   ...targetHandleStyle,
-//   bottom: "10px",
-//   top: "auto",
-// };
-
-// TODO: Implement collision detection and container overlap prevention
-</script>
-
+<!-- eslint-disable vue/no-use-v-if-with-v-for -->
 <template>
   <div
     class="threadContainer nowheel"
@@ -89,25 +15,198 @@ onNodeDragStop(nodeDragHandler);
       <component
         class="nodrag"
         :is="serialisedComponent.type"
-        :componentID="props.data.componentId"
+        :componentID="props.id"
         :storeObject="{
           store: taskGraphStore,
           getProperty: taskGraphStore.getProperty,
           setProperty: taskGraphStore.setProperty,
         }"
-        :componentPath="`$.nodes.${currentNodeId}.components.${props.data.componentId}`"
-      ></component>
+        :componentPath="`$.nodes.${currentNodeId}.components.${props.id}`"
+      >
+        <!-- TODO: See if this is really necessary/smart to solve with slots? Only relevant when layout is to be configurable? -->
+        <!-- <template
+          v-if="serialisedComponent.nestedComponents"
+          v-for="nestedComponent in serialisedComponent.nestedComponents"
+          :key="nestedComponent.name"
+          #[nestedComponent.name]
+        >
+        </template> -->
+      </component>
     </div>
 
     <NodeResizer
       :min-width="minWidth"
       :min-height="minHeight"
       :lineStyle="{ display: 'none' }"
+      @resizeStart="resizeHandler"
       @resize="resizeHandler"
       @resizeEnd="resizeHandler"
     />
   </div>
 </template>
+
+<script lang="ts" setup>
+import {
+  NodeResizer,
+  OnResizeStart,
+  OnResize,
+  OnResizeEnd,
+} from "@vue-flow/node-resizer";
+import "@vue-flow/node-resizer/dist/style.css";
+import type { NodeProps, NodeDragEvent } from "@vue-flow/core";
+import { useTaskGraphStore } from "src/stores/taskGraphStore";
+import type { Layout } from "src/stores/applicationStore";
+import { useApplicationStore } from "src/stores/applicationStore";
+import { useVueFlow } from "@vue-flow/core";
+import { unref, ref } from "vue";
+
+// interface Data {
+//   componentId: number;
+//   width: number;
+//   height: number;
+// }
+
+type ThreadContainerProps = NodeProps;
+
+const props = defineProps<ThreadContainerProps>();
+
+const minHeight = unref(props.data.height);
+const minWidth = unref(props.data.width);
+
+const applicationStore = useApplicationStore();
+const [xModifier, yModifier] = applicationStore.SNAP_GRID;
+
+const taskGraphStore = useTaskGraphStore();
+const currentNodeId = taskGraphStore.currentNode;
+const currentNode = taskGraphStore.getCurrentNode;
+const serialisedComponent = currentNode.components[props.data.componentId];
+
+const collisionEvaluation = ref({
+  hasOccured: false,
+  lastValidPosition: { x: props.position.x, y: props.position.y },
+});
+
+// TODO: Add collision detection to resizeHandler, once https://github.com/bcakmakoglu/vue-flow/discussions/1627 is resolved
+const resizeHandler = (e: OnResizeStart | OnResize | OnResizeEnd) => {
+  const { height, width } = e.params;
+
+  taskGraphStore.setProperty({
+    path: `$.nodes.${currentNodeId}.layouts.${taskGraphStore.layoutSize}.${props.data.componentId}.width`,
+    value: width / xModifier,
+  });
+  taskGraphStore.setProperty({
+    path: `$.nodes.${currentNodeId}.layouts.${taskGraphStore.layoutSize}.${props.data.componentId}.height`,
+    value: height / yModifier,
+  });
+};
+
+const { onNodeDragStart, onNodeDrag, onNodeDragStop } = useVueFlow();
+const nodeDragHandler = (event: NodeDragEvent) => {
+  let { x, y } = event.node.position;
+  const { height, width } = event.node.dimensions;
+  const { id } = event.node;
+
+  const { newX, newY } = collisionCorrection(x, y, width, height, id);
+
+  // set the last valid position of the dragged component
+  x = event.node.position.x = newX * xModifier;
+  y = event.node.position.y = newY * yModifier;
+
+  // track the last valid position of the dragged component in the taskGraphStore
+  taskGraphStore.setProperty({
+    path: `$.nodes.${currentNodeId}.layouts.${taskGraphStore.layoutSize}.${id}.x`,
+    value: x / xModifier,
+  });
+  taskGraphStore.setProperty({
+    path: `$.nodes.${currentNodeId}.layouts.${taskGraphStore.layoutSize}.${id}.y`,
+    value: y / yModifier,
+  });
+};
+onNodeDragStart(nodeDragHandler);
+onNodeDrag(nodeDragHandler);
+onNodeDragStop(nodeDragHandler);
+
+const collisionDetection = (
+  targetX: number,
+  targetY: number,
+  draggedComponentWidth: number,
+  draggedComponentHeight: number,
+  currentId: string,
+) => {
+  const layout: Layout = taskGraphStore.getProperty(
+    `$.nodes.${currentNodeId}.layouts.${taskGraphStore.layoutSize}`,
+  );
+
+  for (const [id, component] of Object.entries(layout)) {
+    // skip position of currently dragged component
+    if (id === currentId) continue;
+
+    const { x, y, width, height } = component;
+    const padding = component.padding ?? 1;
+    const lowerBoundX = x - padding;
+    const upperBoundX = x + width + padding;
+    const lowerBoundY = y - padding;
+    const upperBoundY = y + height + padding;
+
+    if (
+      targetX + draggedComponentWidth > lowerBoundX &&
+      targetX < upperBoundX &&
+      targetY + draggedComponentHeight > lowerBoundY &&
+      targetY < upperBoundY
+    ) {
+      // break on first collision
+      collisionEvaluation.value.hasOccured = true;
+      break;
+    } else {
+      collisionEvaluation.value.hasOccured = false;
+    }
+  }
+
+  // only update lastValidPosition if no collision has occured
+  if (!collisionEvaluation.value.hasOccured) {
+    collisionEvaluation.value.lastValidPosition.x = targetX;
+    collisionEvaluation.value.lastValidPosition.y = targetY;
+  }
+
+  return collisionEvaluation;
+};
+
+const collisionCorrection = (
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  id: string,
+) => {
+  let newX = x / xModifier;
+  let newY = y / yModifier;
+
+  const collision = collisionDetection(
+    newX,
+    newY,
+    width / xModifier,
+    height / yModifier,
+    id,
+  );
+  if (collision.value.hasOccured) {
+    newX = <number>collision.value.lastValidPosition.x;
+    newY = <number>collision.value.lastValidPosition.y;
+  }
+
+  return { newX, newY };
+};
+
+// TODO: Implement configurable Handles/Ports (for connecting Containers via edges)
+// import type { CSSProperties } from "vue";
+// import { Handle, Position } from "@vue-flow/core";
+// const targetHandleStyle: CSSProperties = { background: "#555" };
+// const sourceHandleStyleA: CSSProperties = { ...targetHandleStyle, top: "10px" };
+// const sourceHandleStyleB: CSSProperties = {
+//   ...targetHandleStyle,
+//   bottom: "10px",
+//   top: "auto",
+// };
+</script>
 
 <style>
 .threadContainer {
@@ -140,6 +239,8 @@ onNodeDragStop(nodeDragHandler);
   width: 100%;
   height: calc(100% - 30px);
   cursor: auto;
+
+  overflow-y: auto;
 }
 
 .vue-flow__resize-control.top,

@@ -86,16 +86,16 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
           // only update the value if it is different
           if (subState[splitPath[depth]] != value) {
             subState[splitPath[depth]] = value;
+
+            /**
+             * Log the state change in development mode.
+             */
+            process.env.NODE_ENV === "development" && console.log(path, value);
           }
         } else {
           subState = subState[splitPath[depth]];
         }
       }
-
-      /**
-       * Log the state change in development mode.
-       */
-      process.env.NODE_ENV === "development" && console.log(path, value);
     },
     /**
      * Required helper functions, as it is not possible to define getters that receive arguments.

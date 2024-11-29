@@ -3,8 +3,7 @@ import { ref } from "vue";
 import type { Ref } from "vue";
 import serialisedTaskSchema from "../schemas/zodSchemas/SerialisedTaskSchema";
 
-// TODO: Import all the types from the carpet-component-library in a bundle (maybe expose in the carpet-component-library?)
-import type { SerializedDOTGraphComponent } from "carpet-component-library";
+import type { SerializedCARPETComponents } from "carpet-component-library";
 
 import ExampleTask from "../SerialisedTasks/Example.carpet.json";
 const staticTasks = { Example: serialisedTaskSchema.parse(ExampleTask) };
@@ -14,14 +13,8 @@ const staticTasks = { Example: serialisedTaskSchema.parse(ExampleTask) };
  */
 export type AvailableTasks = keyof typeof staticTasks;
 
-// TODO: Bundle and expose component types in the carpet-component-library
-/**
- * All available components that can be used in the task graph.
- */
-export type Components = SerializedDOTGraphComponent;
-
 export interface SerialisedComponents {
-  [id: number]: Components;
+  [id: number]: SerializedCARPETComponents;
 }
 
 export type LayoutSizes = "phone" | "tablet" | "desktop";
@@ -31,6 +24,7 @@ export type Layout = {
     y: number;
     height: number;
     width: number;
+    padding?: number;
   };
 };
 

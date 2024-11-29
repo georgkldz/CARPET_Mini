@@ -2,11 +2,459 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "additionalProperties": false,
   "definitions": {
+    "({type:\"matchAgainstRegExp\";}&MatchAgainstRegExpValidationStrategy)|({type:\"externalValidation\";}&ExternalValidationStrategy)": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "comparisons": {
+              "items": {
+                "$ref": "#/definitions/StaticComparisonConfiguration"
+              },
+              "type": "array"
+            },
+            "type": {
+              "const": "compareValueFromStatic",
+              "type": "string"
+            }
+          },
+          "required": ["comparisons", "type"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "comparisons": {
+              "items": {
+                "$ref": "#/definitions/PathComparisonConfiguration"
+              },
+              "type": "array"
+            },
+            "type": {
+              "const": "compareValueFromPath",
+              "type": "string"
+            }
+          },
+          "required": ["comparisons", "type"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "regExp": {
+              "type": "string"
+            },
+            "type": {
+              "const": "matchAgainstRegExp",
+              "type": "string"
+            }
+          },
+          "required": ["regExp", "type"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "externalValidation",
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "required": ["type", "url"],
+          "type": "object"
+        }
+      ],
+      "description": "Configuration for the different InputField validation strategies.\nAs the typescript compiler can't handle \"correlated unions\", it is recommended to refactor to generics as described here: https://stackoverflow.com/questions/79160004/can-typescript-infer-subtypes-of-parameters-based-on-a-dynamic-variable-accessin"
+    },
+    "BasicComparisonOperators": {
+      "enum": ["!=", "<", "<=", "=", "==", ">", ">="],
+      "type": "string"
+    },
+    "ButtonComponentData": {
+      "additionalProperties": false,
+      "description": "The Button-component has to display a label. It may display a progress bar or a loading spinner.\nIt can be disabled on invalid input.",
+      "properties": {
+        "buttonConfiguration": {
+          "$ref": "#/definitions/ButtonConfiguration"
+        },
+        "innerComponentLayout": {
+          "description": "Some components may offer a customizable inner component layout. The layout is required to be built with CSS Grid.",
+          "properties": {},
+          "type": "object"
+        },
+        "label": {
+          "description": "The label of the button.",
+          "type": "string"
+        },
+        "loadingState": {
+          "description": "The loadingState of the button. If true, the button will display a loading spinner.",
+          "type": "boolean"
+        },
+        "progressPercentage": {
+          "description": "The progress of the button. If set, the button will display a progress bar.",
+          "type": "number"
+        }
+      },
+      "required": ["buttonConfiguration", "label", "loadingState"],
+      "type": "object"
+    },
+    "ButtonConfiguration": {
+      "additionalProperties": false,
+      "description": "The ButtonConfiguration defines the look and behavior of the button.",
+      "properties": {
+        "dimensions": {
+          "additionalProperties": false,
+          "description": "The dimensions of the button in pixels. Defaults to 100x50.",
+          "properties": {
+            "height": {
+              "type": "number"
+            },
+            "width": {
+              "type": "number"
+            }
+          },
+          "required": ["height", "width"],
+          "type": "object"
+        },
+        "disableOnInvalid": {
+          "description": "Determines wether the button will be disabled if the validation fails.",
+          "type": "boolean"
+        },
+        "icon": {
+          "description": "Additional icon for the button. Displayed to the left of the label."
+        }
+      },
+      "type": "object"
+    },
     "DotGraphComponentData": {
       "additionalProperties": false,
       "description": "The DOTGraph-component may hold a static dotDescription in its componentData.",
       "properties": {
         "dotDescription": {
+          "description": "The dotDescription is a string, that holds the Graphviz-DOT description of the graph.",
+          "type": "string"
+        },
+        "innerComponentLayout": {
+          "description": "Some components may offer a customizable inner component layout. The layout is required to be built with CSS Grid.",
+          "properties": {},
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "FieldConfiguration": {
+      "additionalProperties": false,
+      "description": "The FieldConfiguration defines the properties of the InputField component.\nIt extends the QInputProps from Quasar.",
+      "properties": {
+        "autofocus": {
+          "description": "Focus field on initial component render",
+          "type": "boolean"
+        },
+        "autogrow": {
+          "description": "Make field autogrow along with its content (uses a textarea)",
+          "type": "boolean"
+        },
+        "bgColor": {
+          "$ref": "#/definitions/quasar.NamedColor",
+          "description": "Color name for component from the Quasar Color Palette"
+        },
+        "borderless": {
+          "description": "Use 'borderless' design for the field",
+          "type": "boolean"
+        },
+        "bottomSlots": {
+          "description": "Enables bottom slots ('error', 'hint', 'counter')",
+          "type": "boolean"
+        },
+        "clearIcon": {
+          "description": "Custom icon to use for the clear button when using along with 'clearable' prop",
+          "type": "string"
+        },
+        "clearable": {
+          "description": "Appends clearable icon when a value (not undefined or null) is set; When clicked, model becomes null",
+          "type": "boolean"
+        },
+        "color": {
+          "$ref": "#/definitions/quasar.NamedColor",
+          "description": "Color name for component from the Quasar Color Palette"
+        },
+        "counter": {
+          "description": "Show an automatic counter on bottom right",
+          "type": "boolean"
+        },
+        "dark": {
+          "description": "Notify the component that the background is a dark color\nDefault value: null",
+          "type": "boolean"
+        },
+        "debounce": {
+          "description": "Debounce amount (in milliseconds) when updating model",
+          "type": ["string", "number"]
+        },
+        "dense": {
+          "description": "Dense mode; occupies less space",
+          "type": "boolean"
+        },
+        "disable": {
+          "description": "Put component in disabled mode",
+          "type": "boolean"
+        },
+        "error": {
+          "description": "Does field have validation errors?\nDefault value: null",
+          "type": "boolean"
+        },
+        "errorMessage": {
+          "description": "Validation error message (gets displayed only if 'error' is set to 'true')",
+          "type": "string"
+        },
+        "fillMask": {
+          "description": "Fills string with specified characters (or underscore if value is not string) to fill mask's length",
+          "type": ["string", "boolean"]
+        },
+        "filled": {
+          "description": "Use 'filled' design for the field",
+          "type": "boolean"
+        },
+        "for": {
+          "description": "Used to specify the 'id' of the control and also the 'for' attribute of the label that wraps it; If no 'name' prop is specified, then it is used for this attribute as well",
+          "type": "string"
+        },
+        "hideBottomSpace": {
+          "description": "Do not reserve space for hint/error/counter anymore when these are not used; As a result, it also disables the animation for those; It also allows the hint/error area to stretch vertically based on its content",
+          "type": "boolean"
+        },
+        "hideHint": {
+          "description": "Hide the helper (hint) text when field doesn't have focus",
+          "type": "boolean"
+        },
+        "hint": {
+          "description": "Helper (hint) text which gets placed below your wrapped form component",
+          "type": "string"
+        },
+        "icon": {},
+        "inputClass": {
+          "$ref": "#/definitions/quasar.VueClassProp",
+          "description": "Class definitions to be attributed to the underlying input tag"
+        },
+        "itemAligned": {
+          "description": "Match inner content alignment to that of QItem",
+          "type": "boolean"
+        },
+        "label": {
+          "description": "A text label that will “float” up above the input field, once the field gets focus",
+          "type": "string"
+        },
+        "labelColor": {
+          "$ref": "#/definitions/quasar.NamedColor",
+          "description": "Color name for the label from the Quasar Color Palette; Overrides the 'color' prop; The difference from 'color' prop is that the label will always have this color, even when field is not focused"
+        },
+        "labelSlot": {
+          "description": "Enables label slot; You need to set it to force use of the 'label' slot if the 'label' prop is not set",
+          "type": "boolean"
+        },
+        "lazyRules": {
+          "description": "If set to boolean true then it checks validation status against the 'rules' only after field loses focus for first time; If set to 'ondemand' then it will trigger only when component's validate() method is manually called or when the wrapper QForm submits itself\nDefault value: false",
+          "enum": [false, "ondemand", true]
+        },
+        "loading": {
+          "description": "Signals the user a process is in progress by displaying a spinner; Spinner can be customized by using the 'loading' slot.",
+          "type": "boolean"
+        },
+        "mask": {
+          "description": "Custom mask or one of the predefined mask names",
+          "type": "string"
+        },
+        "maxlength": {
+          "description": "Specify a max length of model",
+          "type": ["string", "number"]
+        },
+        "name": {
+          "description": "Used to specify the name of the control; Useful if dealing with forms; If not specified, it takes the value of 'for' prop, if it exists",
+          "type": "string"
+        },
+        "noErrorIcon": {
+          "description": "Hide error icon when there is an error",
+          "type": "boolean"
+        },
+        "onBlur": {
+          "additionalProperties": false,
+          "description": "Emitted when component loses focus",
+          "type": "object"
+        },
+        "onClear": {
+          "additionalProperties": false,
+          "description": "When using the 'clearable' property, this event is emitted when the clear icon is clicked",
+          "type": "object"
+        },
+        "onFocus": {
+          "additionalProperties": false,
+          "description": "Emitted when component gets focused",
+          "type": "object"
+        },
+        "onUpdate:modelValue": {
+          "additionalProperties": false,
+          "description": "Emitted when the component needs to change the model; Is also used by v-model",
+          "type": "object"
+        },
+        "outlined": {
+          "description": "Use 'outlined' design for the field",
+          "type": "boolean"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "prefix": {
+          "description": "Prefix",
+          "type": "string"
+        },
+        "reactiveRules": {
+          "description": "By default a change in the rules does not trigger a new validation until the model changes; If set to true then a change in the rules will trigger a validation; Has a performance penalty, so use it only when you really need it",
+          "type": "boolean"
+        },
+        "readonly": {
+          "description": "Put component in readonly mode",
+          "type": "boolean"
+        },
+        "reverseFillMask": {
+          "description": "Fills string from the right side of the mask",
+          "type": "boolean"
+        },
+        "rounded": {
+          "description": "Applies a small standard border-radius for a squared shape of the component",
+          "type": "boolean"
+        },
+        "rules": {
+          "description": "Array of Functions/Strings; If String, then it must be a name of one of the embedded validation rules",
+          "items": {
+            "$ref": "#/definitions/quasar.ValidationRule"
+          },
+          "type": "array"
+        },
+        "shadowText": {
+          "description": "Text to be displayed as shadow at the end of the text in the control; Does NOT applies to type=file",
+          "type": "string"
+        },
+        "square": {
+          "description": "Remove border-radius so borders are squared; Overrides 'rounded' prop",
+          "type": "boolean"
+        },
+        "stackLabel": {
+          "description": "Label will be always shown above the field regardless of field content (if any)",
+          "type": "boolean"
+        },
+        "standout": {
+          "description": "Use 'standout' design for the field; Specifies classes to be applied when focused (overriding default ones)",
+          "type": ["string", "boolean"]
+        },
+        "suffix": {
+          "description": "Suffix",
+          "type": "string"
+        },
+        "type": {
+          "description": "Input type\nDefault value: 'text'",
+          "enum": [
+            "date",
+            "datetime-local",
+            "email",
+            "file",
+            "number",
+            "password",
+            "search",
+            "tel",
+            "text",
+            "textarea",
+            "time",
+            "url"
+          ],
+          "type": "string"
+        },
+        "unmaskedValue": {
+          "description": "Model will be unmasked (won't contain tokens/separation characters)",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "File": {
+      "additionalProperties": false,
+      "properties": {
+        "lastModified": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "type": "number"
+        },
+        "type": {
+          "type": "string"
+        },
+        "webkitRelativePath": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "lastModified",
+        "name",
+        "size",
+        "type",
+        "webkitRelativePath"
+      ],
+      "type": "object"
+    },
+    "FormComponentData": {
+      "additionalProperties": false,
+      "description": "The Form-component may hold nothing.",
+      "properties": {
+        "innerComponentLayout": {
+          "description": "Some components may offer a customizable inner component layout. The layout is required to be built with CSS Grid.",
+          "properties": {},
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "FormNestedComponents": {
+      "additionalProperties": false,
+      "description": "The Form-component consists of arbitrarily many input fields and a set of buttons.",
+      "properties": {
+        "actionComponents": {
+          "additionalProperties": false,
+          "properties": {
+            "reset": {
+              "$ref": "#/definitions/SerializedButtonComponent"
+            },
+            "submit": {
+              "$ref": "#/definitions/SerializedButtonComponent"
+            }
+          },
+          "required": ["submit"],
+          "type": "object"
+        },
+        "formComponents": {
+          "additionalProperties": {
+            "$ref": "#/definitions/SerializedInputFieldComponent"
+          },
+          "type": "object"
+        }
+      },
+      "required": ["actionComponents", "formComponents"],
+      "type": "object"
+    },
+    "FormValidationConfiguration": {
+      "additionalProperties": false,
+      "description": "The form-component is submitable if the validation checks that are governed by the FormValidationConfiguration are passed.\nDefaults to \"dependenciesAreValidAndFormFieldsAreCorrect\".",
+      "properties": {
+        "submitableWhen": {
+          "enum": [
+            "dependenciesAreValidAndFormFieldsAreCorrect",
+            "formFieldsAreValidAndDependenciesAreCorrect",
+            "isCorrect",
+            "isValid"
+          ],
           "type": "string"
         }
       },
@@ -29,6 +477,44 @@
         }
       },
       "required": ["active", "current", "descriptions"],
+      "type": "object"
+    },
+    "InputFieldComponentData": {
+      "additionalProperties": false,
+      "description": "The InputField-component may hold a static dotDescription in its componentData.",
+      "properties": {
+        "fieldConfiguration": {
+          "$ref": "#/definitions/FieldConfiguration"
+        },
+        "fieldValue": {
+          "anyOf": [
+            {
+              "additionalProperties": false,
+              "patternProperties": {
+                "^[0-9]+$": {
+                  "$ref": "#/definitions/File"
+                }
+              },
+              "properties": {
+                "length": {
+                  "type": "number"
+                }
+              },
+              "required": ["length"],
+              "type": "object"
+            },
+            {
+              "type": ["string", "number"]
+            }
+          ]
+        },
+        "innerComponentLayout": {
+          "description": "Some components may offer a customizable inner component layout. The layout is required to be built with CSS Grid.",
+          "properties": {},
+          "type": "object"
+        }
+      },
+      "required": ["fieldConfiguration", "fieldValue"],
       "type": "object"
     },
     "JSONPathExpression": {
@@ -60,6 +546,9 @@
                 "height": {
                   "type": "number"
                 },
+                "padding": {
+                  "type": "number"
+                },
                 "width": {
                   "type": "number"
                 },
@@ -85,6 +574,9 @@
                 "height": {
                   "type": "number"
                 },
+                "padding": {
+                  "type": "number"
+                },
                 "width": {
                   "type": "number"
                 },
@@ -108,6 +600,9 @@
               "additionalProperties": false,
               "properties": {
                 "height": {
+                  "type": "number"
+                },
+                "padding": {
                   "type": "number"
                 },
                 "width": {
@@ -196,8 +691,36 @@
       "type": "object"
     },
     "NestedComponents": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/NestedComponents"
+          },
+          {
+            "$ref": "#/definitions/SerializedBaseComponent<string,SerialisedDependencies,ComponentData,ValidationConfiguration,SerialisedMethods,SerialisedContextMenu,NestedComponents>"
+          }
+        ]
+      },
+      "description": "Possible nested components of a component. The components can be nested arbitrarily",
+      "type": "object"
+    },
+    "PathComparisonConfiguration": {
       "additionalProperties": false,
-      "description": "Possible nested components of a component.",
+      "description": "Configuration for basic comparison operations with dynamic values from paths.",
+      "properties": {
+        "operator": {
+          "$ref": "#/definitions/BasicComparisonOperators"
+        },
+        "path": {
+          "$ref": "#/definitions/JSONPathExpression"
+        }
+      },
+      "required": ["operator", "path"],
+      "type": "object"
+    },
+    "SerialisedDependencies": {
+      "additionalProperties": false,
+      "description": "Serialised dependencies of a component.",
       "type": "object"
     },
     "SerialisedMethod": {
@@ -225,7 +748,7 @@
           "additionalProperties": false,
           "patternProperties": {
             "^[0-9]+$": {
-              "$ref": "#/definitions/SerializedDOTGraphComponent"
+              "$ref": "#/definitions/SerializedCARPETComponents"
             }
           },
           "type": "object"
@@ -251,6 +774,180 @@
       },
       "required": ["components", "layouts"],
       "type": "object"
+    },
+    "SerializedBaseComponent<string,SerialisedDependencies,ComponentData,ValidationConfiguration,SerialisedMethods,SerialisedContextMenu,NestedComponents>": {
+      "additionalProperties": false,
+      "description": "Generic type description with defaults of a serialised base component.",
+      "properties": {
+        "component": {
+          "additionalProperties": false,
+          "description": "The data of the component.",
+          "properties": {
+            "innerComponentLayout": {
+              "description": "Some components may offer a customizable inner component layout. The layout is required to be built with CSS Grid.",
+              "properties": {},
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "contextMenu": {
+          "additionalProperties": false,
+          "description": "Optional: The context menu of the component.",
+          "properties": {
+            "isOpen": {
+              "description": "Specifies whether the context menu is open.",
+              "type": "boolean"
+            },
+            "usedMethods": {
+              "description": "The methods that will be made available in the context menu.",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "required": ["isOpen", "usedMethods"],
+          "type": "object"
+        },
+        "dependencies": {
+          "$ref": "#/definitions/SerialisedDependencies",
+          "description": "The dependencies of the component."
+        },
+        "isCorrect": {
+          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
+          "type": "boolean"
+        },
+        "isValid": {
+          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
+          "type": "boolean"
+        },
+        "methods": {
+          "$ref": "#/definitions/SerialisedMethods",
+          "description": "The methods of the component."
+        },
+        "name": {
+          "description": "The name of the component. Will be displayed in the component header in CARPET.",
+          "type": "string"
+        },
+        "nestedComponents": {
+          "$ref": "#/definitions/NestedComponents",
+          "description": "Optional: Nested components of the component."
+        },
+        "type": {
+          "description": "The type of the component.",
+          "type": "string"
+        },
+        "validationConfiguration": {
+          "description": "The validation configuration of the component.",
+          "properties": {},
+          "type": "object"
+        }
+      },
+      "required": [
+        "component",
+        "dependencies",
+        "isCorrect",
+        "isValid",
+        "name",
+        "type",
+        "validationConfiguration"
+      ],
+      "type": "object"
+    },
+    "SerializedButtonComponent": {
+      "additionalProperties": false,
+      "description": "The SerializedButtonComponent interface is used to define the serialised properties of the Button component.",
+      "properties": {
+        "component": {
+          "$ref": "#/definitions/ButtonComponentData",
+          "description": "The data of the component."
+        },
+        "contextMenu": {
+          "additionalProperties": false,
+          "description": "Optional: The context menu of the component.",
+          "properties": {
+            "isOpen": {
+              "description": "Specifies whether the context menu is open.",
+              "type": "boolean"
+            },
+            "usedMethods": {
+              "description": "The methods that will be made available in the context menu.",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "required": ["isOpen", "usedMethods"],
+          "type": "object"
+        },
+        "dependencies": {
+          "$ref": "#/definitions/SerializedButtonDependencies",
+          "description": "The dependencies of the component."
+        },
+        "isCorrect": {
+          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
+          "type": "boolean"
+        },
+        "isValid": {
+          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
+          "type": "boolean"
+        },
+        "methods": {
+          "$ref": "#/definitions/SerialisedMethods",
+          "description": "The methods of the component."
+        },
+        "name": {
+          "description": "The name of the component. Will be displayed in the component header in CARPET.",
+          "type": "string"
+        },
+        "nestedComponents": {
+          "$ref": "#/definitions/NestedComponents",
+          "description": "Optional: Nested components of the component."
+        },
+        "type": {
+          "const": "GenericButton",
+          "description": "The type of the component.",
+          "type": "string"
+        },
+        "validationConfiguration": {
+          "description": "The validation configuration of the component.",
+          "properties": {},
+          "type": "object"
+        }
+      },
+      "required": [
+        "component",
+        "dependencies",
+        "isCorrect",
+        "isValid",
+        "name",
+        "type",
+        "validationConfiguration"
+      ],
+      "type": "object"
+    },
+    "SerializedButtonDependencies": {
+      "additionalProperties": false,
+      "description": "The Button-component has no dependencies.",
+      "type": "object"
+    },
+    "SerializedCARPETComponents": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/SerializedButtonComponent"
+        },
+        {
+          "$ref": "#/definitions/SerializedDOTGraphComponent"
+        },
+        {
+          "$ref": "#/definitions/SerializedFormComponent"
+        },
+        {
+          "$ref": "#/definitions/SerializedInputFieldComponent"
+        }
+      ]
     },
     "SerializedDOTGraphComponent": {
       "additionalProperties": false,
@@ -307,6 +1004,11 @@
           "const": "DOTGraph",
           "description": "The type of the component.",
           "type": "string"
+        },
+        "validationConfiguration": {
+          "description": "The validation configuration of the component.",
+          "properties": {},
+          "type": "object"
         }
       },
       "required": [
@@ -315,7 +1017,8 @@
         "isCorrect",
         "isValid",
         "name",
-        "type"
+        "type",
+        "validationConfiguration"
       ],
       "type": "object"
     },
@@ -324,15 +1027,550 @@
       "description": "The DOTGraph-component requires a valid dotDescription to display.",
       "properties": {
         "dotDescription": {
-          "$ref": "#/definitions/JSONPathExpression"
+          "$ref": "#/definitions/JSONPathExpression",
+          "description": "The dotDescription is a JSONPathExpression, that points to the dotDescription of the DOTGraph-component."
         }
       },
       "required": ["dotDescription"],
       "type": "object"
     },
+    "SerializedFormComponent": {
+      "additionalProperties": false,
+      "description": "The SerializedFormComponent interface is used to define the serialised properties of the Form component.",
+      "properties": {
+        "component": {
+          "$ref": "#/definitions/FormComponentData",
+          "description": "The data of the component."
+        },
+        "contextMenu": {
+          "additionalProperties": false,
+          "description": "Optional: The context menu of the component.",
+          "properties": {
+            "isOpen": {
+              "description": "Specifies whether the context menu is open.",
+              "type": "boolean"
+            },
+            "usedMethods": {
+              "description": "The methods that will be made available in the context menu.",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "required": ["isOpen", "usedMethods"],
+          "type": "object"
+        },
+        "dependencies": {
+          "$ref": "#/definitions/SerializedFormDependencies",
+          "description": "The dependencies of the component."
+        },
+        "dependenciesAreValidAndFormFieldsAreCorrect": {
+          "type": "boolean"
+        },
+        "formFieldsAreValidAndDependenciesAreCorrect": {
+          "type": "boolean"
+        },
+        "isCorrect": {
+          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
+          "type": "boolean"
+        },
+        "isValid": {
+          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
+          "type": "boolean"
+        },
+        "methods": {
+          "$ref": "#/definitions/SerialisedMethods",
+          "description": "The methods of the component."
+        },
+        "name": {
+          "description": "The name of the component. Will be displayed in the component header in CARPET.",
+          "type": "string"
+        },
+        "nestedComponents": {
+          "$ref": "#/definitions/FormNestedComponents",
+          "description": "Optional: Nested components of the component."
+        },
+        "type": {
+          "const": "GenericForm",
+          "description": "The type of the component.",
+          "type": "string"
+        },
+        "validationConfiguration": {
+          "$ref": "#/definitions/FormValidationConfiguration",
+          "description": "The validation configuration of the component."
+        }
+      },
+      "required": [
+        "component",
+        "dependencies",
+        "dependenciesAreValidAndFormFieldsAreCorrect",
+        "formFieldsAreValidAndDependenciesAreCorrect",
+        "isCorrect",
+        "isValid",
+        "name",
+        "type",
+        "validationConfiguration"
+      ],
+      "type": "object"
+    },
+    "SerializedFormDependencies": {
+      "additionalProperties": {
+        "$ref": "#/definitions/JSONPathExpression"
+      },
+      "description": "The Form-component may point to external dependencies for validation checks.\nThe external dependencies must be references to other components.",
+      "type": "object"
+    },
+    "SerializedInputFieldComponent": {
+      "additionalProperties": false,
+      "description": "The SerializedInputFieldComponent interface is used to define the serialised properties of the InputField component.",
+      "properties": {
+        "component": {
+          "$ref": "#/definitions/InputFieldComponentData",
+          "description": "The data of the component."
+        },
+        "contextMenu": {
+          "additionalProperties": false,
+          "description": "Optional: The context menu of the component.",
+          "properties": {
+            "isOpen": {
+              "description": "Specifies whether the context menu is open.",
+              "type": "boolean"
+            },
+            "usedMethods": {
+              "description": "The methods that will be made available in the context menu.",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "required": ["isOpen", "usedMethods"],
+          "type": "object"
+        },
+        "dependencies": {
+          "$ref": "#/definitions/SerializedInputFieldDependencies",
+          "description": "The dependencies of the component."
+        },
+        "isCorrect": {
+          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
+          "type": "boolean"
+        },
+        "isValid": {
+          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
+          "type": "boolean"
+        },
+        "methods": {
+          "$ref": "#/definitions/SerialisedMethods",
+          "description": "The methods of the component."
+        },
+        "name": {
+          "description": "The name of the component. Will be displayed in the component header in CARPET.",
+          "type": "string"
+        },
+        "nestedComponents": {
+          "$ref": "#/definitions/NestedComponents",
+          "description": "Optional: Nested components of the component."
+        },
+        "type": {
+          "const": "InputField",
+          "description": "The type of the component.",
+          "type": "string"
+        },
+        "validationConfiguration": {
+          "$ref": "#/definitions/({type:\"matchAgainstRegExp\";}&MatchAgainstRegExpValidationStrategy)|({type:\"externalValidation\";}&ExternalValidationStrategy)",
+          "description": "The validation configuration of the component."
+        }
+      },
+      "required": [
+        "component",
+        "dependencies",
+        "isCorrect",
+        "isValid",
+        "name",
+        "type",
+        "validationConfiguration"
+      ],
+      "type": "object"
+    },
+    "SerializedInputFieldDependencies": {
+      "additionalProperties": false,
+      "description": "The InputField-component requires a valid [???] to display.",
+      "properties": {
+        "referenceValue": {
+          "$ref": "#/definitions/JSONPathExpression"
+        }
+      },
+      "type": "object"
+    },
+    "StaticComparisonConfiguration": {
+      "additionalProperties": false,
+      "description": "Configuration for basic comparison operations with static values.",
+      "properties": {
+        "operator": {
+          "$ref": "#/definitions/BasicComparisonOperators"
+        },
+        "value": {
+          "type": ["string", "number"]
+        }
+      },
+      "required": ["operator", "value"],
+      "type": "object"
+    },
     "TaskData": {
       "additionalProperties": {},
       "type": "object"
+    },
+    "quasar.NamedColor": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {},
+          "type": "object"
+        },
+        {
+          "enum": [
+            "accent",
+            "amber",
+            "amber-1",
+            "amber-10",
+            "amber-11",
+            "amber-12",
+            "amber-13",
+            "amber-14",
+            "amber-2",
+            "amber-3",
+            "amber-4",
+            "amber-5",
+            "amber-6",
+            "amber-7",
+            "amber-8",
+            "amber-9",
+            "blue",
+            "blue-1",
+            "blue-10",
+            "blue-11",
+            "blue-12",
+            "blue-13",
+            "blue-14",
+            "blue-2",
+            "blue-3",
+            "blue-4",
+            "blue-5",
+            "blue-6",
+            "blue-7",
+            "blue-8",
+            "blue-9",
+            "blue-grey",
+            "blue-grey-1",
+            "blue-grey-10",
+            "blue-grey-11",
+            "blue-grey-12",
+            "blue-grey-13",
+            "blue-grey-14",
+            "blue-grey-2",
+            "blue-grey-3",
+            "blue-grey-4",
+            "blue-grey-5",
+            "blue-grey-6",
+            "blue-grey-7",
+            "blue-grey-8",
+            "blue-grey-9",
+            "brown",
+            "brown-1",
+            "brown-10",
+            "brown-11",
+            "brown-12",
+            "brown-13",
+            "brown-14",
+            "brown-2",
+            "brown-3",
+            "brown-4",
+            "brown-5",
+            "brown-6",
+            "brown-7",
+            "brown-8",
+            "brown-9",
+            "cyan",
+            "cyan-1",
+            "cyan-10",
+            "cyan-11",
+            "cyan-12",
+            "cyan-13",
+            "cyan-14",
+            "cyan-2",
+            "cyan-3",
+            "cyan-4",
+            "cyan-5",
+            "cyan-6",
+            "cyan-7",
+            "cyan-8",
+            "cyan-9",
+            "dark",
+            "deep-orange",
+            "deep-orange-1",
+            "deep-orange-10",
+            "deep-orange-11",
+            "deep-orange-12",
+            "deep-orange-13",
+            "deep-orange-14",
+            "deep-orange-2",
+            "deep-orange-3",
+            "deep-orange-4",
+            "deep-orange-5",
+            "deep-orange-6",
+            "deep-orange-7",
+            "deep-orange-8",
+            "deep-orange-9",
+            "deep-purple",
+            "deep-purple-1",
+            "deep-purple-10",
+            "deep-purple-11",
+            "deep-purple-12",
+            "deep-purple-13",
+            "deep-purple-14",
+            "deep-purple-2",
+            "deep-purple-3",
+            "deep-purple-4",
+            "deep-purple-5",
+            "deep-purple-6",
+            "deep-purple-7",
+            "deep-purple-8",
+            "deep-purple-9",
+            "green",
+            "green-1",
+            "green-10",
+            "green-11",
+            "green-12",
+            "green-13",
+            "green-14",
+            "green-2",
+            "green-3",
+            "green-4",
+            "green-5",
+            "green-6",
+            "green-7",
+            "green-8",
+            "green-9",
+            "grey",
+            "grey-1",
+            "grey-10",
+            "grey-11",
+            "grey-12",
+            "grey-13",
+            "grey-14",
+            "grey-2",
+            "grey-3",
+            "grey-4",
+            "grey-5",
+            "grey-6",
+            "grey-7",
+            "grey-8",
+            "grey-9",
+            "indigo",
+            "indigo-1",
+            "indigo-10",
+            "indigo-11",
+            "indigo-12",
+            "indigo-13",
+            "indigo-14",
+            "indigo-2",
+            "indigo-3",
+            "indigo-4",
+            "indigo-5",
+            "indigo-6",
+            "indigo-7",
+            "indigo-8",
+            "indigo-9",
+            "info",
+            "light-blue",
+            "light-blue-1",
+            "light-blue-10",
+            "light-blue-11",
+            "light-blue-12",
+            "light-blue-13",
+            "light-blue-14",
+            "light-blue-2",
+            "light-blue-3",
+            "light-blue-4",
+            "light-blue-5",
+            "light-blue-6",
+            "light-blue-7",
+            "light-blue-8",
+            "light-blue-9",
+            "light-green",
+            "light-green-1",
+            "light-green-10",
+            "light-green-11",
+            "light-green-12",
+            "light-green-13",
+            "light-green-14",
+            "light-green-2",
+            "light-green-3",
+            "light-green-4",
+            "light-green-5",
+            "light-green-6",
+            "light-green-7",
+            "light-green-8",
+            "light-green-9",
+            "lime",
+            "lime-1",
+            "lime-10",
+            "lime-11",
+            "lime-12",
+            "lime-13",
+            "lime-14",
+            "lime-2",
+            "lime-3",
+            "lime-4",
+            "lime-5",
+            "lime-6",
+            "lime-7",
+            "lime-8",
+            "lime-9",
+            "negative",
+            "orange",
+            "orange-1",
+            "orange-10",
+            "orange-11",
+            "orange-12",
+            "orange-13",
+            "orange-14",
+            "orange-2",
+            "orange-3",
+            "orange-4",
+            "orange-5",
+            "orange-6",
+            "orange-7",
+            "orange-8",
+            "orange-9",
+            "pink",
+            "pink-1",
+            "pink-10",
+            "pink-11",
+            "pink-12",
+            "pink-13",
+            "pink-14",
+            "pink-2",
+            "pink-3",
+            "pink-4",
+            "pink-5",
+            "pink-6",
+            "pink-7",
+            "pink-8",
+            "pink-9",
+            "positive",
+            "primary",
+            "purple",
+            "purple-1",
+            "purple-10",
+            "purple-11",
+            "purple-12",
+            "purple-13",
+            "purple-14",
+            "purple-2",
+            "purple-3",
+            "purple-4",
+            "purple-5",
+            "purple-6",
+            "purple-7",
+            "purple-8",
+            "purple-9",
+            "red",
+            "red-1",
+            "red-10",
+            "red-11",
+            "red-12",
+            "red-13",
+            "red-14",
+            "red-2",
+            "red-3",
+            "red-4",
+            "red-5",
+            "red-6",
+            "red-7",
+            "red-8",
+            "red-9",
+            "secondary",
+            "teal",
+            "teal-1",
+            "teal-10",
+            "teal-11",
+            "teal-12",
+            "teal-13",
+            "teal-14",
+            "teal-2",
+            "teal-3",
+            "teal-4",
+            "teal-5",
+            "teal-6",
+            "teal-7",
+            "teal-8",
+            "teal-9",
+            "warning",
+            "yellow",
+            "yellow-1",
+            "yellow-10",
+            "yellow-11",
+            "yellow-12",
+            "yellow-13",
+            "yellow-14",
+            "yellow-2",
+            "yellow-3",
+            "yellow-4",
+            "yellow-5",
+            "yellow-6",
+            "yellow-7",
+            "yellow-8",
+            "yellow-9"
+          ],
+          "type": "string"
+        }
+      ]
+    },
+    "quasar.ValidationRule": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "type": "object"
+        },
+        {
+          "enum": [
+            "anyColor",
+            "date",
+            "email",
+            "fulltime",
+            "hexColor",
+            "hexOrHexaColor",
+            "hexOrRgbColor",
+            "hexaColor",
+            "hexaOrRgbaColor",
+            "rgbColor",
+            "rgbOrRgbaColor",
+            "rgbaColor",
+            "time",
+            "timeOrFulltime"
+          ],
+          "type": "string"
+        }
+      ]
+    },
+    "quasar.VueClassProp": {
+      "anyOf": [
+        {
+          "additionalProperties": {},
+          "type": "object"
+        },
+        {
+          "items": {
+            "$ref": "#/definitions/quasar.VueClassProp"
+          },
+          "type": "array"
+        },
+        {
+          "type": "string"
+        }
+      ]
     }
   },
   "properties": {
