@@ -17,7 +17,7 @@
       <MiniMap />
 
       <template #node-ThreadContainer="props">
-        <ThreadContainer :data="props.data" />
+        <ThreadContainer v-bind="props" />
       </template>
     </VueFlow>
   </div>

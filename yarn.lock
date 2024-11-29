@@ -337,7 +337,7 @@
     minimist "^1.2.6"
     plist "^3.0.5"
 
-"@electron/packager@^18.3.5", "@electron/packager@>= 18":
+"@electron/packager@>= 18":
   version "18.3.5"
   resolved "https://registry.npmjs.org/@electron/packager/-/packager-18.3.5.tgz"
   integrity sha512-ClgTxXTt3MesWAcjIxIkgxELjTcllw1FRoVsihP7uT48kpDMqI71p4XvnMWbq8PvU57TcrKICAaLkxRhbc+/wQ==
@@ -1894,10 +1894,10 @@ caniuse-lite@^1.0.30001646:
   resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001663.tgz"
   integrity sha512-o9C3X27GLKbLeTYZ6HBOLU1tsAcBZsLis28wrVzddShCS16RujjHp9GDHKZqrB3meE0YjhawvMFsGb/igqiPzA==
 
-carpet-component-library@^0.0.10:
-  version "0.0.10"
-  resolved "https://registry.npmjs.org/carpet-component-library/-/carpet-component-library-0.0.10.tgz"
-  integrity sha512-ig9+R4eE2YfNkwilMeyVc6eOR88fXlghO4/0zN7jm9oAbr1ho4udQRtOXXuXkUXn+hiOMtSYMkYZOya9tdFrFQ==
+carpet-component-library@^0.0.11:
+  version "0.0.11"
+  resolved "https://registry.npmjs.org/carpet-component-library/-/carpet-component-library-0.0.11.tgz"
+  integrity sha512-svkZp/5vPY2R8BUR4yAEm0ec1Zek/ubCAX26F1k40kQVfYx9ahMGVN6WVnpXSFvN7g255BxZbtp5qwxOM/XXcQ==
   dependencies:
     "@quasar/extras" "^1.16.12"
     d3 "^7.9.0"
@@ -2728,7 +2728,7 @@ electron-builder-squirrel-windows@25.1.8:
     builder-util "25.1.7"
     fs-extra "^10.1.0"
 
-electron-builder@^25.1.8, "electron-builder@>= 22":
+"electron-builder@>= 22":
   version "25.1.8"
   resolved "https://registry.npmjs.org/electron-builder/-/electron-builder-25.1.8.tgz"
   integrity sha512-poRgAtUHHOnlzZnc9PK4nzG53xh74wj2Jy7jkTrqZ0MWPoHGh1M2+C//hGeYdA+4K8w4yiVCNYoLXF7ySj2Wig==
