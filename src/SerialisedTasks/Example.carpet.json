@@ -13,7 +13,7 @@
           },
           "1": {
             "x": 26,
-            "y": 25,
+            "y": 26,
             "width": 5,
             "height": 5
           },
@@ -26,6 +26,12 @@
           "3": {
             "x": 30,
             "y": 32,
+            "width": 5,
+            "height": 5
+          },
+          "4": {
+            "x": 26,
+            "y": 20,
             "width": 5,
             "height": 5
           }
@@ -187,6 +193,16 @@
               }
             }
           }
+        },
+        "4": {
+          "component": {},
+          "dependencies": {
+          },
+          "validationConfiguration": {},
+          "isCorrect": true,
+          "isValid": true,
+          "name": "Latex",
+          "type": "LatexInputField"
         }
       }
     }
