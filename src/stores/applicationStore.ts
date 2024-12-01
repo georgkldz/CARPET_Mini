@@ -4,8 +4,13 @@ import type { Ref } from "vue";
 import axios, { AxiosError } from "axios";
 import serialisedTaskSchema from "../schemas/zodSchemas/SerialisedTaskSchema";
 
-import type { SerializedDOTGraphComponent } from "carpet-component-library";
-//import type { SerializedCustomComponents } from "../components/index";
+import type {
+  SerializedDOTGraphComponent,
+  SerializedFormComponent,
+  SerializedButtonComponent,
+  SerializedInputFieldComponent,
+} from "carpet-component-library";
+// import type { SerializedCustomComponents } from "../components/index";
 import type { SerializedBasicInputFieldComponent } from "../components/BasicInputField/BasicInputField";
 import { SerializedLatexInputComponent } from "components/LatexInput/LatexInput.ts";
 
@@ -23,7 +28,11 @@ export interface SerialisedComponents {
     | SerializedDOTGraphComponent
     | SerializedBasicInputFieldComponent
     | SerializedLatexInputComponent
-    | SerializedLatexInputFieldComponent;
+    | SerializedLatexInputFieldComponent
+    | SerializedBasicInputFieldComponent
+    | SerializedFormComponent
+    | SerializedButtonComponent
+    | SerializedInputFieldComponent;
 }
 
 export type LayoutSizes = "phone" | "tablet" | "desktop";
@@ -33,6 +42,7 @@ export type Layout = {
     y: number;
     height: number;
     width: number;
+    padding?: number;
   };
 };
 
