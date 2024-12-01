@@ -1,35 +1,40 @@
 <template>
   <div class="latex-editor">
-    <div class="editor-container">
-      <!-- Eingabebereich mit Quasar QInput -->
-      <q-input
-        v-if="isEditing"
-        v-model="latexContent"
-        type="text"
-        dense
-        outlined
-        :placeholder="dynamicPlaceholder"
-        label=""
-        class="editor"
-        @focusin="handleFocusIn"
-        @focusout="handleFocusOut"
-        @input="onUserInput"
-      >
-        <!-- Vorschau im Label-Bereich -->
-        <template v-slot:label>
-          <span v-html="renderedLatexLabel"></span>
-        </template>
-      </q-input>
+    <!-- Eingabebereich mit Quasar QInput -->
+    <q-input
+      v-if="isEditing"
+      v-model="latexContent"
+      type="text"
+      dense
+      outlined
+      :placeholder="dynamicPlaceholder"
+      label=""
+      class="editor"
+      @focusin="handleFocusIn"
+      @focusout="handleFocusOut"
+      @input="onUserInput"
+    >
+      <!-- Vorschau im Label-Bereich -->
+      <template v-slot:label>
+        <span v-html="renderedLatexLabel"></span>
+      </template>
+    </q-input>
 
-      <!-- Vorschau ohne Bearbeitung -->
-      <div
-        v-else
-        class="latex-display"
-        @click="handleFocusIn"
-        v-html="renderedLatexLabel"
-      ></div>
-    </div>
-
+    <!-- Vorschau ohne Bearbeitung -->
+    <q-input
+      v-else
+      v-model="latexContent"
+      dense
+      outlined
+      readonly
+      class="editor preview"
+      @click="handleFocusIn"
+    >
+      <!-- Vorschau im Default-Bereich -->
+      <template v-slot:default>
+        <span v-html="renderedLatexLabel" class="latex-preview"></span>
+      </template>
+    </q-input>
   </div>
 </template>
 
@@ -58,8 +63,6 @@ const isEditing = ref(false); // Steuert den Bearbeitungsmodus
 
 // Computed für Syntaxfehler (Verwendung von getSyntaxError aus LatexInputField.ts)
 const syntaxError = computed(() => component.getSyntaxError(latexContent.value));
-
-
 
 // Echtzeit-Rendering des LaTeX-Inhalts
 const renderedLatexLabel = computed(() => {
@@ -125,32 +128,24 @@ watch(modelValue, (newValue) => {
 .latex-editor {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
   max-width: 800px;
   margin: 0 auto;
 }
 
-.editor-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.friendly-error {
-  color: red;
-  font-size: 0.9em;
-  margin-top: 5px;
-}
-
-.latex-display {
-  border: 1px solid #ccc;
-  padding: 7px;
-  cursor: text;
-  min-height: 40px;
-}
-.q-field {
+.editor {
   height: 40px;
   line-height: 40px;
   padding: 0;
 }
+
+/* Spezifische Stile für die Vorschau im Default-Slot */
+.preview .latex-preview {
+  white-space: nowrap; /* Verhindert Zeilenumbrüche */
+  overflow: hidden; /* Versteckt überflüssigen Inhalt */
+  text-overflow: ellipsis; /* Zeigt "..." für abgeschnittenen Text */
+  display: block; /* Sicherstellen, dass der Inhalt als Block dargestellt wird */
+  width: 100%; /* Maximale Breite nutzen */
+}
 </style>
+
