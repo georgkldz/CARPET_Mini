@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import type { StateTree } from "pinia";
-// import { toRefs } from "vue";
 import { useApplicationStore } from "./applicationStore";
 import type { AvailableTasks } from "./applicationStore";
 import type { SerialisedTask } from "./applicationStore";
@@ -12,7 +11,13 @@ import type {
   StoreSetterPayload,
 } from "carpet-component-library";
 
-// TODO: specifiy the types of the event objects
+// Konstant für die Session-ID
+const SESSION_ID = 43;
+
+// Server-Endpunkt
+const SERVER_URL = "http://localhost:3000"; // Passe die URL an deinen Server an
+
+// TODO: Specify the types of the event objects
 export interface EventLog {
   interactionEvents: Array<object>;
   mouseEvents: Array<object>;
@@ -32,9 +37,13 @@ export interface TaskGraphState extends SerialisedTask {
   currentNode: number | null;
   previousNode: number | null;
   replayLog: EventLog;
+  documentId: string | null; // Hinzugefügt: Speichert die documentId
 }
 
 export type TaskGraphStateKey = keyof TaskGraphState;
+
+//SessionId nur einmal vom Server abrufen
+let sessionInitialized = false;
 
 /**
  * The taskGraphStore has to be defined with the Options-API, as `this.$state` is not available for actions in the Setup-API.
@@ -59,6 +68,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     rootNode: 0,
     nodes: {},
     edges: {},
+    documentId: null, // Initialwert für documentId
   }),
   getters: {
     getPropertyFromPath: (state) => (path: JSONPathExpression) => {
@@ -127,6 +137,35 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
 
     toggleLoading() {
       this.isLoading = !this.isLoading;
+    },
+
+    async joinSession() {
+      if (sessionInitialized) {
+        console.log("Session already initialized.");
+        return;
+      }
+
+      try {
+        console.log("Versuch joinSession");
+        const response = await fetch(`${SERVER_URL}/joinSession`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ sessionId: SESSION_ID }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to join session");
+        }
+
+        const data = await response.json();
+        this.documentId = data.documentUrl;
+        sessionInitialized = true; // Verhindert weitere Aufrufe
+        console.log("Document ID:", this.documentId); // Debug-Ausgabe
+      } catch (error) {
+        console.error("Error joining session:", error);
+      }
     },
   },
 });

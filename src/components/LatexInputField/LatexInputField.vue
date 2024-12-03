@@ -103,6 +103,12 @@ const handleFocusOut = (event: FocusEvent) => {
 
 // Initialisierung und Synchronisierung
 onMounted(() => {
+  if (props.storeObject && props.storeObject.store) {
+    console.log("Store Object Details:", props.storeObject);
+    props.storeObject.store.joinSession();
+  } else {
+    console.error("Store or storeObject is undefined", props.storeObject);
+  }
   latexContent.value = modelValue.value || "";
   component.validate(latexContent.value); // Initiale Validierung
 
