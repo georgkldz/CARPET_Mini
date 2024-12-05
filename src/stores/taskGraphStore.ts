@@ -4,6 +4,23 @@ import { useApplicationStore } from "./applicationStore";
 import type { AvailableTasks } from "./applicationStore";
 import type { SerialisedTask } from "./applicationStore";
 import { JSONPath } from "jsonpath-plus";
+import { Repo, DocHandle, AnyDocumentId } from "@automerge/automerge-repo/slim";
+import { BrowserWebSocketClientAdapter } from "@automerge/automerge-repo-network-websocket";
+import { BroadcastChannelNetworkAdapter } from "@automerge/automerge-repo-network-broadcastchannel";
+import { IndexedDBStorageAdapter } from "@automerge/automerge-repo-storage-indexeddb";
+
+// URL zur WebAssembly-Binary mit ?url laden
+import wasmUrl from "@automerge/automerge/automerge.wasm?url";
+// Slim-Varianten von Automerge und Automerge-Repo verwenden
+import { next as Automerge } from "@automerge/automerge/slim";
+
+(async () => {
+    // WebAssembly-Modul initialisieren
+    await Automerge.initializeWasm(wasmUrl);
+
+
+})();
+
 
 import type {
   StoreAPI,
@@ -16,6 +33,19 @@ const SESSION_ID = 43;
 
 // Server-Endpunkt
 const SERVER_URL = "http://localhost:3000"; // Passe die URL an deinen Server an
+
+// Automerge-Repo initialisieren
+const repo = new Repo({
+  network: [
+    new BrowserWebSocketClientAdapter("ws://localhost:3000"),
+    new BroadcastChannelNetworkAdapter(),
+  ],
+  storage: new IndexedDBStorageAdapter(),
+});
+    console.log("Repo erstellt:", repo);
+
+// Handle mit spezifischem Typ und initialem Wert null
+let handle: DocHandle<{ taskGraph: Record<string, unknown> }> | null = null;
 
 // TODO: Specify the types of the event objects
 export interface EventLog {
@@ -37,7 +67,7 @@ export interface TaskGraphState extends SerialisedTask {
   currentNode: number | null;
   previousNode: number | null;
   replayLog: EventLog;
-  documentId: string | null; // Hinzugefügt: Speichert die documentId
+  documentId: AnyDocumentId | null; // Hinzugefügt: Speichert die documentId
 }
 
 export type TaskGraphStateKey = keyof TaskGraphState;
@@ -87,6 +117,62 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     setCurrentTask(taskName: string) {
       this.currentTask = taskName;
     },
+      // Synchronisiere Änderungen von Automerge ins Store
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  syncFromDoc(doc: any) {
+    if (!doc.taskGraph) return;
+
+    for (const [key, value] of Object.entries(doc.taskGraph)) {
+      this.setProperty({ path: `$.${key}`, value });
+    }
+  },
+
+  // Synchronisiere Änderungen vom Store in Automerge
+  syncToDoc() {
+    if (!handle) {
+      console.error("No handle available for syncing.");
+      return;
+    }
+
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    handle.change((doc: any) => {
+      if (!doc.taskGraph) {
+        doc.taskGraph = {};
+      }
+
+      for (const [key, value] of Object.entries(this.$state)) {
+        if (key in doc.taskGraph) {
+          doc.taskGraph[key] = value;
+        }
+      }
+    });
+  },
+
+  // Dokument mit Automerge laden
+  async loadDocument() {
+    if (!this.documentId) {
+      console.error("Document ID is missing.");
+      return;
+    }
+
+    handle = repo.find(this.documentId);
+
+    handle.whenReady().then(() => {
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+      handle?.change((doc: any) => {
+        if (!doc.taskGraph) {
+          doc.taskGraph = {};
+        }
+      });
+
+      this.syncFromDoc(handle?.doc);
+    });
+
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    handle.on("change", (d: any) => {
+      this.syncFromDoc(d.doc);
+    });
+  },
     setProperty(payload: StoreSetterPayload) {
       const { path, value } = payload;
       const splitPath = JSONPath.toPathArray(path).slice(1);
@@ -106,6 +192,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
        * Log the state change in development mode.
        */
       process.env.NODE_ENV === "development" && console.log(path, value);
+      this.syncToDoc();
     },
     /**
      * Required helper functions, as it is not possible to define getters that receive arguments.
@@ -166,6 +253,8 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       } catch (error) {
         console.error("Error joining session:", error);
       }
+      await this.loadDocument();
+
     },
   },
 });
