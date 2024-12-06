@@ -17,8 +17,6 @@ import { next as Automerge } from "@automerge/automerge/slim";
 (async () => {
     // WebAssembly-Modul initialisieren
     await Automerge.initializeWasm(wasmUrl);
-
-
 })();
 
 
@@ -127,61 +125,72 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     }
   },
 
-  // Synchronisiere Änderungen vom Store in Automerge
-  syncToDoc() {
-    if (!handle) {
-      console.error("No handle available for syncing.");
-      return;
-    }
-
-      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    handle.change((doc: any) => {
-      if (!doc.taskGraph) {
-        doc.taskGraph = {};
-      }
-
-      for (const [key, value] of Object.entries(this.$state)) {
-        if (key in doc.taskGraph) {
-          doc.taskGraph[key] = value;
-        }
-      }
-    });
-  },
-
-  // Dokument mit Automerge laden
   async loadDocument() {
-    if (!this.documentId) {
-      console.error("Document ID is missing.");
-      return;
-    }
+      if (!this.documentId) {
+        console.error("Document ID is missing.");
+        return;
+      }
 
-    handle = repo.find(this.documentId);
+      console.log("Lade Dokument mit ID:", this.documentId);
+      handle = repo.find(this.documentId);
+      console.log("DocHandle erstellt "+ handle.url);
+      handle.whenReady().then(() => {
+        console.log("Dokument ist bereit.");
+        handle?.change((doc) => {
+          if (!doc.taskGraph) {
+            doc.taskGraph = {};
+          }
+        });
 
-    handle.whenReady().then(() => {
-        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-      handle?.change((doc: any) => {
+        this.syncFromDoc(handle?.doc);
+        console.log("Synchronisierung von Dokument abgeschlossen.");
+      });
+
+      handle.on("change", (d) => {
+        console.log("Änderung im Dokument erkannt, synchronisiere...");
+        this.syncFromDoc(d.doc);
+      });
+    },
+
+    syncToDoc() {
+      console.log("syncToDoc wird aufgerufen. Handle verfügbar:", !!handle);
+      if (!handle) {
+        console.warn(
+          "No handle available for syncing. Stelle sicher, dass loadDocument erfolgreich abgeschlossen ist."
+        );
+        return;
+      }
+
+      handle.change((doc) => {
+        console.log("handle.change wird aufgerufen");
         if (!doc.taskGraph) {
           doc.taskGraph = {};
         }
+
+        // Synchronisiere alle Schlüssel aus dem Store
+        for (const [key, value] of Object.entries(this.$state)) {
+          // Nur aktualisieren, wenn der Wert unterschiedlich ist
+          if (doc.taskGraph[key] !== value) {
+            console.log(`Synchronisiere Schlüssel: ${key}, Neuer Wert:`, value);
+            doc.taskGraph[key] = value;
+          }
+        }
+        console.log("Dokument nun "+doc.taskGraph);
       });
+    },
 
-      this.syncFromDoc(handle?.doc);
-    });
 
-      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    handle.on("change", (d: any) => {
-      this.syncFromDoc(d.doc);
-    });
-  },
     setProperty(payload: StoreSetterPayload) {
       const { path, value } = payload;
       const splitPath = JSONPath.toPathArray(path).slice(1);
       let subState = this.$state as StateTree;
+      let changed = false;
       for (let depth = 0; depth < splitPath.length; depth++) {
         if (depth === splitPath.length - 1) {
           // only update the value if it is different
           if (subState[splitPath[depth]] != value) {
             subState[splitPath[depth]] = value;
+            changed = true;
           }
         } else {
           subState = subState[splitPath[depth]];
@@ -192,7 +201,13 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
        * Log the state change in development mode.
        */
       process.env.NODE_ENV === "development" && console.log(path, value);
-      this.syncToDoc();
+      console.log("setProperty wurde ausgeführt. Versuche Automerge")
+        if (changed && handle) {
+          console.log("syncToDoc wird aufgerufen");
+        this.syncToDoc();
+      } else {
+        console.warn("Handle ist nicht initialisiert. Synchronisierung wird übersprungen.");
+      }
     },
     /**
      * Required helper functions, as it is not possible to define getters that receive arguments.
@@ -249,12 +264,15 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
         const data = await response.json();
         this.documentId = data.documentUrl;
         sessionInitialized = true; // Verhindert weitere Aufrufe
-        console.log("Document ID:", this.documentId); // Debug-Ausgabe
+        console.log("Document ID:", this.documentId);
+
+        // Lade das Dokument nach erfolgreichem Beitritt
+        await this.loadDocument();
+        console.log("Dokument erfolgreich geladen.");
       } catch (error) {
         console.error("Error joining session:", error);
       }
-      await this.loadDocument();
+    }
 
-    },
   },
 });
