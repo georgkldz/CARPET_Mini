@@ -4,10 +4,8 @@ import { useApplicationStore } from "./applicationStore";
 import type { AvailableTasks } from "./applicationStore";
 import type { SerialisedTask } from "./applicationStore";
 import { JSONPath } from "jsonpath-plus";
-import { Repo, DocHandle, AnyDocumentId } from "@automerge/automerge-repo/slim";
-import { BrowserWebSocketClientAdapter } from "@automerge/automerge-repo-network-websocket";
-import { BroadcastChannelNetworkAdapter } from "@automerge/automerge-repo-network-broadcastchannel";
-import { IndexedDBStorageAdapter } from "@automerge/automerge-repo-storage-indexeddb";
+import { DocHandle, AnyDocumentId } from "@automerge/automerge-repo/slim";
+import {initializeRepo } from "../utils/repo.ts";
 
 // URL zur WebAssembly-Binary mit ?url laden
 import wasmUrl from "@automerge/automerge/automerge.wasm?url";
@@ -32,19 +30,6 @@ const SESSION_ID = 43;
 // Server-Endpunkt
 const SERVER_URL = "http://localhost:3000"; // Passe die URL an deinen Server an
 
-// Automerge-Repo initialisieren
-const repo = new Repo({
-  network: [
-    new BrowserWebSocketClientAdapter("ws://localhost:3000"),
-    new BroadcastChannelNetworkAdapter(),
-  ],
-  storage: new IndexedDBStorageAdapter(),
-});
-    console.log("Repo erstellt:", repo);
-
-// Handle mit spezifischem Typ und initialem Wert null
-let handle: DocHandle<{ taskGraph: Record<string, unknown> }> | null = null;
-
 // TODO: Specify the types of the event objects
 export interface EventLog {
   interactionEvents: Array<object>;
@@ -66,12 +51,12 @@ export interface TaskGraphState extends SerialisedTask {
   previousNode: number | null;
   replayLog: EventLog;
   documentId: AnyDocumentId | null; // Hinzugefügt: Speichert die documentId
+  handle:  DocHandle<{ taskGraph: Record<string, unknown> }> | null;
+  sessionInitialized: boolean;
 }
 
 export type TaskGraphStateKey = keyof TaskGraphState;
 
-//SessionId nur einmal vom Server abrufen
-let sessionInitialized = false;
 
 /**
  * The taskGraphStore has to be defined with the Options-API, as `this.$state` is not available for actions in the Setup-API.
@@ -97,8 +82,11 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     nodes: {},
     edges: {},
     documentId: null, // Initialwert für documentId
+    handle: null as DocHandle<{ taskGraph: Record<string, unknown> }> | null,
+    sessionInitialized: false,
   }),
   getters: {
+
     getPropertyFromPath: (state) => (path: JSONPathExpression) => {
       if (typeof path !== "string") {
         throw new Error(`Path is not a string: ${path}`);
@@ -113,6 +101,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
   },
   actions: {
     setCurrentTask(taskName: string) {
+      console.log("setCurrentTask betreten");
       this.currentTask = taskName;
     },
       // Synchronisiere Änderungen von Automerge ins Store
@@ -124,44 +113,17 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       this.setProperty({ path: `$.${key}`, value });
     }
   },
-
-  async loadDocument() {
-      if (!this.documentId) {
-        console.error("Document ID is missing.");
-        return;
-      }
-
-      console.log("Lade Dokument mit ID:", this.documentId);
-      handle = repo.find(this.documentId);
-      console.log("DocHandle erstellt "+ handle.url);
-      handle.whenReady().then(() => {
-        console.log("Dokument ist bereit.");
-        handle?.change((doc) => {
-          if (!doc.taskGraph) {
-            doc.taskGraph = {};
-          }
-        });
-
-        this.syncFromDoc(handle?.doc);
-        console.log("Synchronisierung von Dokument abgeschlossen.");
-      });
-
-      handle.on("change", (d) => {
-        console.log("Änderung im Dokument erkannt, synchronisiere...");
-        this.syncFromDoc(d.doc);
-      });
-    },
-
     syncToDoc() {
-      console.log("syncToDoc wird aufgerufen. Handle verfügbar:", !!handle);
-      if (!handle) {
+      console.log("syncToDoc wird aufgerufen. Handle verfügbar:", this.handle?.isReady);
+      console.log(this.handle?.documentId);
+      if (!this.handle?.isReady) {
         console.warn(
           "No handle available for syncing. Stelle sicher, dass loadDocument erfolgreich abgeschlossen ist."
         );
         return;
       }
 
-      handle.change((doc) => {
+      this.handle.change((doc) => {
         console.log("handle.change wird aufgerufen");
         if (!doc.taskGraph) {
           doc.taskGraph = {};
@@ -202,7 +164,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
        */
       process.env.NODE_ENV === "development" && console.log(path, value);
       console.log("setProperty wurde ausgeführt. Versuche Automerge")
-        if (changed && handle) {
+        if (changed && this.handle?.isReady) {
           console.log("syncToDoc wird aufgerufen");
         this.syncToDoc();
       } else {
@@ -221,6 +183,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       return this.getPropertyFromPath(path);
     },
     fetchTaskGraph() {
+      console.log("fetchTaskGraph betreten");
       const applicationStore = useApplicationStore();
       const tasks = applicationStore.tasks;
       const currentTask = tasks[this.currentTask as AvailableTasks];
@@ -242,13 +205,13 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     },
 
     async joinSession() {
-      if (sessionInitialized) {
+      console.log("Methode joinSession betreten");
+      if (this.sessionInitialized) {
         console.log("Session already initialized.");
         return;
       }
 
       try {
-        console.log("Versuch joinSession");
         const response = await fetch(`${SERVER_URL}/joinSession`, {
           method: "POST",
           headers: {
@@ -260,19 +223,28 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
         if (!response.ok) {
           throw new Error("Failed to join session");
         }
-
         const data = await response.json();
         this.documentId = data.documentUrl;
-        sessionInitialized = true; // Verhindert weitere Aufrufe
-        console.log("Document ID:", this.documentId);
-
-        // Lade das Dokument nach erfolgreichem Beitritt
-        await this.loadDocument();
-        console.log("Dokument erfolgreich geladen.");
+        console.log("joinSession hat vom Server DocumentId erhalten:", this.documentId);
       } catch (error) {
         console.error("Error joining session:", error);
       }
-    }
+      console.log("Methode loadDocument betreten")
+      if (!this.documentId) {
+        console.error("Document ID is missing.");
+        return;
+      }
 
+      const repo = await initializeRepo();
+      console.log("Repo für loadDocument erhalten:", repo);
+      console.log("Lade Dokument mit ID:", this.documentId);
+      this.handle = repo.find(this.documentId);
+      console.log("DocHandle wurde erstellt "+ this.handle.url);
+      this.handle.on("change", (d) => {
+        console.log("Änderung im Dokument erkannt, synchronisiere...");
+        this.syncFromDoc(d.doc);
+      });
+      this.sessionInitialized = true; // Verhindert weitere Aufrufe
+    }
   },
 });

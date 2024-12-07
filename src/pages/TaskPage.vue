@@ -33,10 +33,13 @@ const isLoading = computed(() => taskStore.isLoading);
  * This is due to the router not rerendering the component on the same route.
  * See: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Reacting-to-Params-Changes
  */
-onBeforeMount(() => {
+onBeforeMount(async () => {
+  console.log("onBeforeMount betreten");
+  await taskStore.joinSession();
   taskStore.setCurrentTask(route.params.taskName as string);
   taskStore.fetchTaskGraph();
 });
+
 watch(
   () => route.params.taskName,
   (newTaskName) => {
