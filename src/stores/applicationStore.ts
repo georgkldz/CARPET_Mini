@@ -1,4 +1,4 @@
-import { defineStore } from "pinia";
+import { defineStore, StateTree, type StateTree } from "pinia";
 import { ref } from "vue";
 import type { Ref } from "vue";
 import axios, { AxiosError } from "axios";
@@ -10,13 +10,38 @@ import type {
   SerializedButtonComponent,
   SerializedInputFieldComponent,
 } from "carpet-component-library";
+
+
+import { AnyDocumentId, DocHandle, Repo } from "@automerge/automerge-repo/slim";
+import { IndexedDBStorageAdapter } from "@automerge/automerge-repo-storage-indexeddb";
+import { BroadcastChannelNetworkAdapter } from "@automerge/automerge-repo-network-broadcastchannel";
+import { BrowserWebSocketClientAdapter } from "@automerge/automerge-repo-network-websocket";
+// URL zur WebAssembly-Binary mit ?url laden
+import wasmUrl from "@automerge/automerge/automerge.wasm?url";
+// Slim-Varianten von Automerge und Automerge-Repo verwenden
+import { next as Automerge } from "@automerge/automerge/slim";
 // import type { SerializedCustomComponents } from "../components/index";
 import type { SerializedBasicInputFieldComponent } from "../components/BasicInputField/BasicInputField";
 import { SerializedLatexInputComponent } from "components/LatexInput/LatexInput.ts";
-
 import ExampleTask from "../SerialisedTasks/Example.carpet.json";
 import { SerializedLatexInputFieldComponent } from "components/LatexInputField/LatexInputField.ts";
 const staticTasks = { Example: serialisedTaskSchema.parse(ExampleTask) };
+import {useTaskGraphStore} from "stores/taskGraphStore.ts";
+
+(async () => {
+  // WebAssembly-Modul initialisieren
+  await Automerge.initializeWasm(wasmUrl);
+})();
+
+
+// Konstant für die Session-ID
+const SESSION_ID = 43;
+
+// Server-Endpunkt
+const SERVER_URL = "http://localhost:3000"; // Passe die URL an deinen Server an
+
+let documentId: AnyDocumentId;
+let handle: DocHandle<{ taskGraph: Record<string, unknown> }>;
 
 /**
  * The available tasks in the current application.
@@ -110,8 +135,18 @@ export interface SerialisedTask {
 }
 
 export const useApplicationStore = defineStore("applicationStore", () => {
+  const repo = new Repo({
+    network: [
+      new BrowserWebSocketClientAdapter("ws://localhost:3000"),
+      new BroadcastChannelNetworkAdapter(),
+    ],
+    storage: new IndexedDBStorageAdapter(),
+  });
+
   const userId = ref<string | null>(null);
   const isAuthenticated = ref(false);
+
+  let sessionInitialized = false;
 
   /**
    * (Mocked) Getter for reading all serialised tasks from the file system.
@@ -135,7 +170,6 @@ export const useApplicationStore = defineStore("applicationStore", () => {
       const response = await axios.post("http://localhost:3000/login", payload);
       userId.value = response.data.userId; // `.value` bei `ref` erforderlich
       isAuthenticated.value = true;
-      console.log("Login erfolgreich! BenutzerID ist " + userId.value);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         // Verwende AxiosError-Typisierung anstelle von `any`
@@ -164,6 +198,72 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     }
   };
 
+  // Synchronisiere Änderungen von Automerge ins Store
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  const syncFromDoc = (doc: any) => {
+    if (!doc.taskGraph) return;
+
+    for (const [key, value] of Object.entries(doc.taskGraph)) {
+      doc.taskGraph.setProperty({ path: `$.${key}`, value });
+    }
+  }
+
+  const syncToDoc = () => {
+    const taskGraphStore = useTaskGraphStore;
+    if (!handle?.isReady) {
+      console.warn(
+        "No handle available for syncing. Stelle sicher, dass loadDocument erfolgreich abgeschlossen ist."
+      );
+      return;
+    }
+
+    handle.change((doc) => {
+      if (!doc.taskGraph) {
+        doc.taskGraph = {};
+      }
+
+      // Synchronisiere alle Schlüssel aus dem Store
+      for (const [key, value] of Object.entries(taskGraphStore. .$state as StateTree)) {
+        // Nur aktualisieren, wenn der Wert unterschiedlich ist
+        if (doc.taskGraph[key] !== value) {
+          doc.taskGraph[key] = value;
+        }
+      }
+      console.log("Dokument nun "+doc.taskGraph);
+    });
+  }
+
+   const joinSession = async() => {
+    if (sessionInitialized) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${SERVER_URL}/joinSession`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ sessionId: SESSION_ID }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to join session");
+      }
+      const data = await response.json();
+      documentId = data.documentUrl;
+    } catch (error) {
+    }
+    if (documentId) {
+      return;
+    }
+    handle = repo.find(documentId);
+    handle.on("change", (d) => {
+      syncFromDoc(d.doc);
+    });
+    sessionInitialized = true; // Verhindert weitere Aufrufe
+  }
+
   return {
     leftDrawerOpen,
     toggleLeftDrawer,
@@ -175,5 +275,8 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     isAuthenticated,
     login,
     logout,
+    joinSession,
+    syncFromDoc,
+    syncToDoc,
   };
 });

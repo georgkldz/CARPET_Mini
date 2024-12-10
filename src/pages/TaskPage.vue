@@ -27,7 +27,7 @@ const route = useRoute();
 const currentNode = getProperty("$.currentNode");
 
 const isLoading = computed(() => taskStore.isLoading);
-
+await taskStore.joinSession();
 /**
  * Both onMounted and watch are required to either initialize or update the current taskName and load the task when the route changes.
  * This is due to the router not rerendering the component on the same route.
@@ -35,7 +35,7 @@ const isLoading = computed(() => taskStore.isLoading);
  */
 onBeforeMount(async () => {
   console.log("onBeforeMount betreten");
-  await taskStore.joinSession();
+
   taskStore.setCurrentTask(route.params.taskName as string);
   taskStore.fetchTaskGraph();
 });

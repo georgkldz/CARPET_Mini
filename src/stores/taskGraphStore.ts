@@ -4,18 +4,6 @@ import { useApplicationStore } from "./applicationStore";
 import type { AvailableTasks } from "./applicationStore";
 import type { SerialisedTask } from "./applicationStore";
 import { JSONPath } from "jsonpath-plus";
-import { DocHandle, AnyDocumentId } from "@automerge/automerge-repo/slim";
-import {initializeRepo } from "../utils/repo.ts";
-
-// URL zur WebAssembly-Binary mit ?url laden
-import wasmUrl from "@automerge/automerge/automerge.wasm?url";
-// Slim-Varianten von Automerge und Automerge-Repo verwenden
-import { next as Automerge } from "@automerge/automerge/slim";
-
-(async () => {
-    // WebAssembly-Modul initialisieren
-    await Automerge.initializeWasm(wasmUrl);
-})();
 
 
 import type {
@@ -24,11 +12,6 @@ import type {
   StoreSetterPayload,
 } from "carpet-component-library";
 
-// Konstant für die Session-ID
-const SESSION_ID = 43;
-
-// Server-Endpunkt
-const SERVER_URL = "http://localhost:3000"; // Passe die URL an deinen Server an
 
 // TODO: Specify the types of the event objects
 export interface EventLog {
@@ -50,9 +33,6 @@ export interface TaskGraphState extends SerialisedTask {
   currentNode: number | null;
   previousNode: number | null;
   replayLog: EventLog;
-  documentId: AnyDocumentId | null; // Hinzugefügt: Speichert die documentId
-  handle:  DocHandle<{ taskGraph: Record<string, unknown> }> | null;
-  sessionInitialized: boolean;
 }
 
 export type TaskGraphStateKey = keyof TaskGraphState;
@@ -81,9 +61,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     rootNode: 0,
     nodes: {},
     edges: {},
-    documentId: null, // Initialwert für documentId
-    handle: null as DocHandle<{ taskGraph: Record<string, unknown> }> | null,
-    sessionInitialized: false,
   }),
   getters: {
 
@@ -104,45 +81,9 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       console.log("setCurrentTask betreten");
       this.currentTask = taskName;
     },
-      // Synchronisiere Änderungen von Automerge ins Store
-      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  syncFromDoc(doc: any) {
-    if (!doc.taskGraph) return;
-
-    for (const [key, value] of Object.entries(doc.taskGraph)) {
-      this.setProperty({ path: `$.${key}`, value });
-    }
-  },
-    syncToDoc() {
-      console.log("syncToDoc wird aufgerufen. Handle verfügbar:", this.handle?.isReady);
-      console.log(this.handle?.documentId);
-      if (!this.handle?.isReady) {
-        console.warn(
-          "No handle available for syncing. Stelle sicher, dass loadDocument erfolgreich abgeschlossen ist."
-        );
-        return;
-      }
-
-      this.handle.change((doc) => {
-        console.log("handle.change wird aufgerufen");
-        if (!doc.taskGraph) {
-          doc.taskGraph = {};
-        }
-
-        // Synchronisiere alle Schlüssel aus dem Store
-        for (const [key, value] of Object.entries(this.$state)) {
-          // Nur aktualisieren, wenn der Wert unterschiedlich ist
-          if (doc.taskGraph[key] !== value) {
-            console.log(`Synchronisiere Schlüssel: ${key}, Neuer Wert:`, value);
-            doc.taskGraph[key] = value;
-          }
-        }
-        console.log("Dokument nun "+doc.taskGraph);
-      });
-    },
-
 
     setProperty(payload: StoreSetterPayload) {
+      const applicationStore = useApplicationStore();
       const { path, value } = payload;
       const splitPath = JSONPath.toPathArray(path).slice(1);
       let subState = this.$state as StateTree;
@@ -164,11 +105,8 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
        */
       process.env.NODE_ENV === "development" && console.log(path, value);
       console.log("setProperty wurde ausgeführt. Versuche Automerge")
-        if (changed && this.handle?.isReady) {
-          console.log("syncToDoc wird aufgerufen");
-        this.syncToDoc();
-      } else {
-        console.warn("Handle ist nicht initialisiert. Synchronisierung wird übersprungen.");
+        if (changed) {
+          applicationStore.syncToDoc();
       }
     },
     /**
@@ -204,47 +142,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       this.isLoading = !this.isLoading;
     },
 
-    async joinSession() {
-      console.log("Methode joinSession betreten");
-      if (this.sessionInitialized) {
-        console.log("Session already initialized.");
-        return;
-      }
 
-      try {
-        const response = await fetch(`${SERVER_URL}/joinSession`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ sessionId: SESSION_ID }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to join session");
-        }
-        const data = await response.json();
-        this.documentId = data.documentUrl;
-        console.log("joinSession hat vom Server DocumentId erhalten:", this.documentId);
-      } catch (error) {
-        console.error("Error joining session:", error);
-      }
-      console.log("Methode loadDocument betreten")
-      if (!this.documentId) {
-        console.error("Document ID is missing.");
-        return;
-      }
-
-      const repo = await initializeRepo();
-      console.log("Repo für loadDocument erhalten:", repo);
-      console.log("Lade Dokument mit ID:", this.documentId);
-      this.handle = repo.find(this.documentId);
-      console.log("DocHandle wurde erstellt "+ this.handle.url);
-      this.handle.on("change", (d) => {
-        console.log("Änderung im Dokument erkannt, synchronisiere...");
-        this.syncFromDoc(d.doc);
-      });
-      this.sessionInitialized = true; // Verhindert weitere Aufrufe
-    }
   },
 });
