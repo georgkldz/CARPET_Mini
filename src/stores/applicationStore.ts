@@ -223,13 +223,12 @@ export const useApplicationStore = defineStore("applicationStore", () => {
       }
 
       // Synchronisiere alle Schlüssel aus dem Store
-      for (const [key, value] of Object.entries(taskGraphStore. .$state as StateTree)) {
+      for (const [key, value] of Object.entries(taskGraphStore.$state)) {
         // Nur aktualisieren, wenn der Wert unterschiedlich ist
         if (doc.taskGraph[key] !== value) {
           doc.taskGraph[key] = value;
         }
       }
-      console.log("Dokument nun "+doc.taskGraph);
     });
   }
 
@@ -254,7 +253,7 @@ export const useApplicationStore = defineStore("applicationStore", () => {
       documentId = data.documentUrl;
     } catch (error) {
     }
-    if (documentId) {
+    if (!documentId) {
       return;
     }
     handle = repo.find(documentId);

@@ -104,7 +104,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
        * Log the state change in development mode.
        */
       process.env.NODE_ENV === "development" && console.log(path, value);
-      console.log("setProperty wurde ausgeführt. Versuche Automerge")
         if (changed) {
           applicationStore.syncToDoc();
       }
@@ -121,7 +120,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       return this.getPropertyFromPath(path);
     },
     fetchTaskGraph() {
-      console.log("fetchTaskGraph betreten");
       const applicationStore = useApplicationStore();
       const tasks = applicationStore.tasks;
       const currentTask = tasks[this.currentTask as AvailableTasks];

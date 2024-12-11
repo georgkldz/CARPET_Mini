@@ -19,8 +19,10 @@ import { useRoute } from "vue-router";
 import LOOM from "src/components/LOOM/LOOM.vue";
 import LoadingSpinner from "src/components/LoadingSpinner.vue";
 import { useTaskGraphStore } from "src/stores/taskGraphStore";
+import {useApplicationStore} from "stores/applicationStore.ts";
 
 const taskStore = useTaskGraphStore();
+const applicationStore = useApplicationStore();
 const { getProperty } = taskStore;
 
 const route = useRoute();
@@ -34,9 +36,7 @@ await taskStore.joinSession();
  * See: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Reacting-to-Params-Changes
  */
 onBeforeMount(async () => {
-  console.log("onBeforeMount betreten");
-
-  taskStore.setCurrentTask(route.params.taskName as string);
+   taskStore.setCurrentTask(route.params.taskName as string);
   taskStore.fetchTaskGraph();
 });
 
@@ -67,6 +67,7 @@ const trackMouse = (event: MouseEvent) => {
 };
 onMounted(() => {
   document.addEventListener("mousemove", trackMouse);
+  applicationStore.joinSession();
 });
 
 onBeforeUnmount(() => {
