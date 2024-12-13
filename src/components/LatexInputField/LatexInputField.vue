@@ -105,7 +105,7 @@ const handleFocusOut = (event: FocusEvent) => {
 onMounted(() => {
   if (props.storeObject && props.storeObject.store) {
     console.log("Store Object Details:", props.storeObject);
-    props.storeObject.store.joinSession();
+    // props.storeObject.store.joinSession();
   } else {
     console.error("Store or storeObject is undefined", props.storeObject);
   }

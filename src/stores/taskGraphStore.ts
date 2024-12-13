@@ -42,6 +42,7 @@ export type TaskGraphStateKey = keyof TaskGraphState;
  * The taskGraphStore has to be defined with the Options-API, as `this.$state` is not available for actions in the Setup-API.
  * Acces to `this.$state` is required to manipulate the store state via `setProperty` from any component.
  */
+//Options API
 export const useTaskGraphStore = defineStore("taskGraphStore", {
   state: (): TaskGraphState => ({
     currentTask: null,
@@ -63,7 +64,9 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     edges: {},
   }),
   getters: {
-
+    getFullState(state): TaskGraphState {
+      return state; // Gibt den gesamten State zurück
+    },
     getPropertyFromPath: (state) => (path: JSONPathExpression) => {
       if (typeof path !== "string") {
         throw new Error(`Path is not a string: ${path}`);
@@ -83,17 +86,15 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     },
 
     setProperty(payload: StoreSetterPayload) {
-      const applicationStore = useApplicationStore();
+      console.log("setProperty aufgerufen ", payload);
       const { path, value } = payload;
       const splitPath = JSONPath.toPathArray(path).slice(1);
       let subState = this.$state as StateTree;
-      let changed = false;
       for (let depth = 0; depth < splitPath.length; depth++) {
         if (depth === splitPath.length - 1) {
           // only update the value if it is different
           if (subState[splitPath[depth]] != value) {
             subState[splitPath[depth]] = value;
-            changed = true;
           }
         } else {
           subState = subState[splitPath[depth]];
@@ -104,9 +105,13 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
        * Log the state change in development mode.
        */
       process.env.NODE_ENV === "development" && console.log(path, value);
-        if (changed) {
-          applicationStore.syncToDoc();
-      }
+      const applicationStore = useApplicationStore();
+      applicationStore.syncToDoc();
+    },
+    init() {
+      const applicationStore = useApplicationStore();
+      applicationStore.registerTaskGraphStateCallback(() => this.$state as TaskGraphState);
+
     },
     /**
      * Required helper functions, as it is not possible to define getters that receive arguments.

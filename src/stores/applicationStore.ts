@@ -1,4 +1,4 @@
-import { defineStore, StateTree, type StateTree } from "pinia";
+import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { Ref } from "vue";
 import axios, { AxiosError } from "axios";
@@ -26,13 +26,16 @@ import { SerializedLatexInputComponent } from "components/LatexInput/LatexInput.
 import ExampleTask from "../SerialisedTasks/Example.carpet.json";
 import { SerializedLatexInputFieldComponent } from "components/LatexInputField/LatexInputField.ts";
 const staticTasks = { Example: serialisedTaskSchema.parse(ExampleTask) };
-import {useTaskGraphStore} from "stores/taskGraphStore.ts";
+import { TaskGraphState, useTaskGraphStore } from "./taskGraphStore";
+import type { Doc } from "@automerge/automerge";
 
 (async () => {
   // WebAssembly-Modul initialisieren
   await Automerge.initializeWasm(wasmUrl);
 })();
-
+interface TaskGraph {
+  [key: string]: unknown;
+}
 
 // Konstant für die Session-ID
 const SESSION_ID = 43;
@@ -134,7 +137,12 @@ export interface SerialisedTask {
   taskData?: TaskData;
 }
 
+
+
+//Composition API
 export const useApplicationStore = defineStore("applicationStore", () => {
+
+  let getTaskGraphState: (() => TaskGraphState) | null = null;
   const repo = new Repo({
     network: [
       new BrowserWebSocketClientAdapter("ws://localhost:3000"),
@@ -199,17 +207,37 @@ export const useApplicationStore = defineStore("applicationStore", () => {
   };
 
   // Synchronisiere Änderungen von Automerge ins Store
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const syncFromDoc = (doc: any) => {
-    if (!doc.taskGraph) return;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/ban-ts-comment
 
-    for (const [key, value] of Object.entries(doc.taskGraph)) {
-      doc.taskGraph.setProperty({ path: `$.${key}`, value });
-    }
-  }
+    const syncFromDoc = (doc: Doc<{ taskGraph: TaskGraph }>): void => {
+      if (!handle?.isReady) {
+        console.warn(
+          "No handle available for syncing. Stelle sicher, dass loadDocument erfolgreich abgeschlossen ist."
+        );
+        return;
+      }
+      console.log("syncFROMDoc aufgerufen");
+      if (!doc.taskGraph) return;
+
+      const taskGraphStore = useTaskGraphStore(); // Importiere den taskGraphStore
+      for (const [key, value] of Object.entries(doc.taskGraph)) {
+        taskGraphStore.setProperty({ path: `$.${key}`, value }); // Direkt auf den Store zugreifen
+      }
+    };
+
 
   const syncToDoc = () => {
-    const taskGraphStore = useTaskGraphStore;
+    console.log("syncToDoc aufgerufen");
+    if (!getTaskGraphState) {
+      console.warn("No taskGraphState callback defined.");
+      return;
+    }
+
+    const taskGraphState = getTaskGraphState();
+    if (!taskGraphState) {
+      console.warn("TaskGraphState is undefined.");
+      return;
+    }
     if (!handle?.isReady) {
       console.warn(
         "No handle available for syncing. Stelle sicher, dass loadDocument erfolgreich abgeschlossen ist."
@@ -221,14 +249,14 @@ export const useApplicationStore = defineStore("applicationStore", () => {
       if (!doc.taskGraph) {
         doc.taskGraph = {};
       }
-
+      console.log("handle.change aufgerufen")
       // Synchronisiere alle Schlüssel aus dem Store
-      for (const [key, value] of Object.entries(taskGraphStore.$state)) {
-        // Nur aktualisieren, wenn der Wert unterschiedlich ist
+      for (const [key, value] of Object.entries(taskGraphState)) {
         if (doc.taskGraph[key] !== value) {
           doc.taskGraph[key] = value;
         }
       }
+    console.log(doc);
     });
   }
 
@@ -261,7 +289,11 @@ export const useApplicationStore = defineStore("applicationStore", () => {
       syncFromDoc(d.doc);
     });
     sessionInitialized = true; // Verhindert weitere Aufrufe
-  }
+  };
+  const registerTaskGraphStateCallback = (callback: () => TaskGraphState) => {
+    console.log("Callback für TaskGraphState registriert");
+    getTaskGraphState = callback;
+  };
 
   return {
     leftDrawerOpen,
@@ -277,5 +309,6 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     joinSession,
     syncFromDoc,
     syncToDoc,
+    registerTaskGraphStateCallback,
   };
 });

@@ -29,13 +29,14 @@ const route = useRoute();
 const currentNode = getProperty("$.currentNode");
 
 const isLoading = computed(() => taskStore.isLoading);
-await taskStore.joinSession();
+
 /**
  * Both onMounted and watch are required to either initialize or update the current taskName and load the task when the route changes.
  * This is due to the router not rerendering the component on the same route.
  * See: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Reacting-to-Params-Changes
  */
 onBeforeMount(async () => {
+  taskStore.init();
    taskStore.setCurrentTask(route.params.taskName as string);
   taskStore.fetchTaskGraph();
 });
