@@ -37,7 +37,7 @@ const isLoading = computed(() => taskStore.isLoading);
  */
 onBeforeMount(async () => {
   taskStore.init();
-   taskStore.setCurrentTask(route.params.taskName as string);
+  taskStore.setCurrentTask(route.params.taskName as string);
   taskStore.fetchTaskGraph();
 });
 

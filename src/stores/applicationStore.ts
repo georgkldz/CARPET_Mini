@@ -153,8 +153,10 @@ export const useApplicationStore = defineStore("applicationStore", () => {
 
   const userId = ref<string | null>(null);
   const isAuthenticated = ref(false);
+  const documentReady = ref(false);
+  const isRemoteUpdate = ref(false);
+  let isJoinSessionProcessing = false;
 
-  let sessionInitialized = false;
 
   /**
    * (Mocked) Getter for reading all serialised tasks from the file system.
@@ -210,7 +212,7 @@ export const useApplicationStore = defineStore("applicationStore", () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/ban-ts-comment
 
     const syncFromDoc = (doc: Doc<{ taskGraph: TaskGraph }>): void => {
-      if (!handle?.isReady) {
+      if (!documentReady.value) {
         console.warn(
           "No handle available for syncing. Stelle sicher, dass loadDocument erfolgreich abgeschlossen ist."
         );
@@ -218,16 +220,23 @@ export const useApplicationStore = defineStore("applicationStore", () => {
       }
       console.log("syncFROMDoc aufgerufen");
       if (!doc.taskGraph) return;
-
+      const plainTaskGraph = JSON.parse(JSON.stringify(doc.taskGraph));
+      isRemoteUpdate.value = true;
       const taskGraphStore = useTaskGraphStore(); // Importiere den taskGraphStore
-      for (const [key, value] of Object.entries(doc.taskGraph)) {
+      for (const [key, value] of Object.entries(plainTaskGraph)) {
         taskGraphStore.setProperty({ path: `$.${key}`, value }); // Direkt auf den Store zugreifen
       }
+      isRemoteUpdate.value = false;
     };
 
 
   const syncToDoc = () => {
-    console.log("syncToDoc aufgerufen");
+    if (!documentReady.value) {
+      return;
+    }
+    if (isRemoteUpdate.value) {
+      return;
+    }
     if (!getTaskGraphState) {
       console.warn("No taskGraphState callback defined.");
       return;
@@ -236,12 +245,6 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     const taskGraphState = getTaskGraphState();
     if (!taskGraphState) {
       console.warn("TaskGraphState is undefined.");
-      return;
-    }
-    if (!handle?.isReady) {
-      console.warn(
-        "No handle available for syncing. Stelle sicher, dass loadDocument erfolgreich abgeschlossen ist."
-      );
       return;
     }
 
@@ -253,7 +256,9 @@ export const useApplicationStore = defineStore("applicationStore", () => {
       // Synchronisiere alle Schlüssel aus dem Store
       for (const [key, value] of Object.entries(taskGraphState)) {
         if (doc.taskGraph[key] !== value) {
-          doc.taskGraph[key] = value;
+          //doc.taskGraph[key] = value;
+          const plainValue = JSON.parse(JSON.stringify(value));
+          doc.taskGraph[key] = plainValue;
         }
       }
     console.log(doc);
@@ -261,7 +266,12 @@ export const useApplicationStore = defineStore("applicationStore", () => {
   }
 
    const joinSession = async() => {
-    if (sessionInitialized) {
+    if (isJoinSessionProcessing) {
+      console.log("joinSession läuft gerade, breche erneuten Aufruf ab");
+      return;
+    }
+    isJoinSessionProcessing = true;
+    if (documentReady.value) {
       return;
     }
 
@@ -285,11 +295,16 @@ export const useApplicationStore = defineStore("applicationStore", () => {
       return;
     }
     handle = repo.find(documentId);
+    handle.whenReady().then(() => {
+      documentReady.value = true;
+      console.log("DocHandle ist bereit "+handle.documentId);
+    });
     handle.on("change", (d) => {
       syncFromDoc(d.doc);
     });
-    sessionInitialized = true; // Verhindert weitere Aufrufe
+    isJoinSessionProcessing = false;
   };
+
   const registerTaskGraphStateCallback = (callback: () => TaskGraphState) => {
     console.log("Callback für TaskGraphState registriert");
     getTaskGraphState = callback;
@@ -310,5 +325,7 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     syncFromDoc,
     syncToDoc,
     registerTaskGraphStateCallback,
+    documentReady,
+    isRemoteUpdate,
   };
 });

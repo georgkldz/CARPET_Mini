@@ -86,7 +86,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     },
 
     setProperty(payload: StoreSetterPayload) {
-      console.log("setProperty aufgerufen ", payload);
+      const applicationStore = useApplicationStore();
       const { path, value } = payload;
       const splitPath = JSONPath.toPathArray(path).slice(1);
       let subState = this.$state as StateTree;
@@ -105,8 +105,9 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
        * Log the state change in development mode.
        */
       process.env.NODE_ENV === "development" && console.log(path, value);
-      const applicationStore = useApplicationStore();
-      applicationStore.syncToDoc();
+      if (!applicationStore.isRemoteUpdate) {
+        applicationStore.syncToDoc();
+      }
     },
     init() {
       const applicationStore = useApplicationStore();
