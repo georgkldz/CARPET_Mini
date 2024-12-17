@@ -37,6 +37,10 @@ export interface TaskGraphState extends SerialisedTask {
 
 export type TaskGraphStateKey = keyof TaskGraphState;
 
+interface FieldValuesMap {
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  [componentPath: string]: any;
+}
 
 /**
  * The taskGraphStore has to be defined with the Options-API, as `this.$state` is not available for actions in the Setup-API.
@@ -145,7 +149,32 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     toggleLoading() {
       this.isLoading = !this.isLoading;
     },
+    extractFieldValues(): FieldValuesMap {
+      const result: FieldValuesMap = {};
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+      const traverse = (obj: any, basePath = "$") => {
+        for (const key in obj) {
+          const currentPath = basePath + "." + key;
+          if (key === "fieldValue") {
+            // Hier ist ein fieldValue, speichere ihn
+            result[currentPath] = obj[key];
+          } else if (obj[key] && typeof obj[key] === "object") {
+            traverse(obj[key], currentPath);
+          }
+        }
+      };
 
+      // Starte bei $.nodes
+      traverse(this.$state.nodes, "$.nodes");
+      return result;
+    },
+    applyFieldValues(fieldValues: FieldValuesMap) {
+      for (const [path, value] of Object.entries(fieldValues)) {
+        // path ist z.B. "$.nodes.0.components.3.fieldValue"
+        // setProperty aktualisiert den State entsprechend
+        this.setProperty({ path: path as JSONPathExpression, value });
+      }
+    },
 
   },
 });

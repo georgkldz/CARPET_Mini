@@ -27,16 +27,19 @@ import ExampleTask from "../SerialisedTasks/Example.carpet.json";
 import { SerializedLatexInputFieldComponent } from "components/LatexInputField/LatexInputField.ts";
 const staticTasks = { Example: serialisedTaskSchema.parse(ExampleTask) };
 import { TaskGraphState, useTaskGraphStore } from "./taskGraphStore";
-import type { Doc } from "@automerge/automerge";
+//import type { Doc } from "@automerge/automerge";
 
 (async () => {
   // WebAssembly-Modul initialisieren
   await Automerge.initializeWasm(wasmUrl);
 })();
-interface TaskGraph {
-  [key: string]: unknown;
+// interface TaskGraph {
+//   [key: string]: unknown;
+// }
+interface FieldValuesMap {
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  [componentPath: string]: any;
 }
-
 // Konstant für die Session-ID
 const SESSION_ID = 43;
 
@@ -44,7 +47,7 @@ const SESSION_ID = 43;
 const SERVER_URL = "http://localhost:3000"; // Passe die URL an deinen Server an
 
 let documentId: AnyDocumentId;
-let handle: DocHandle<{ taskGraph: Record<string, unknown> }>;
+let handle: DocHandle<{ fieldValues: FieldValuesMap }>;
 
 /**
  * The available tasks in the current application.
@@ -208,26 +211,30 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     }
   };
 
-  // Synchronisiere Änderungen von Automerge ins Store
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/ban-ts-comment
+  function updateFieldValuesFromStore() {
+    const taskGraphStore = useTaskGraphStore();
+    const fieldValues = taskGraphStore.extractFieldValues();
+    return fieldValues;
+  }
 
-    const syncFromDoc = (doc: Doc<{ taskGraph: TaskGraph }>): void => {
-      if (!documentReady.value) {
-        console.warn(
-          "No handle available for syncing. Stelle sicher, dass loadDocument erfolgreich abgeschlossen ist."
-        );
-        return;
-      }
-      console.log("syncFROMDoc aufgerufen");
-      if (!doc.taskGraph) return;
-      const plainTaskGraph = JSON.parse(JSON.stringify(doc.taskGraph));
-      isRemoteUpdate.value = true;
-      const taskGraphStore = useTaskGraphStore(); // Importiere den taskGraphStore
-      for (const [key, value] of Object.entries(plainTaskGraph)) {
-        taskGraphStore.setProperty({ path: `$.${key}`, value }); // Direkt auf den Store zugreifen
-      }
-      isRemoteUpdate.value = false;
-    };
+  function applyFieldValuesToStore(fieldValues: FieldValuesMap) {
+    const taskGraphStore = useTaskGraphStore();
+    taskGraphStore.applyFieldValues(fieldValues);
+  }
+  // Synchronisiere Änderungen von Automerge ins Store
+  const syncFromDoc = (doc: { fieldValues?: FieldValuesMap }): void => {
+    if (!documentReady.value) {
+      console.warn("No handle available for syncing.");
+      return;
+    }
+    console.log("syncFROMDoc aufgerufen");
+    if (!doc.fieldValues) return;
+
+    isRemoteUpdate.value = true;
+    // Übernimm die fieldValues ins TaskGraphStore
+    applyFieldValuesToStore(doc.fieldValues);
+    isRemoteUpdate.value = false;
+  };
 
 
   const syncToDoc = () => {
@@ -242,26 +249,17 @@ export const useApplicationStore = defineStore("applicationStore", () => {
       return;
     }
 
-    const taskGraphState = getTaskGraphState();
-    if (!taskGraphState) {
-      console.warn("TaskGraphState is undefined.");
-      return;
-    }
+    const fieldValues = updateFieldValuesFromStore();
 
     handle.change((doc) => {
-      if (!doc.taskGraph) {
-        doc.taskGraph = {};
+      if (!doc.fieldValues) {
+        doc.fieldValues = {};
       }
       console.log("handle.change aufgerufen")
       // Synchronisiere alle Schlüssel aus dem Store
-      for (const [key, value] of Object.entries(taskGraphState)) {
-        if (doc.taskGraph[key] !== value) {
-          //doc.taskGraph[key] = value;
-          const plainValue = JSON.parse(JSON.stringify(value));
-          doc.taskGraph[key] = plainValue;
+      for (const [key, value] of Object.entries(fieldValues)) {
+          doc.fieldValues[key] = value;
         }
-      }
-    console.log(doc);
     });
   }
 
