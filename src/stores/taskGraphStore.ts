@@ -68,9 +68,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     edges: {},
   }),
   getters: {
-    getFullState(state): TaskGraphState {
-      return state; // Gibt den gesamten State zurück
-    },
     getPropertyFromPath: (state) => (path: JSONPathExpression) => {
       if (typeof path !== "string") {
         throw new Error(`Path is not a string: ${path}`);
@@ -113,11 +110,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
         applicationStore.syncToDoc();
       }
     },
-    init() {
-      const applicationStore = useApplicationStore();
-      applicationStore.registerTaskGraphStateCallback(() => this.$state as TaskGraphState);
 
-    },
     /**
      * Required helper functions, as it is not possible to define getters that receive arguments.
      * This is due to getters being simply computed properties.
@@ -163,7 +156,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
           }
         }
       };
-
       // Starte bei $.nodes
       traverse(this.$state.nodes, "$.nodes");
       return result;
