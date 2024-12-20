@@ -26,28 +26,28 @@ import { SerializedLatexInputComponent } from "components/LatexInput/LatexInput.
 import ExampleTask from "../SerialisedTasks/Example.carpet.json";
 import { SerializedLatexInputFieldComponent } from "components/LatexInputField/LatexInputField.ts";
 const staticTasks = { Example: serialisedTaskSchema.parse(ExampleTask) };
-import { TaskGraphState, useTaskGraphStore } from "./taskGraphStore";
+import {  useTaskGraphStore } from "./taskGraphStore";
 //import type { Doc } from "@automerge/automerge";
 
 (async () => {
   // WebAssembly-Modul initialisieren
   await Automerge.initializeWasm(wasmUrl);
 })();
-// interface TaskGraph {
-//   [key: string]: unknown;
-// }
-interface FieldValuesMap {
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  [componentPath: string]: any;
-}
+
 // Konstant für die Session-ID
 const SESSION_ID = 43;
 
 // Server-Endpunkt
 const SERVER_URL = "http://localhost:3000"; // Passe die URL an deinen Server an
+interface ComponentSyncData {
+  id: number;
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  data: any;
+}
 
 let documentId: AnyDocumentId;
-let handle: DocHandle<{ fieldValues: FieldValuesMap }>;
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+let handle: DocHandle<{ componentsData: { [id: number]: any}}>;
 
 /**
  * The available tasks in the current application.
@@ -145,7 +145,6 @@ export interface SerialisedTask {
 //Composition API
 export const useApplicationStore = defineStore("applicationStore", () => {
 
-  let getTaskGraphState: (() => TaskGraphState) | null = null;
   const repo = new Repo({
     network: [
       new BrowserWebSocketClientAdapter("ws://localhost:3000"),
@@ -211,56 +210,42 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     }
   };
 
-  function updateFieldValuesFromStore() {
-    const taskGraphStore = useTaskGraphStore();
-    const fieldValues = taskGraphStore.extractFieldValues();
-    return fieldValues;
-  }
 
-  function applyFieldValuesToStore(fieldValues: FieldValuesMap) {
-    const taskGraphStore = useTaskGraphStore();
-    taskGraphStore.applyFieldValues(fieldValues);
-  }
   // Synchronisiere Änderungen von Automerge ins Store
-  const syncFromDoc = (doc: { fieldValues?: FieldValuesMap }): void => {
+  function syncComponents(componentData: ComponentSyncData[]) {
     if (!documentReady.value) {
-      console.warn("No handle available for syncing.");
+      console.warn("Dokument noch nicht bereit, kann nicht syncen");
       return;
     }
-    console.log("syncFROMDoc aufgerufen");
-    if (!doc.fieldValues) return;
-
     isRemoteUpdate.value = true;
     // Übernimm die fieldValues ins TaskGraphStore
-    applyFieldValuesToStore(doc.fieldValues);
+    handle.change((doc) => {
+      if (!doc.componentsData) {
+        doc.componentsData = {};
+      }
+      componentData.forEach(({ id, data }) => {
+        doc.componentsData[id] = JSON.parse(JSON.stringify(data));
+        // JSON.parse/stringify um sicherzugehen, dass keine Proxies übertragen werden.
+      });
+    });
     isRemoteUpdate.value = false;
   };
 
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  function syncFromDocComponents(doc: { componentsData?: { [id: number]: any } }) {
+    if (!doc.componentsData) return;
+    // Die Daten liegen jetzt im Dokument, wir geben sie ans taskGraphStore weiter
+    const changes = Object.entries(doc.componentsData).map(([id, data]) => ({
+      id: Number(id),
+      data
+    }));
 
-  const syncToDoc = () => {
-    if (!documentReady.value) {
-      return;
-    }
-    if (isRemoteUpdate.value) {
-      return;
-    }
-    if (!getTaskGraphState) {
-      console.warn("No taskGraphState callback defined.");
-      return;
-    }
-
-    const fieldValues = updateFieldValuesFromStore();
-
-    handle.change((doc) => {
-      if (!doc.fieldValues) {
-        doc.fieldValues = {};
-      }
-      console.log("handle.change aufgerufen")
-      // Synchronisiere alle Schlüssel aus dem Store
-      for (const [key, value] of Object.entries(fieldValues)) {
-          doc.fieldValues[key] = value;
-        }
-    });
+    const taskGraphStore = useTaskGraphStore();
+    // Wir setzen isRemoteUpdate, falls du sicherstellen willst,
+    // dass applySynchronizedChanges kein erneutes Sync auslöst.
+    isRemoteUpdate.value = true;
+    taskGraphStore.applySynchronizedChanges(changes);
+    isRemoteUpdate.value = false;
   }
 
    const joinSession = async() => {
@@ -298,15 +283,12 @@ export const useApplicationStore = defineStore("applicationStore", () => {
       console.log("DocHandle ist bereit "+handle.documentId);
     });
     handle.on("change", (d) => {
-      syncFromDoc(d.doc);
+      syncFromDocComponents(d.doc);
     });
     isJoinSessionProcessing = false;
   };
 
-  const registerTaskGraphStateCallback = (callback: () => TaskGraphState) => {
-    console.log("Callback für TaskGraphState registriert");
-    getTaskGraphState = callback;
-  };
+
 
   return {
     leftDrawerOpen,
@@ -320,9 +302,7 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     login,
     logout,
     joinSession,
-    syncFromDoc,
-    syncToDoc,
-    registerTaskGraphStateCallback,
+    syncComponents,
     documentReady,
     isRemoteUpdate,
   };

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import type { StateTree } from "pinia";
-import { useApplicationStore } from "./applicationStore";
+import {  useApplicationStore } from "./applicationStore";
 import type { AvailableTasks } from "./applicationStore";
 import type { SerialisedTask } from "./applicationStore";
 import { JSONPath } from "jsonpath-plus";
@@ -37,10 +37,6 @@ export interface TaskGraphState extends SerialisedTask {
 
 export type TaskGraphStateKey = keyof TaskGraphState;
 
-interface FieldValuesMap {
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  [componentPath: string]: any;
-}
 
 /**
  * The taskGraphStore has to be defined with the Options-API, as `this.$state` is not available for actions in the Setup-API.
@@ -68,9 +64,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     edges: {},
   }),
   getters: {
-    getFullState(state): TaskGraphState {
-      return state; // Gibt den gesamten State zurück
-    },
     getPropertyFromPath: (state) => (path: JSONPathExpression) => {
       if (typeof path !== "string") {
         throw new Error(`Path is not a string: ${path}`);
@@ -84,6 +77,21 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     },
   },
   actions: {
+    extractComponentData() {
+      // JSONPath zur Auswahl aller Komponenten-Daten
+      const componentsPath = '$.nodes.0.components';
+      const components = JSONPath({ path: componentsPath, json: this.$state });
+
+      if (!components || !components[0]) {
+        console.warn("Keine Komponenten gefunden unter", componentsPath);
+        return [];
+      }
+      const componentDataWithIds = Object.entries(components[0]).map(([id, data]) => ({
+        id: Number(id),
+        data,
+      }));
+      return componentDataWithIds;
+    },
     setCurrentTask(taskName: string) {
       console.log("setCurrentTask betreten");
       this.currentTask = taskName;
@@ -112,11 +120,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       if (!applicationStore.isRemoteUpdate) {
         applicationStore.syncToDoc();
       }
-    },
-    init() {
-      const applicationStore = useApplicationStore();
-      applicationStore.registerTaskGraphStateCallback(() => this.$state as TaskGraphState);
-
     },
     /**
      * Required helper functions, as it is not possible to define getters that receive arguments.
@@ -149,32 +152,23 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     toggleLoading() {
       this.isLoading = !this.isLoading;
     },
-    extractFieldValues(): FieldValuesMap {
-      const result: FieldValuesMap = {};
-      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-      const traverse = (obj: any, basePath = "$") => {
-        for (const key in obj) {
-          const currentPath = basePath + "." + key;
-          if (key === "fieldValue") {
-            // Hier ist ein fieldValue, speichere ihn
-            result[currentPath] = obj[key];
-          } else if (obj[key] && typeof obj[key] === "object") {
-            traverse(obj[key], currentPath);
-          }
-        }
-      };
 
-      // Starte bei $.nodes
-      traverse(this.$state.nodes, "$.nodes");
-      return result;
+    synchronizeComponents() {
+      const applicationStore = useApplicationStore();
+      // Extrahieren der Komponenten mit IDs
+      const componentData = this.extractComponentData();
+      // Weitergabe an den applicationStore zur Synchronisation
+      applicationStore.syncComponents(componentData);
     },
-    applyFieldValues(fieldValues: FieldValuesMap) {
-      for (const [path, value] of Object.entries(fieldValues)) {
-        // path ist z.B. "$.nodes.0.components.3.fieldValue"
-        // setProperty aktualisiert den State entsprechend
-        this.setProperty({ path: path as JSONPathExpression, value });
-      }
-    },
+
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    applySynchronizedChanges(changes: { id: number; data: any }[]) {
+      // Änderungen anwenden
+      changes.forEach(({ id, data }) => {
+          // Bestehende Komponente aktualisieren
+          this.$state.nodes[0].components[id] = data;
+      });
+    }
 
   },
 });
