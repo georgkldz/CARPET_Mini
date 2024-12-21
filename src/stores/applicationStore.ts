@@ -39,15 +39,17 @@ const SESSION_ID = 43;
 
 // Server-Endpunkt
 const SERVER_URL = "http://localhost:3000"; // Passe die URL an deinen Server an
-interface ComponentSyncData {
-  id: number;
+
+interface ComponentDoc {
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  data: any;
+  componentsData?: { [idOrPath: string]: any };
 }
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+const lastComponentsDataCache = ref<Record<string, any> | null>(null);
 
 let documentId: AnyDocumentId;
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-let handle: DocHandle<{ componentsData: { [id: number]: any}}>;
+let handle: DocHandle<ComponentDoc>;
 
 /**
  * The available tasks in the current application.
@@ -212,39 +214,75 @@ export const useApplicationStore = defineStore("applicationStore", () => {
 
 
   // Synchronisiere Änderungen von Automerge ins Store
-  function syncComponents(componentData: ComponentSyncData[]) {
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  function syncSingleComponentChange(path: string, value: any) {
     if (!documentReady.value) {
       console.warn("Dokument noch nicht bereit, kann nicht syncen");
       return;
     }
-    isRemoteUpdate.value = true;
+    if (isRemoteUpdate.value) {
+      return;
+    }
     // Übernimm die fieldValues ins TaskGraphStore
     handle.change((doc) => {
-      if (!doc.componentsData) {
-        doc.componentsData = {};
-      }
-      componentData.forEach(({ id, data }) => {
-        doc.componentsData[id] = JSON.parse(JSON.stringify(data));
-        // JSON.parse/stringify um sicherzugehen, dass keine Proxies übertragen werden.
-      });
+      doc.componentsData = doc.componentsData ?? {};
+      doc.componentsData[path] = JSON.parse(JSON.stringify(value));
     });
+    console.log(`syncSingleComponentChange -> Path: ${path}, Value:`, value);
     isRemoteUpdate.value = false;
   };
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  function syncFromDocComponents(doc: { componentsData?: { [id: number]: any } }) {
+  function syncFromDocComponents(doc: { componentsData?: Record<string, any> }) {
     if (!doc.componentsData) return;
-    // Die Daten liegen jetzt im Dokument, wir geben sie ans taskGraphStore weiter
-    const changes = Object.entries(doc.componentsData).map(([id, data]) => ({
-      id: Number(id),
-      data
-    }));
+
+    // Neuen Stand
+    const newComponents = doc.componentsData;
+    // Optional: Alten Stand cachen
+     const oldComponents = lastComponentsDataCache; // globale oder store-weite Variable
+
+    // Vergleiche
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    const changedEntries: Array<{ pathOrId: string; data: any }> = [];
+
+    // 1) Finde geänderte oder neue Keys
+    for (const [key, val] of Object.entries(newComponents)) {
+      if (!oldComponents.value || JSON.stringify(oldComponents.value[key]) !== JSON.stringify(val)) {
+        changedEntries.push({ pathOrId: key, data: val });
+      }
+    }
+    // 2) Finde gelöschte Keys (optional)
+    if (oldComponents.value) {
+      for (const key of Object.keys(oldComponents)) {
+        if (!(key in newComponents)) {
+          changedEntries.push({ pathOrId: key, data: undefined });
+        }
+      }
+    }
+
+    if (changedEntries.length === 0) {
+      console.log("Keine echten Änderungen in componentsData");
+      return;
+    }
+
+    console.log("Echte Änderungen:", changedEntries);
+
+    // Update local cache
+    lastComponentsDataCache.value = JSON.parse(JSON.stringify(newComponents));
 
     const taskGraphStore = useTaskGraphStore();
     // Wir setzen isRemoteUpdate, falls du sicherstellen willst,
     // dass applySynchronizedChanges kein erneutes Sync auslöst.
     isRemoteUpdate.value = true;
-    taskGraphStore.applySynchronizedChanges(changes);
+    changedEntries.forEach(({ pathOrId, data }) => {
+      // Falls du "id" => {component data} hast:
+      const idNum = Number(pathOrId);
+      if (isNaN(idNum)) {
+        // Dann ist es ein Pfad? Kommt auf dein Modell an
+      } else {
+        taskGraphStore.applySynchronizedChanges([{ id: idNum, data }]);
+      }
+    });
     isRemoteUpdate.value = false;
   }
 
@@ -281,6 +319,24 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     handle.whenReady().then(() => {
       documentReady.value = true;
       console.log("DocHandle ist bereit "+handle.documentId);
+      // Prüfen, ob das Dokument noch KEINE componentsData enthält
+      const doc = handle.docSync();
+      if (!doc?.componentsData) {
+        console.log("Dokument leer, führe initialen Voll-Sync aus...");
+        handle.change((doc) => {
+          doc.componentsData = {};
+
+          // Hole den TaskGraphStore und lese den gesamten relevanten Unterbaum
+          const taskGraphStore = useTaskGraphStore();
+          const componentData = taskGraphStore.extractComponentData();
+          // => z. B. [{ id: number, data: any }, ...]
+
+          // Übertrage alles ins Automerge-Dokument
+          for (const { id, data } of componentData) {
+            doc.componentsData![id.toString()] = JSON.parse(JSON.stringify(data));
+          }
+        });
+      }
     });
     handle.on("change", (d) => {
       syncFromDocComponents(d.doc);
@@ -302,7 +358,7 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     login,
     logout,
     joinSession,
-    syncComponents,
+    syncSingleComponentChange,
     documentReady,
     isRemoteUpdate,
   };

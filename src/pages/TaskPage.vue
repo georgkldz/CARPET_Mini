@@ -36,7 +36,6 @@ const isLoading = computed(() => taskStore.isLoading);
  * See: https://router.vuejs.org/guide/essentials/dynamic-matching.html#Reacting-to-Params-Changes
  */
 onBeforeMount(async () => {
-  taskStore.init();
   taskStore.setCurrentTask(route.params.taskName as string);
   taskStore.fetchTaskGraph();
 });

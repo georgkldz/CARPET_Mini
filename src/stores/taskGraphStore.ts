@@ -79,7 +79,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
   actions: {
     extractComponentData() {
       // JSONPath zur Auswahl aller Komponenten-Daten
-      const componentsPath = '$.nodes.0.components';
+      const componentsPath = "$.nodes.0.components";
       const components = JSONPath({ path: componentsPath, json: this.$state });
 
       if (!components || !components[0]) {
@@ -117,8 +117,8 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
        * Log the state change in development mode.
        */
       process.env.NODE_ENV === "development" && console.log(path, value);
-      if (!applicationStore.isRemoteUpdate) {
-        applicationStore.syncToDoc();
+      if (!applicationStore.isRemoteUpdate && path.startsWith("$.nodes.0.components")) {
+        this.syncSinglePathValue(path, value);
       }
     },
     /**
@@ -153,12 +153,11 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       this.isLoading = !this.isLoading;
     },
 
-    synchronizeComponents() {
+
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    syncSinglePathValue(path: string, value: any) {
       const applicationStore = useApplicationStore();
-      // Extrahieren der Komponenten mit IDs
-      const componentData = this.extractComponentData();
-      // Weitergabe an den applicationStore zur Synchronisation
-      applicationStore.syncComponents(componentData);
+      applicationStore.syncSingleComponentChange(path, value);
     },
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
