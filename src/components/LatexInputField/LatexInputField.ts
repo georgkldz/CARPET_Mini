@@ -10,6 +10,8 @@ import type {
 import { BaseComponent } from "carpet-component-library";
 import { unref } from "vue";
 import katex from "katex";
+import type { QInputProps } from "quasar";
+
 
 /**
  * The LatexInputFieldProps interface is used to define the properties, that are passed from the parent component to the LatexInputField component.
@@ -26,7 +28,7 @@ export declare type LatexInputFieldComponentType = "LatexInputField";
 /**
  * The InputField-component may receive a path to a reference value for the initialization of the input field value.
  */
-export declare interface SerializedLatexInputFieldDependencies
+export interface SerializedLatexInputFieldDependencies
   extends SerialisedDependencies {
   referenceValue?: JSONPathExpression;
 }
@@ -34,14 +36,19 @@ export declare interface SerializedLatexInputFieldDependencies
 /**
  * The LatexInputField-component may utilize a reference value for the initialization of the input field value.
  */
-export declare interface LatexInputFieldDependencies extends ComponentDependencies {
+export interface LatexInputFieldDependencies extends ComponentDependencies {
   referenceValue?: string | undefined | null;
+}
+
+export interface FieldConfiguration extends Omit<QInputProps, "modelValue" | "inputStyle"> {
+  placeholder?: string;
 }
 
 /**
  * The InputField-component may hold a static input field value in its componentData.
  */
 export declare interface LatexInputFieldComponentData extends ComponentData {
+  fieldConfiguration: FieldConfiguration;
   fieldValue: string | undefined | null;
 }
 
@@ -117,3 +124,4 @@ export class LatexInputFieldComponent extends BaseComponent<
   }
 
 }
+

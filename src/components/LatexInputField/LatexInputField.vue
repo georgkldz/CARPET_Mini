@@ -3,7 +3,7 @@
     <!-- Eingabebereich mit Quasar QInput -->
     <q-input
       v-if="isEditing"
-      v-model="latexContent"
+      v-model="value"
       type="text"
       dense
       outlined
@@ -12,7 +12,7 @@
       class="editor"
       @focusin="handleFocusIn"
       @focusout="handleFocusOut"
-      @input="onUserInput"
+      @update:model-value="onUserInput"
     >
       <!-- Vorschau im Label-Bereich -->
       <template v-slot:label>
@@ -23,7 +23,7 @@
     <!-- Vorschau ohne Bearbeitung -->
     <q-input
       v-else
-      v-model="latexContent"
+      v-model="value"
       dense
       outlined
       readonly
@@ -40,6 +40,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, watch, onMounted, toRefs, unref } from "vue";
+import type { Ref } from "vue";
 import { QInput } from "quasar";
 import { LatexInputFieldComponent } from "src/components/LatexInputField/LatexInputField";
 import type { LatexInputFieldProps } from "src/components/LatexInputField/LatexInputField";
@@ -48,7 +49,7 @@ import "katex/dist/katex.min.css";
 
 // Props aus der CARPET Component Library definieren
 const props = defineProps<LatexInputFieldProps>();
-const { storeObject, componentID, componentPath, modelValue } = toRefs(props);
+const { storeObject, componentID, componentPath } = toRefs(props);
 
 // LatexInputFieldComponent-Instanz erstellen
 const component = new LatexInputFieldComponent(
@@ -57,37 +58,36 @@ const component = new LatexInputFieldComponent(
   unref(componentPath),
 );
 
+// Aus dem Component-Objekt erhalten wir die Daten.
+// Hier liegt z. B. fieldValue und ggf. andere Konfigurationen.
+const componentData = component.getComponentData();
+const dependencies = component.loadDependencies();
+
+// Lokales Ref, das wir per v-model an den QInput binden
+// und in das wir den Wert aus dem Store schreiben.
+const value: Ref<(typeof componentData.value)["fieldValue"]> = ref(undefined);
+
 // Reaktive Variablen
-const latexContent = ref<string>(modelValue.value || ""); // Lokaler Inhalt
 const isEditing = ref(false); // Steuert den Bearbeitungsmodus
 
 // Computed für Syntaxfehler (Verwendung von getSyntaxError aus LatexInputField.ts)
-const syntaxError = computed(() => component.getSyntaxError(latexContent.value));
+const syntaxError = computed(() => component.getSyntaxError(value.value));
 
 // Echtzeit-Rendering des LaTeX-Inhalts
 const renderedLatexLabel = computed(() => {
-  if (latexContent.value.trim() === "") {
+  if (!value.value || value.value.trim() === "") {
     return "Hier Latex-Code eingeben";
   }
   return syntaxError.value === null
-    ? katex.renderToString(latexContent.value || "", { throwOnError: true })
+    ? katex.renderToString(value.value, { throwOnError: true })
     : "Ungültiger LaTeX-Code";
 });
 
 // Dynamischer Placeholder
 const dynamicPlaceholder = computed(() => {
-  return latexContent.value.trim() === "" ? "Hier Latex eingeben" : "";
+  return !value.value || value.value.trim() === "" ? "Hier Latex eingeben" : "";
 });
 
-// Benutzerinteraktionen
-const onUserInput = () => {
-  // Trigger Validierung und speichern im Store
-  component.validate(latexContent.value);
-  unref(storeObject).setProperty({
-    path: `${component.getComponentPath()}.component.fieldValue`,
-    value: latexContent.value,
-  });
-};
 
 const handleFocusIn = () => {
   isEditing.value = true;
@@ -103,31 +103,34 @@ const handleFocusOut = (event: FocusEvent) => {
 
 // Initialisierung und Synchronisierung
 onMounted(() => {
-  if (props.storeObject && props.storeObject.store) {
-    console.log("Store Object Details:", props.storeObject);
-    // props.storeObject.store.joinSession();
-  } else {
-    console.error("Store or storeObject is undefined", props.storeObject);
-  }
-  latexContent.value = modelValue.value || "";
-  component.validate(latexContent.value); // Initiale Validierung
+  // Initialer Wert (genauso wie InputField.vue)
+  // => erst referenceValue, falls gesetzt, sonst fieldValue
+  value.value = dependencies.value.referenceValue ?? unref(componentData).fieldValue;
+  component.validate(<string | undefined | null>value.value);
 
-  // Synchronisierung mit dem Store
-  watch(latexContent, (newValue) => {
-    component.validate(newValue);
-    unref(storeObject).setProperty({
-      path: `${component.getComponentPath()}.component.fieldValue`,
-      value: newValue,
-    });
+});
+
+watch(
+  () => componentData.value.fieldValue,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      value.value = newVal;
+      component.validate(value.value);
+    }
+  }
+);
+
+const onUserInput = (newValue: string | number | null) => {
+  // 1) Wert in den Store schreiben
+  unref(storeObject).setProperty({
+    path: `${component.getComponentPath()}.component.fieldValue`,
+    value: newValue
   });
-});
 
-// Beobachten von externen Änderungen an modelValue
-watch(modelValue, (newValue) => {
-  if (newValue !== latexContent.value) {
-    latexContent.value = newValue || "";
-  }
-});
+  // 2) Validierung
+  component.validate(value.value);
+};
+
 </script>
 
 <style scoped>
@@ -154,4 +157,5 @@ watch(modelValue, (newValue) => {
   width: 100%; /* Maximale Breite nutzen */
 }
 </style>
+
 

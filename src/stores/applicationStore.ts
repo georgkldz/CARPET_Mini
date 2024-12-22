@@ -8,7 +8,7 @@ import type {
   SerializedDOTGraphComponent,
   SerializedFormComponent,
   SerializedButtonComponent,
-  SerializedInputFieldComponent,
+  SerializedInputFieldComponent, JSONPathExpression
 } from "carpet-component-library";
 
 
@@ -225,7 +225,9 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     }
     // Übernimm die fieldValues ins TaskGraphStore
     handle.change((doc) => {
-      doc.componentsData = doc.componentsData ?? {};
+      if (!doc.componentsData) {
+        doc.componentsData = {}; // nur ein Mal anlegen
+      }
       doc.componentsData[path] = JSON.parse(JSON.stringify(value));
     });
     console.log(`syncSingleComponentChange -> Path: ${path}, Value:`, value);
@@ -234,12 +236,13 @@ export const useApplicationStore = defineStore("applicationStore", () => {
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   function syncFromDocComponents(doc: { componentsData?: Record<string, any> }) {
+    console.log("syncFromDocComponents aufgerufen", doc);
     if (!doc.componentsData) return;
 
     // Neuen Stand
     const newComponents = doc.componentsData;
     // Optional: Alten Stand cachen
-     const oldComponents = lastComponentsDataCache; // globale oder store-weite Variable
+    const oldComponents = lastComponentsDataCache; // globale oder store-weite Variable
 
     // Vergleiche
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -275,18 +278,29 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     // dass applySynchronizedChanges kein erneutes Sync auslöst.
     isRemoteUpdate.value = true;
     changedEntries.forEach(({ pathOrId, data }) => {
+      // 1) data === undefined? => überspringen
+      if (data === undefined) {
+        console.log("Ignoriere Patch, da data===undefined:", pathOrId);
+        return;
+      }
       // Falls du "id" => {component data} hast:
       const idNum = Number(pathOrId);
-      if (isNaN(idNum)) {
-        // Dann ist es ein Pfad? Kommt auf dein Modell an
-      } else {
+      console.log("pathOrId", pathOrId);
+      console.log("idNum ", idNum);
+      if (!isNaN(idNum)) {
         taskGraphStore.applySynchronizedChanges([{ id: idNum, data }]);
+      } else {
+        console.log("Wende Pfad an:", pathOrId);
+        taskGraphStore.setProperty({
+          path: pathOrId as JSONPathExpression,
+          value: data,
+        });
       }
     });
     isRemoteUpdate.value = false;
   }
 
-   const joinSession = async() => {
+  const joinSession = async() => {
     if (isJoinSessionProcessing) {
       console.log("joinSession läuft gerade, breche erneuten Aufruf ab");
       return;
@@ -329,16 +343,19 @@ export const useApplicationStore = defineStore("applicationStore", () => {
           // Hole den TaskGraphStore und lese den gesamten relevanten Unterbaum
           const taskGraphStore = useTaskGraphStore();
           const componentData = taskGraphStore.extractComponentData();
+          console.log("Sub-State beim initialen Voll-Sync: ", componentData);
           // => z. B. [{ id: number, data: any }, ...]
 
           // Übertrage alles ins Automerge-Dokument
           for (const { id, data } of componentData) {
             doc.componentsData![id.toString()] = JSON.parse(JSON.stringify(data));
           }
+          console.log("Automerge-Dokument initial angelegt: ", doc.componentsData)
         });
       }
     });
     handle.on("change", (d) => {
+      console.log("Change-Event von anderem Peer empfangen", d);
       syncFromDocComponents(d.doc);
     });
     isJoinSessionProcessing = false;
@@ -363,3 +380,4 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     isRemoteUpdate,
   };
 });
+

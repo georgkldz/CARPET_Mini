@@ -178,8 +178,11 @@
           }
         },
         "4": {
-          "component": {},
+          "component": {
+            "fieldValue": ""
+          },
           "dependencies": {
+            "referenceValue": "$.nodes.0.components.4.component.fieldValue"
           },
           "validationConfiguration": {},
           "isCorrect": true,
@@ -198,3 +201,4 @@
     "dotDescription": "digraph G { bgcolor=transparent  a->b; b->c; c->a; }"
   }
 }
+

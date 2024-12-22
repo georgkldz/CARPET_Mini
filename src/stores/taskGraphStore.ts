@@ -118,6 +118,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
        */
       process.env.NODE_ENV === "development" && console.log(path, value);
       if (!applicationStore.isRemoteUpdate && path.startsWith("$.nodes.0.components")) {
+        //if ( path.startsWith("$.nodes.0.components")) {
         this.syncSinglePathValue(path, value);
       }
     },
@@ -162,12 +163,13 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     applySynchronizedChanges(changes: { id: number; data: any }[]) {
-      // Änderungen anwenden
+      console.log("applySynchronizedChanges aufgerufen", changes);
       changes.forEach(({ id, data }) => {
-          // Bestehende Komponente aktualisieren
-          this.$state.nodes[0].components[id] = data;
+        // Bestehende Komponente aktualisieren
+        this.$state.nodes[0].components[id] = data;
       });
     }
 
   },
 });
+
