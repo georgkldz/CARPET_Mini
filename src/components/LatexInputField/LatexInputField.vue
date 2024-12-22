@@ -61,11 +61,15 @@ const component = new LatexInputFieldComponent(
 // Aus dem Component-Objekt erhalten wir die Daten.
 // Hier liegt z. B. fieldValue und ggf. andere Konfigurationen.
 const componentData = component.getComponentData();
-const dependencies = component.loadDependencies();
+//const dependencies = component.loadDependencies();
 
 // Lokales Ref, das wir per v-model an den QInput binden
 // und in das wir den Wert aus dem Store schreiben.
 const value: Ref<(typeof componentData.value)["fieldValue"]> = ref(undefined);
+const referenceValue = computed(() => {
+  return unref(storeObject).getProperty("$.nodes.0.components.4.component.fieldValue");
+});
+
 
 // Reaktive Variablen
 const isEditing = ref(false); // Steuert den Bearbeitungsmodus
@@ -105,13 +109,13 @@ const handleFocusOut = (event: FocusEvent) => {
 onMounted(() => {
   // Initialer Wert (genauso wie InputField.vue)
   // => erst referenceValue, falls gesetzt, sonst fieldValue
-  value.value = dependencies.value.referenceValue ?? unref(componentData).fieldValue;
+  value.value = referenceValue.value ?? unref(componentData).fieldValue;
   component.validate(<string | undefined | null>value.value);
 
 });
 
 watch(
-  () => componentData.value.fieldValue,
+  () => referenceValue.value,
   (newVal, oldVal) => {
     if (newVal !== oldVal) {
       value.value = newVal;
