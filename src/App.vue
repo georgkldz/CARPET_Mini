@@ -3,6 +3,7 @@
     <!-- Bedingte Anzeige: LoginScreen oder MainLayout -->
     <LoginScreen v-if="!appStore.isAuthenticated" />
     <MainLayout v-else />
+
   </div>
 </template>
 
@@ -43,4 +44,19 @@ a {
   color: inherit;
   text-decoration: none;
 }
+.toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  opacity: 0.95;
+  z-index: 9999;  /* Erhöht den z-index */
+  transition: opacity 0.3s ease-in-out;
+}
+
 </style>

@@ -55,7 +55,9 @@
             },
             "fieldValue": "test"
           },
-          "dependencies": {},
+          "dependencies": {
+            "referenceValue": "$.nodes.0.components.1.component.fieldValue"
+          },
           "validationConfiguration": {
             "type": "compareValueFromStatic",
             "comparisons": [{ "value": "test", "operator": "==" }]
@@ -113,7 +115,9 @@
                   },
                   "fieldValue": "dock"
                 },
-                "dependencies": {},
+                "dependencies": {
+                  "referenceValue": "$.nodes.0.components.3.nestedComponents.formComponents.inputField1.component.fieldValue"
+                },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
                   "comparisons": [{ "value": "test", "operator": "==" }]

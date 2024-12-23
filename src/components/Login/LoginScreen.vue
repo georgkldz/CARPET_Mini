@@ -24,6 +24,7 @@
       </div>
       <button type="submit" :disabled="loading">Anmelden</button>
     </form>
+
     <p v-if="error" class="error">{{ error }}</p>
   </div>
 </template>
@@ -48,7 +49,6 @@ export default defineComponent({
 
       try {
         await appStore.login({ email: email.value, password: password.value });
-        alert("Login erfolgreich!");
       } catch (err) {
         if (err instanceof Error) {
           error.value = err.message || "Anmeldung fehlgeschlagen.";
