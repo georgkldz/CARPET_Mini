@@ -25,6 +25,8 @@ import type { SerializedBasicInputFieldComponent } from "../components/BasicInpu
 import { SerializedLatexInputComponent } from "components/LatexInput/LatexInput.ts";
 import ExampleTask from "../SerialisedTasks/Example.carpet.json";
 import { SerializedLatexInputFieldComponent } from "components/LatexInputField/LatexInputField.ts";
+import {SerializedTextViewComponent} from "components/TextView/TextView.ts";
+
 const staticTasks = { Example: serialisedTaskSchema.parse(ExampleTask) };
 import {  useTaskGraphStore } from "./taskGraphStore";
 //import type { Doc } from "@automerge/automerge";
@@ -65,7 +67,8 @@ export interface SerialisedComponents {
     | SerializedBasicInputFieldComponent
     | SerializedFormComponent
     | SerializedButtonComponent
-    | SerializedInputFieldComponent;
+    | SerializedInputFieldComponent
+    | SerializedTextViewComponent;
 }
 
 export type LayoutSizes = "phone" | "tablet" | "desktop";

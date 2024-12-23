@@ -5,6 +5,12 @@
     "0": {
       "layouts": {
         "desktop": {
+          "0": {
+            "x": 1,
+            "y": 1,
+            "width": 30,
+            "height": 30
+          },
           "1": {
             "x": 26,
             "y": 26,
@@ -48,53 +54,13 @@
         }
       },
       "components": {
-        "1": {
-          "component": {
-            "fieldConfiguration": {
-              "icon": "10k"
-            },
-            "fieldValue": "test"
-          },
-          "dependencies": {
-            "referenceValue": "$.nodes.0.components.1.component.fieldValue"
-          },
-          "validationConfiguration": {
-            "type": "compareValueFromStatic",
-            "comparisons": [{ "value": "test", "operator": "==" }]
-          },
-          "isCorrect": false,
-          "isValid": false,
-          "name": "test",
-          "type": "InputField"
-        },
-        "2": {
-          "component": {
-            "fieldConfiguration": {
-              "icon": "10k",
-              "label": "test",
-              "hint": "test"
-            },
-            "fieldValue": "test"
-          },
-          "dependencies": {
-            "referenceValue": "$.nodes.0.components.1.component.fieldValue"
-          },
-          "validationConfiguration": {
-            "type": "compareValueFromStatic",
-            "comparisons": [{ "value": "test", "operator": "==" }]
-          },
-          "isCorrect": false,
-          "isValid": false,
-          "name": "test",
-          "type": "InputField"
-        },
-        "3": {
+        "0": {
           "type": "GenericForm",
-          "name": "Example Form",
+          "name": "Einzelbearbeitung",
           "isValid": true,
           "isCorrect": true,
-          "dependenciesAreValidAndFormFieldsAreCorrect": false,
-          "formFieldsAreValidAndDependenciesAreCorrect": false,
+          "dependenciesAreValidAndFormFieldsAreCorrect": true,
+          "formFieldsAreValidAndDependenciesAreCorrect": true,
           "dependencies": {},
           "validationConfiguration": {
             "submitableWhen": "dependenciesAreValidAndFormFieldsAreCorrect"
@@ -102,21 +68,18 @@
           "component": {},
           "nestedComponents": {
             "formComponents": {
-              "inputField1": {
-                "type": "InputField",
-                "name": "InputField1",
-                "isValid": false,
-                "isCorrect": false,
+              "textView1": {
+                "type": "TextView",
+                "name": "TextView1",
+                "isValid": true,
+                "isCorrect": true,
                 "component": {
                   "fieldConfiguration": {
-                    "icon": "10k",
-                    "label": "zB",
-                    "hint": "zB"
                   },
-                  "fieldValue": "dock"
+                  "fieldValue": "Gesucht ist eine ganzrationale Funktion dritten Grades, deren Graph in A(0 | 4) einen Extrempunkt hat, die x-Achse bei x = 2 schneidet und durch den Punkt B(1 | 3) geht."
                 },
                 "dependencies": {
-                  "referenceValue": "$.nodes.0.components.3.nestedComponents.formComponents.inputField1.component.fieldValue"
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.textView1.component.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -181,6 +144,47 @@
             }
           }
         },
+        "1": {
+          "component": {
+            "fieldConfiguration": {
+              "icon": "10k"
+            },
+            "fieldValue": "test"
+          },
+          "dependencies": {
+            "referenceValue": "$.nodes.0.components.1.component.fieldValue"
+          },
+          "validationConfiguration": {
+            "type": "compareValueFromStatic",
+            "comparisons": [{ "value": "test", "operator": "==" }]
+          },
+          "isCorrect": false,
+          "isValid": false,
+          "name": "test",
+          "type": "InputField"
+        },
+        "2": {
+          "component": {
+            "fieldConfiguration": {
+              "icon": "10k",
+              "label": "test",
+              "hint": "test"
+            },
+            "fieldValue": "test"
+          },
+          "dependencies": {
+            "referenceValue": "$.nodes.0.components.1.component.fieldValue"
+          },
+          "validationConfiguration": {
+            "type": "compareValueFromStatic",
+            "comparisons": [{ "value": "test", "operator": "==" }]
+          },
+          "isCorrect": false,
+          "isValid": false,
+          "name": "test",
+          "type": "InputField"
+        },
+
         "4": {
           "component": {
             "fieldValue": ""

@@ -64,20 +64,21 @@ const component = new LatexInputFieldComponent(
 // Aus dem Component-Objekt erhalten wir die Daten.
 // Hier liegt z. B. fieldValue und ggf. andere Konfigurationen.
 const componentData = component.getComponentData();
-//const dependencies = component.loadDependencies();
+const dependencies = component.loadDependencies();
 
 // Lokales Ref, das wir per v-model an den QInput binden
 // und in das wir den Wert aus dem Store schreiben.
 const value: Ref<(typeof componentData.value)["fieldValue"]> = ref(undefined);
+
 const referenceValue = computed(() => {
-  return unref(storeObject).getProperty("$.nodes.0.components.4.component.fieldValue");
+  return dependencies.value.referenceValue;
 });
 
 
 // Reaktive Variablen
 const isEditing = ref(false); // Steuert den Bearbeitungsmodus
 
-// Computed für Syntaxfehler (Verwendung von getSyntaxError aus LatexInputField.ts)
+// Computed für Syntaxfehler (Verwendung von getSyntaxError aus TextView.ts)
 const syntaxError = computed(() => component.getSyntaxError(value.value));
 
 // Echtzeit-Rendering des LaTeX-Inhalts
