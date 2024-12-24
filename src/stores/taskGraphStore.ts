@@ -119,6 +119,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       process.env.NODE_ENV === "development" && console.log(path, value);
       if (!applicationStore.isRemoteUpdate && path.startsWith("$.nodes.0.components")) {
         //if ( path.startsWith("$.nodes.0.components")) {
+        console.log("setProperty ruft syncSinglePathValue auf mit ",path, value);
         this.syncSinglePathValue(path, value);
       }
     },
@@ -158,6 +159,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     syncSinglePathValue(path: string, value: any) {
       const applicationStore = useApplicationStore();
+      console.log("Rufe applicationStore auf mit", path, value);
       applicationStore.syncSingleComponentChange(path, value);
     },
 

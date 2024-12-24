@@ -233,7 +233,7 @@ export const useApplicationStore = defineStore("applicationStore", () => {
       }
       doc.componentsData[path] = JSON.parse(JSON.stringify(value));
     });
-    console.log(`syncSingleComponentChange -> Path: ${path}, Value:`, value);
+    console.log("syncSingleComponentChange -> Path: ${path}, Value:", value);
     isRemoteUpdate.value = false;
   };
 
