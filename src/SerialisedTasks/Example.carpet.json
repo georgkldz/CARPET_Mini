@@ -102,6 +102,25 @@
           "component": {},
           "nestedComponents": {
             "formComponents": {
+              "textView1": {
+                "type": "TextView",
+                "name": "TextView1",
+                "isValid": false,
+                "isCorrect": false,
+                "component": {
+                  "fieldConfiguration": {
+                    "icon": "10k",
+                    "label": "zB",
+                    "hint": "zB"
+                  },
+                  "fieldValue": "Aufgabentext"
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.0.components.3.nestedComponents.formComponents.textView1.component.fieldValue"
+                },
+                "validationConfiguration": {
+                }
+              },
               "inputField1": {
                 "type": "InputField",
                 "name": "InputField1",
