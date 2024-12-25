@@ -42,6 +42,7 @@ export interface LatexInputFieldDependencies extends ComponentDependencies {
 
 export interface FieldConfiguration extends Omit<QInputProps, "modelValue" | "inputStyle"> {
   placeholder?: string;
+  prepend?: string;
 }
 
 /**

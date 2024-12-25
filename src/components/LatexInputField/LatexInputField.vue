@@ -7,29 +7,42 @@
       type="text"
       dense
       outlined
-      :placeholder="dynamicPlaceholder"
+      v-bind="fieldConfiguration"
+      :placeholder="fieldConfiguration.placeholder ?? ''"
       label=""
       class="editor"
       @focusin="handleFocusIn"
       @focusout="handleFocusOut"
       @update:model-value="onUserInput"
     >
+      <template v-slot:prepend v-if="fieldConfiguration.prepend">
+        <span class="prepend">{{ fieldConfiguration.prepend }}</span>
+      </template>
+
       <!-- Vorschau im Label-Bereich -->
       <template v-slot:label>
         <span v-html="renderedLatexLabel"></span>
+      </template>
+      <template v-slot:hint v-if="fieldConfiguration.hint">
+        {{ fieldConfiguration.hint }}
       </template>
     </q-input>
 
     <!-- Vorschau ohne Bearbeitung -->
     <q-input
-      v-else
+       v-else
       :model-value="''"
-    dense
-    outlined
-    readonly
-    class="editor preview"
-    @click="handleFocusIn"
+      dense
+      outlined
+      readonly
+      v-bind="fieldConfiguration"
+      :placeholder="''"
+      class="editor preview"
+      @click="handleFocusIn"
     >
+    <template v-slot:before v-if="fieldConfiguration.prepend">
+        <span class="prepend">{{ fieldConfiguration.prepend }}</span>
+    </template>
     <template #default>
       <span v-html="renderedLatexLabel" class="latex-preview"></span>
     </template>
@@ -65,6 +78,7 @@ const component = new LatexInputFieldComponent(
 // Hier liegt z. B. fieldValue und ggf. andere Konfigurationen.
 const componentData = component.getComponentData();
 const dependencies = component.loadDependencies();
+const fieldConfiguration = unref(componentData).fieldConfiguration;
 
 // Lokales Ref, das wir per v-model an den QInput binden
 // und in das wir den Wert aus dem Store schreiben.
@@ -84,18 +98,12 @@ const syntaxError = computed(() => component.getSyntaxError(value.value));
 // Echtzeit-Rendering des LaTeX-Inhalts
 const renderedLatexLabel = computed(() => {
   if (!value.value || value.value.trim() === "") {
-    return "Hier Latex-Code eingeben";
+    return "Hier Latex eingeben";
   }
   return syntaxError.value === null
     ? katex.renderToString(value.value, { throwOnError: true })
     : "Ungültiger LaTeX-Code";
 });
-
-// Dynamischer Placeholder
-const dynamicPlaceholder = computed(() => {
-  return !value.value || value.value.trim() === "" ? "Hier Latex eingeben" : "";
-});
-
 
 const handleFocusIn = () => {
   isEditing.value = true;
