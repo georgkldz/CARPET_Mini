@@ -7,16 +7,11 @@ import wasmUrl from "@automerge/automerge/automerge.wasm?url";
 import { next as Automerge } from "@automerge/automerge/slim";
 
 (async () => {
-  // WebAssembly-Modul initialisieren
   await Automerge.initializeWasm(wasmUrl);
 })();
 
 import { useTaskGraphStore } from "../taskGraphStore";
-//import type { useApplicationStore } from "../applicationStore"
 import { JSONPathExpression } from "carpet-component-library";
-
-// Konstant für die Session-ID
-const SESSION_ID = 43;
 
 // Server-Endpunkt
 const SERVER_URL = "http://localhost:3000"; // Passe die URL an deinen Server an
@@ -29,7 +24,6 @@ interface ComponentDoc {
 const lastComponentsDataCache = ref<Record<string, any> | null>(null);
 
 let documentId: AnyDocumentId;
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 let handle: DocHandle<ComponentDoc>;
 const documentReady = ref(false);
 const isRemoteUpdate = ref(false);
@@ -46,7 +40,7 @@ const repo = new Repo({
 /**
  * joinSession - initializes the Automerge-Session
  */
-export async function joinSession(taskGraphStore: ReturnType<typeof useTaskGraphStore>) {
+export async function joinSession(  sessionId: number,   taskGraphStore: ReturnType<typeof useTaskGraphStore>) {
   if (isJoinSessionProcessing) {
     console.log("joinSession läuft gerade, breche erneuten Aufruf ab");
     return;
@@ -61,7 +55,7 @@ export async function joinSession(taskGraphStore: ReturnType<typeof useTaskGraph
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ sessionId: SESSION_ID }),
+      body: JSON.stringify({ sessionId }),
     });
     if (!response.ok) {
       throw new Error("Failed to join session");
@@ -138,7 +132,7 @@ export function syncFromDocComponents(  doc: { componentsData?: Record<string, a
   if (!doc.componentsData) return;
 
   const newComponents = doc.componentsData;
-  const oldComponents = lastComponentsDataCache; // globale oder store-weite Variable
+  const oldComponents = lastComponentsDataCache;
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const changedEntries: Array<{ pathOrId: string; data: any }> = [];
@@ -167,12 +161,12 @@ export function syncFromDocComponents(  doc: { componentsData?: Record<string, a
   lastComponentsDataCache.value = JSON.parse(JSON.stringify(newComponents));
   isRemoteUpdate.value = true;
   changedEntries.forEach(({ pathOrId, data }) => {
-    // 1) data === undefined? => überspringen
+    // 1) data === undefined? => skip
     if (data === undefined) {
       console.log("Ignoriere Patch, da data===undefined:", pathOrId);
       return;
     }
-    // Falls du "id" => {component data} hast:
+    // If "id" => {component data}:
     const idNum = Number(pathOrId);
     console.log("pathOrId", pathOrId);
     console.log("idNum ", idNum);

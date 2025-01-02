@@ -113,6 +113,8 @@ export interface SerialisedTask {
   taskData?: TaskData;
 }
 
+const SESSION_ID = 43;
+
 //Composition API
 export const useApplicationStore = defineStore("applicationStore", () => {
 
@@ -120,6 +122,7 @@ export const useApplicationStore = defineStore("applicationStore", () => {
   const isAuthenticated = ref(false);
   const documentReady = ref(false);
   const isRemoteUpdate = ref(false);
+  const sessionId = ref<number | null>(SESSION_ID);
 
   /**
    * (Mocked) Getter for reading all serialised tasks from the file system.
@@ -171,7 +174,11 @@ export const useApplicationStore = defineStore("applicationStore", () => {
 
   function joinSessionWrapper() {
     const taskGraphStore = useTaskGraphStore();
-    joinSession(taskGraphStore);
+    if (sessionId.value === null) {
+      console.error("Keine Session-ID vorhanden.");
+      return;
+    }
+    joinSession(sessionId.value, taskGraphStore);
   }
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -180,6 +187,7 @@ export const useApplicationStore = defineStore("applicationStore", () => {
   }
 
   return {
+    sessionId,
     leftDrawerOpen,
     toggleLeftDrawer,
     darkMode,
