@@ -4,6 +4,7 @@ import {  useApplicationStore } from "./applicationStore";
 import type { AvailableTasks } from "./applicationStore";
 import type { SerialisedTask } from "./applicationStore";
 import { JSONPath } from "jsonpath-plus";
+import {syncSingleComponentChange} from "stores/sync/automergeSync.ts";
 
 
 import type {
@@ -120,7 +121,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       if (!applicationStore.isRemoteUpdate && path.startsWith("$.nodes.0.components")) {
         //if ( path.startsWith("$.nodes.0.components")) {
         console.log("setProperty ruft syncSinglePathValue auf mit ",path, value);
-        this.syncSinglePathValue(path, value);
+        syncSingleComponentChange(path, value);
       }
     },
     /**
