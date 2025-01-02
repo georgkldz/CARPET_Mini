@@ -158,13 +158,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
 
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    syncSinglePathValue(path: string, value: any) {
-      const applicationStore = useApplicationStore();
-      console.log("Rufe applicationStore auf mit", path, value);
-      applicationStore.syncSingleComponentChange(path, value);
-    },
-
-    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     applySynchronizedChanges(changes: { id: number; data: any }[]) {
       console.log("applySynchronizedChanges aufgerufen", changes);
       changes.forEach(({ id, data }) => {
