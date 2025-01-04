@@ -1,16 +1,19 @@
 <template>
   <div>
-    {{ value }}
+    <span
+      v-for="(seg, idx) in textSegments"
+      :key="idx"
+      :class="computeClass(seg)"
+    >
+      {{ seg.text }}
+    </span>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, watch, toRefs, unref, ref } from "vue";
-import type { Ref } from "vue";
-import { TextViewComponent } from "components/TextView/TextView.ts";
+import { onMounted, computed, watch, toRefs, unref } from "vue";
+import { TextSegment, TextViewComponent } from "components/TextView/TextView.ts";
 import type { TextViewProps } from "components/TextView/TextView";
-
-
 
 const props = defineProps<TextViewProps>();
 const { storeObject, componentID, componentPath } = toRefs(props);
@@ -19,25 +22,38 @@ const component = new TextViewComponent(storeObject, unref(componentID), unref(c
 const componentData = component.getComponentData();
 //const fieldConfiguration = unref(componentData).fieldConfiguration;
 
-const dependencies = component.loadDependencies();
+const textSegments = computed(() => unref(componentData).textSegments || []);
 
-const value: Ref<(typeof componentData.value)["fieldValue"]> = ref(undefined);
+function computeClass(seg: TextSegment) {
+  return {
+    "bold-text": seg.bold,
+    "italic-text": seg.italic,
+    [seg.cssClass ?? ""]: Boolean(seg.cssClass),
+  }
+}
 
 onMounted(() => {
-  value.value = dependencies.value.referenceValue ?? unref(componentData).fieldValue;
-  component.validate(<string | undefined | null>value.value);
+  const combined = textSegments.value.map(seg => seg.text).join(" ");
+  component.validate(combined);
 });
 
 watch(
-  () => dependencies.value.referenceValue,
-  (newValue, oldValue) => {
-    if (newValue !== oldValue) {
-      value.value = newValue;
-      component.validate(<string |  undefined | null>value.value);
-    }
-  }
+  () => textSegments.value,
+  (newSegs) => {
+    // Hier bauen wir den Text zusammen:
+    const combined = newSegs.map(seg => seg.text).join(" ");
+    component.validate(combined);
+  },
+  { deep: true }
 );
 
 </script>
 
-<style></style>
+<style scoped>
+.bold-text {
+  font-weight: bold;
+}
+.italic-text {
+  font-style: italic;
+}
+</style>

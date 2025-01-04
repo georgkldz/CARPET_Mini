@@ -17,7 +17,7 @@ import type { QInputProps } from "quasar";
  */
 export declare interface TextViewProps extends ComponentProps {}
 export interface TextViewProps extends ComponentProps {
-  modelValue?: string; // Der LaTeX-Inhalt wird optional übergeben
+  modelValue?: string;
 }
 /**
  * The type of the TextView component.
@@ -43,12 +43,19 @@ export interface FieldConfiguration extends Omit<QInputProps, "modelValue" | "in
   placeholder?: string;
 }
 
+export declare interface TextSegment {
+  text: string;
+  bold?: boolean;
+  italic?: boolean;
+  cssClass?: string;
+}
+
 /**
  * The InputField-component may hold a static input field value in its componentData.
  */
 export declare interface TextViewComponentData extends ComponentData {
   fieldConfiguration: FieldConfiguration;
-  fieldValue: string | undefined | null;
+  textSegments?: Array<TextSegment>;
 }
 
 /**
@@ -87,12 +94,7 @@ export class TextViewComponent extends BaseComponent<
   TextViewValidationConfiguration
 > {
   /**
-   * A InputFieldComponent is valid, if it matches the value in the InputFieldValidationConfiguration.
-   * @returns
-   */
-  /**
-   * Validate the LaTeX content entered by the user.
-   * @param userValue The LaTeX content provided by the user.
+   * validate: checks, if the loaded text (or the concatenated string) is undefined, null or empty.
    */
   public validate(textValue: string | undefined | null) {
     // Start: Angenommen, der Wert ist erst mal gültig
