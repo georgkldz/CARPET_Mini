@@ -59,4 +59,9 @@ a {
   transition: opacity 0.3s ease-in-out;
 }
 
+.form__elements {
+  width: 100%;
+  width: 100%;
+}
+
 </style>

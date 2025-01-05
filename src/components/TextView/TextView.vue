@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="textview-fullwidth">
     <span
       v-for="(seg, idx) in textSegments"
       :key="idx"
@@ -50,6 +50,10 @@ watch(
 </script>
 
 <style scoped>
+.textview-fullwidth {
+  width: 500px;
+  text-align: left;
+}
 .bold-text {
   font-weight: bold;
 }
