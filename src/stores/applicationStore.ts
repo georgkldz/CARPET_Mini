@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { Ref } from "vue";
-import axios, { AxiosError } from "axios";
 import serialisedTaskSchema from "../schemas/zodSchemas/SerialisedTaskSchema";
 
 import type {
@@ -118,11 +117,14 @@ const SESSION_ID = 43;
 //Composition API
 export const useApplicationStore = defineStore("applicationStore", () => {
 
-  const userId = ref<string | null>(null);
-  const isAuthenticated = ref(false);
   const documentReady = ref(false);
   const isRemoteUpdate = ref(false);
   const sessionId = ref<number | null>(SESSION_ID);
+
+  function setSessionId(id: number) {
+    sessionId.value = id;
+  }
+
 
   /**
    * (Mocked) Getter for reading all serialised tasks from the file system.
@@ -141,36 +143,7 @@ export const useApplicationStore = defineStore("applicationStore", () => {
   const toggleDarkMode = () => {
     darkMode.value = !darkMode.value;
   };
-  const login = async (payload: { email: string; password: string }) => {
-    try {
-      const response = await axios.post("http://localhost:3000/login", payload);
-      userId.value = response.data.userId; // `.value` bei `ref` erforderlich
-      isAuthenticated.value = true;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<{ message: string }>;
-        const errorMessage =
-          axiosError.response?.data?.message || "Login fehlgeschlagen.";
-        throw new Error(errorMessage);
-      }
-      throw new Error("Ein unbekannter Fehler ist aufgetreten.");
-    }
-  };
 
-  const logout = async () => {
-    try {
-      await axios.post("http://localhost:3000/logout");
-      userId.value = null;
-      isAuthenticated.value = false;
-      console.log("Logout erfolgreich!");
-    } catch (error) {
-      console.error(
-        "Fehler beim Logout:",
-        error instanceof Error ? error.message : error,
-      );
-      throw new Error("Logout fehlgeschlagen.");
-    }
-  };
 
   function joinSessionWrapper() {
     const taskGraphStore = useTaskGraphStore();
@@ -194,10 +167,7 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     toggleDarkMode,
     tasks,
     SNAP_GRID,
-    userId,
-    isAuthenticated,
-    login,
-    logout,
+    setSessionId,
     joinSession: joinSessionWrapper,
     syncSingleComponentChange: syncSingleComponentWrapper,
     documentReady,

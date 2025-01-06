@@ -3,8 +3,34 @@ import { RouteRecordRaw } from "vue-router";
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
-    component: () => import("pages/IndexPage.vue"),
+    redirect: "/login"
   },
+  {
+    path: "/login",
+    name: "Login",
+    component: () => import("pages/Login/LoginScreen.vue")
+  },
+  {
+    path: "/student-selection",
+    name: "StudentSelection",
+    component: () => import("pages/Login/StudentSelection.vue"),
+  },
+  {
+    path: "/teacher-selection",
+    name: "TeacherSelection",
+    component: () => import("pages/Login/TeacherSelection.vue"),
+  },
+  {
+    path: "/create-task",
+    name: "CreateTask",
+    component: () => import("pages/TeacherNewTask.vue"),
+  },
+  {
+    path: "/main-layout",
+    name: "MainLayout",
+    component: () => import("layouts/MainLayout/MainLayout.vue"),
+  },
+
   {
     path: "/task/:taskName",
     name: "Task",

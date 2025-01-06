@@ -70,6 +70,7 @@
                 "isCorrect": false,
                 "component": {
                   "fieldConfiguration": {
+                    "hint": ""
                   },
                   "textSegments": [
                     { "text": "Gesucht ist eine ganzrationale Funktion dritten Grades, deren Graph in A(0 | 4) einen Extrempunkt hat, die x-Achse bei x = 2 schneidet und durch den Punkt B(1 | 3) geht." }
