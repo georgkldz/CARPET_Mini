@@ -1,4 +1,6 @@
 <template>
+  <q-layout>
+    <q-page-container>
   <q-page class="q-pa-md">
     <div class="row justify-center">
       <div class="col-12 col-sm-8 col-md-6">
@@ -44,6 +46,8 @@
       </div>
     </div>
   </q-page>
+    </q-page-container>
+  </q-layout>
 </template>
 
 <script setup lang="ts">
