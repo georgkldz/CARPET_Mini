@@ -20,7 +20,7 @@ export const useAuthStore = defineStore("authStore", {
     getRole(state): number | null {
       return state.currentUser?.role ?? null;
     },
-    getTaskId(state): number | null {
+    getCurrentTaskId(state): number | null {
       return state.currentTask;
       }
   },
