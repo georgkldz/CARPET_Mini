@@ -113,9 +113,31 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
         value: foundTask.description,
       });
       this.setProperty({
-        path: "$.nodes.0.components.0.nestedComponents.formComponents.textView1.component.fieldConfiguration.hint",
+        path: "$.taskData.taskDescription",
+        value: foundTask.description,
+      });
+      this.setProperty({
+        path: "$.taskData.hint",
         value: foundTask.hint ?? "",
       });
+      // Im loadDBTaskIntoGraph():
+      this.setProperty({
+        path: "$.taskData.degree",
+        value: foundTask.degree
+      });
+      this.setProperty({
+        path: "$.taskData.symmetry",
+        value: foundTask.symmetry
+      });
+      this.setProperty({
+        path: "$.taskData.solutions.textFieldEquation1",
+        value: foundTask.textFieldEquation1 ?? ""
+      });
+      this.setProperty({
+        path: "$.taskData.solutions.sampleSolutionCollaborativeWork",
+        value: foundTask.sampleSolutionCollaborativeWork ?? ""
+      });
+
 
       // Ggf. weitere Felder
       console.log("loadDBTaskIntoGraph: Task übernommen:", foundTask);

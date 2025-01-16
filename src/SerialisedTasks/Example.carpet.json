@@ -78,7 +78,7 @@
                   "fieldValue": ""
                 },
                 "dependencies": {
-                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.textView1.component.fieldValue"
+                  "referenceValue": "$.taskData.taskDescription"
                 },
                 "validationConfiguration": {
                 }
@@ -358,7 +358,20 @@
     "0": [1]
   },
   "layoutSize": "desktop",
+
   "taskData": {
+    "taskDescription": "",
+    "degree": 3,
+    "symmetry": "none",
+    "hint": "",
+    "solutions": {
+      "textFieldEquation1": "f(1)=-2",
+      "textFieldEquation2": "f'(3)=0",
+      "textFieldEquation3": "f''(4)=0",
+      "textFieldEquation4": "f(-7)=5",
+      "textFieldEquation5": "",
+      "sampleSolutionCollaborativeWork": ""
+    },
     "dotDescription": "digraph G { bgcolor=transparent  a->b; b->c; c->a; }"
   }
 }
