@@ -98,7 +98,7 @@ export class LatexInputFieldComponent extends BaseComponent<
    */
   public validate(userValue: string | undefined | null) {
     const error = this.getSyntaxError(userValue);
-    const isValid = error === null;
+    const isValid = error === null || userValue?.toString() == "";
 
     unref(this.storeObject).setProperty({
       path: `${this.serialisedBaseComponentPath}.isValid`,

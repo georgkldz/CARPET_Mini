@@ -58,7 +58,7 @@
           "formFieldsAreValidAndDependenciesAreCorrect": false,
           "dependencies": {},
           "validationConfiguration": {
-            "submitableWhen": "dependenciesAreValidAndFormFieldsAreCorrect"
+            "submitableWhen": "isValid"
           },
           "component": {},
           "nestedComponents": {
@@ -66,7 +66,7 @@
               "textView1": {
                 "type": "TextView",
                 "name": "TextView1",
-                "isValid": false,
+                "isValid": true,
                 "isCorrect": false,
                 "component": {
                   "fieldConfiguration": {
@@ -86,7 +86,7 @@
               "textView2": {
                 "type": "TextView",
                 "name": "TextView2",
-                "isValid": false,
+                "isValid": true,
                 "isCorrect": false,
                 "component": {
                   "fieldConfiguration": {
@@ -105,7 +105,7 @@
               "latexInputField1": {
                 "type": "LatexInputField",
                 "name": "LatexInputField1",
-                "isValid": false,
+                "isValid": true,
                 "isCorrect": false,
                 "component": {
                   "fieldConfiguration": {
@@ -121,7 +121,7 @@
               "latexInputField2": {
                 "type": "LatexInputField",
                 "name": "LatexInputField2",
-                "isValid": false,
+                "isValid": true,
                 "isCorrect": false,
                 "component": {
                   "fieldConfiguration": {
@@ -136,7 +136,7 @@
               "latexInputField3": {
                 "type": "LatexInputField",
                 "name": "LatexInputField3",
-                "isValid": false,
+                "isValid": true,
                 "isCorrect": false,
                 "component": {
                   "fieldConfiguration": {
@@ -151,7 +151,7 @@
               "textView3": {
                 "type": "TextView",
                 "name": "TextView3",
-                "isValid": false,
+                "isValid": true,
                 "isCorrect": false,
                 "component": {
                   "fieldConfiguration": {
@@ -193,7 +193,7 @@
               "inputField2": {
                 "type": "InputField",
                 "name": "InputField2",
-                "isValid": false,
+                "isValid": true,
                 "isCorrect": false,
                 "component": {
                   "fieldConfiguration": {
@@ -214,8 +214,8 @@
               },
               "inputField3": {
                 "type": "InputField",
-                "name": "InputField2",
-                "isValid": false,
+                "name": "InputField3",
+                "isValid": true,
                 "isCorrect": false,
                 "component": {
                   "fieldConfiguration": {
@@ -236,8 +236,8 @@
               },
               "inputField4": {
                 "type": "InputField",
-                "name": "InputField2",
-                "isValid": false,
+                "name": "InputField4",
+                "isValid": true,
                 "isCorrect": false,
                 "component": {
                   "fieldConfiguration": {
@@ -259,7 +259,7 @@
               "inputField5": {
                 "type": "InputField",
                 "name": "InputField5",
-                "isValid": false,
+                "isValid": true,
                 "isCorrect": false,
                 "component": {
                   "fieldConfiguration": {
@@ -283,7 +283,7 @@
               "submit": {
                 "type": "GenericButton",
                 "name": "Submit",
-                "isValid": true,
+                "isValid": false,
                 "isCorrect": true,
                 "dependencies": {},
                 "validationConfiguration": {},
