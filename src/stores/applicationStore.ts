@@ -10,15 +10,14 @@ import type {
   SerializedInputFieldComponent //, JSONPathExpression
 } from "carpet-component-library";
 
-import type { SerializedBasicInputFieldComponent } from "../components/BasicInputField/BasicInputField";
-import { SerializedLatexInputComponent } from "components/LatexInput/LatexInput.ts";
+
 import ExampleTask from "../SerialisedTasks/Example.carpet.json";
-import { SerializedLatexInputFieldComponent } from "components/LatexInputField/LatexInputField.ts";
-import {SerializedTextViewComponent} from "components/TextView/TextView.ts";
+import { SerializedLatexInputFieldComponent } from "carpet-component-library";
+import {SerializedTextViewComponent} from "carpet-component-library";
 
 const staticTasks = { Example: serialisedTaskSchema.parse(ExampleTask) };
 import {  useTaskGraphStore } from "./taskGraphStore";
-import {joinSession, syncSingleComponentChange} from "stores/sync/automergeSync.ts";
+import {joinSession, syncSingleComponentChange} from "stores/sync/automergeSync";
 
 /**
  * The available tasks in the current application.
@@ -28,10 +27,7 @@ export type AvailableTasks = keyof typeof staticTasks;
 export interface SerialisedComponents {
   [id: number]:
     | SerializedDOTGraphComponent
-    | SerializedBasicInputFieldComponent
-    | SerializedLatexInputComponent
     | SerializedLatexInputFieldComponent
-    | SerializedBasicInputFieldComponent
     | SerializedFormComponent
     | SerializedButtonComponent
     | SerializedInputFieldComponent

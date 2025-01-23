@@ -10,7 +10,7 @@ import { next as Automerge } from "@automerge/automerge/slim";
   await Automerge.initializeWasm(wasmUrl);
 })();
 
-import { useTaskGraphStore } from "../taskGraphStore";
+import { useTaskGraphStore } from "stores/taskGraphStore.js";
 import { JSONPathExpression } from "carpet-component-library";
 
 // Server-Endpunkt

@@ -19,7 +19,7 @@ import { useRoute } from "vue-router";
 import LOOM from "src/components/LOOM/LOOM.vue";
 import LoadingSpinner from "src/components/LoadingSpinner.vue";
 import { useTaskGraphStore } from "src/stores/taskGraphStore";
-import {useApplicationStore} from "stores/applicationStore.ts";
+import {useApplicationStore} from "stores/applicationStore";
 
 const taskStore = useTaskGraphStore();
 const applicationStore = useApplicationStore();

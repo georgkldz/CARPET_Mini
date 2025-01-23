@@ -2,7 +2,7 @@
 import { defineStore } from "pinia";
 import axios, { AxiosError } from "axios";
 import type { User } from "src/models/User.ts";
-import { useTasksStore } from "stores/tasksStore.ts";
+import { useTasksStore } from "stores/tasksStore";
 //import type { Task } from "src/models/Task";
 
 export const useAuthStore = defineStore("authStore", {

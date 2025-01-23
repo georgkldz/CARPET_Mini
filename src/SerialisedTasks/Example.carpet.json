@@ -23,7 +23,6 @@
             "width": 5,
             "height": 5
           },
-
           "4": {
             "x": 30,
             "y": 32,
@@ -52,8 +51,10 @@
         "0": {
           "type": "GenericForm",
           "name": "Einzelbearbeitung",
-          "isValid": true,
-          "isCorrect": true,
+          "state": {
+            "isValid": true,
+            "isCorrect": true
+          },
           "dependenciesAreValidAndFormFieldsAreCorrect": false,
           "formFieldsAreValidAndDependenciesAreCorrect": false,
           "dependencies": {},
@@ -66,16 +67,18 @@
               "textView1": {
                 "type": "TextView",
                 "name": "TextView1",
-                "isValid": true,
-                "isCorrect": false,
-                "component": {
-                  "fieldConfiguration": {
-                    "hint": ""
-                  },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
                   "textSegments": [
-                    { "text": "HatnichtgeklapptHatnichtgeklappt" }
+                    {
+                      "text": "HatnichtgeklapptHatnichtgeklappt"
+                    }
                   ],
                   "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "hint": ""
                 },
                 "dependencies": {
                   "referenceValue": "$.taskData.taskDescription"
@@ -86,15 +89,21 @@
               "textView2": {
                 "type": "TextView",
                 "name": "TextView2",
-                "isValid": true,
-                "isCorrect": false,
-                "component": {
-                  "fieldConfiguration": {
-                  },"textSegments": [
-                    { "text": "1. Schritt: ", "bold": true },
-                    { "text": "Ansatz" }
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "1. Schritt: ",
+                      "bold": true
+                    },
+                    {
+                      "text": "Ansatz"
+                    }
                   ],
                   "fieldValue": ""
+                },
+                "componentConfiguration": {
                 },
                 "dependencies": {
                   "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.textView2.component.fieldValue"
@@ -105,65 +114,70 @@
               "latexInputField1": {
                 "type": "LatexInputField",
                 "name": "LatexInputField1",
-                "isValid": true,
-                "isCorrect": false,
-                "component": {
-                  "fieldConfiguration": {
-                    "prepend": "f(x)=",
-                    "placeholder": "z.B. x³ + ..."
-                  },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
                   "fieldValue": ""
                 },
+                "componentConfiguration": {
+                  "prepend": "f(x)=",
+                  "placeholder": "z.B. x³ + ..."
+                },
                 "dependencies": {
-                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.latexInputField1.component.fieldValue"
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.latexInputField1.state.fieldValue"
                 }
               },
               "latexInputField2": {
                 "type": "LatexInputField",
                 "name": "LatexInputField2",
-                "isValid": true,
-                "isCorrect": false,
-                "component": {
-                  "fieldConfiguration": {
-                    "prepend": "f'(x)="
-                  },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
                   "fieldValue": ""
                 },
+                "componentConfiguration": {
+                  "prepend": "f'(x)="
+                },
                 "dependencies": {
-                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.latexInputField2.component.fieldValue"
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.latexInputField2.state.fieldValue"
                 }
               },
               "latexInputField3": {
                 "type": "LatexInputField",
                 "name": "LatexInputField3",
-                "isValid": true,
-                "isCorrect": false,
-                "component": {
-                  "fieldConfiguration": {
-                    "prepend": "f''(x)="
-                  },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
                   "fieldValue": ""
                 },
+                "componentConfiguration": {
+                  "prepend": "f''(x)="
+                },
                 "dependencies": {
-                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.latexInputField3.component.fieldValue"
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.latexInputField3.state.fieldValue"
                 }
               },
               "textView3": {
                 "type": "TextView",
                 "name": "TextView3",
-                "isValid": true,
-                "isCorrect": false,
-                "component": {
-                  "fieldConfiguration": {
-                  },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
                   "textSegments": [
-                    { "text": "2. Schritt: ", "bold": true },
-                    { "text": "notiere Gleichungen" }
+                    {
+                      "text": "2. Schritt: ",
+                      "bold": true
+                    },
+                    {
+                      "text": "notiere Gleichungen"
+                    }
                   ],
                   "fieldValue": ""
                 },
+                "componentConfiguration": {
+                },
                 "dependencies": {
-                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.textView3.component.fieldValue"
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.textView3.state.fieldValue"
                 },
                 "validationConfiguration": {
                 }
@@ -171,208 +185,244 @@
               "inputField1": {
                 "type": "InputField",
                 "name": "InputField1",
-                "isValid": false,
-                "isCorrect": false,
-                "component": {
-                  "fieldConfiguration": {
-                    "icon": "",
-                    "label": "",
-                    "hint": "",
-                    "placeholder": "z. B. f(7) = 11"
-                  },
+                "state": {
+                  "isValid": false,
+                  "isCorrect": false,
                   "fieldValue": ""
                 },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "z. B. f(7) = 11"
+                },
                 "dependencies": {
-                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.inputField1.component.fieldValue"
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.inputField1.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
-                  "comparisons": [{ "value": "test", "operator": "==" }]
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ]
                 }
               },
               "inputField2": {
                 "type": "InputField",
                 "name": "InputField2",
-                "isValid": true,
-                "isCorrect": false,
-                "component": {
-                  "fieldConfiguration": {
-                    "icon": "",
-                    "label": "",
-                    "hint": "",
-                    "placeholder": ""
-                  },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
                   "fieldValue": ""
                 },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
                 "dependencies": {
-                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.inputField2.component.fieldValue"
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.inputField2.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
-                  "comparisons": [{ "value": "test", "operator": "==" }]
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ]
                 }
               },
               "inputField3": {
                 "type": "InputField",
                 "name": "InputField3",
-                "isValid": true,
-                "isCorrect": false,
-                "component": {
-                  "fieldConfiguration": {
-                    "icon": "",
-                    "label": "",
-                    "hint": "",
-                    "placeholder": ""
-                  },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
                   "fieldValue": ""
                 },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
                 "dependencies": {
-                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.inputField3.component.fieldValue"
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.inputField3.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
-                  "comparisons": [{ "value": "test", "operator": "==" }]
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ]
                 }
               },
               "inputField4": {
                 "type": "InputField",
                 "name": "InputField4",
-                "isValid": true,
-                "isCorrect": false,
-                "component": {
-                  "fieldConfiguration": {
-                    "icon": "",
-                    "label": "",
-                    "hint": "",
-                    "placeholder": ""
-                  },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
                   "fieldValue": ""
                 },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
                 "dependencies": {
-                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.inputField4.component.fieldValue"
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.inputField4.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
-                  "comparisons": [{ "value": "test", "operator": "==" }]
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ]
                 }
               },
               "inputField5": {
                 "type": "InputField",
                 "name": "InputField5",
-                "isValid": true,
-                "isCorrect": false,
-                "component": {
-                  "fieldConfiguration": {
-                    "icon": "",
-                    "label": "",
-                    "hint": "",
-                    "placeholder": ""
-                  },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
                   "fieldValue": ""
                 },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
                 "dependencies": {
-                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.inputField5.component.fieldValue"
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.inputField5.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
-                  "comparisons": [{ "value": "test", "operator": "==" }]
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ]
                 }
-              }
-            },
-            "actionComponents": {
-              "submit": {
-                "type": "GenericButton",
-                "name": "Submit",
-                "isValid": false,
-                "isCorrect": true,
-                "dependencies": {},
-                "validationConfiguration": {},
-                "component": {
-                  "label": "an Gruppe senden",
-                  "loadingState": false,
-                  "buttonConfiguration": {
-                    "disableOnInvalid": true
+              },
+              "actionComponents": {
+                "submit": {
+                  "type": "GenericButton",
+                  "name": "Submit",
+                  "isValid": false,
+                  "isCorrect": true,
+                  "dependencies": {},
+                  "validationConfiguration": {},
+                  "component": {
+                    "label": "an Gruppe senden",
+                    "loadingState": false,
+                    "buttonConfiguration": {
+                      "disableOnInvalid": true
+                    }
                   }
                 }
               }
             }
+          },
+          "1": {
+            "component": {
+              "fieldConfiguration": {
+                "icon": "10k"
+              },
+              "fieldValue": "test"
+            },
+            "dependencies": {
+              "referenceValue": "$.nodes.0.components.1.state.fieldValue"
+            },
+            "validationConfiguration": {
+              "type": "compareValueFromStatic",
+              "comparisons": [
+                {
+                  "value": "test",
+                  "operator": "=="
+                }
+              ]
+            },
+            "isCorrect": false,
+            "isValid": false,
+            "name": "test",
+            "type": "InputField"
+          },
+          "2": {
+            "component": {
+              "fieldConfiguration": {
+                "icon": "10k",
+                "label": "test",
+                "hint": "test"
+              },
+              "fieldValue": "test"
+            },
+            "dependencies": {
+              "referenceValue": "$.nodes.0.components.1.component.fieldValue"
+            },
+            "validationConfiguration": {
+              "type": "compareValueFromStatic",
+              "comparisons": [
+                {
+                  "value": "test",
+                  "operator": "=="
+                }
+              ]
+            },
+            "isCorrect": false,
+            "isValid": false,
+            "name": "test",
+            "type": "InputField"
+          },
+          "4": {
+            "component": {
+              "fieldValue": ""
+            },
+            "dependencies": {
+              "referenceValue": "$.nodes.0.components.4.component.fieldValue"
+            },
+            "validationConfiguration": {},
+            "isCorrect": true,
+            "isValid": true,
+            "name": "Latex",
+            "type": "LatexInputField"
           }
-        },
-        "1": {
-          "component": {
-            "fieldConfiguration": {
-              "icon": "10k"
-            },
-            "fieldValue": "test"
-          },
-          "dependencies": {
-            "referenceValue": "$.nodes.0.components.1.component.fieldValue"
-          },
-          "validationConfiguration": {
-            "type": "compareValueFromStatic",
-            "comparisons": [{ "value": "test", "operator": "==" }]
-          },
-          "isCorrect": false,
-          "isValid": false,
-          "name": "test",
-          "type": "InputField"
-        },
-        "2": {
-          "component": {
-            "fieldConfiguration": {
-              "icon": "10k",
-              "label": "test",
-              "hint": "test"
-            },
-            "fieldValue": "test"
-          },
-          "dependencies": {
-            "referenceValue": "$.nodes.0.components.1.component.fieldValue"
-          },
-          "validationConfiguration": {
-            "type": "compareValueFromStatic",
-            "comparisons": [{ "value": "test", "operator": "==" }]
-          },
-          "isCorrect": false,
-          "isValid": false,
-          "name": "test",
-          "type": "InputField"
-        },
-        "4": {
-          "component": {
-            "fieldValue": ""
-          },
-          "dependencies": {
-            "referenceValue": "$.nodes.0.components.4.component.fieldValue"
-          },
-          "validationConfiguration": {},
-          "isCorrect": true,
-          "isValid": true,
-          "name": "Latex",
-          "type": "LatexInputField"
         }
       }
-    }
-  },
-  "edges": {
-    "0": [1]
-  },
-  "layoutSize": "desktop",
-
-  "taskData": {
-    "taskDescription": "",
-    "degree": 3,
-    "symmetry": "none",
-    "hint": "",
-    "solutions": {
-      "textFieldEquation1": "f(1)=-2",
-      "textFieldEquation2": "f'(3)=0",
-      "textFieldEquation3": "f''(4)=0",
-      "textFieldEquation4": "f(-7)=5",
-      "textFieldEquation5": "",
-      "sampleSolutionCollaborativeWork": ""
     },
-    "dotDescription": "digraph G { bgcolor=transparent  a->b; b->c; c->a; }"
+    "edges": {
+      "0": [
+        1
+      ]
+    },
+    "layoutSize": "desktop",
+    "taskData": {
+      "taskDescription": "",
+      "degree": 3,
+      "symmetry": "none",
+      "hint": "",
+      "solutions": {
+        "textFieldEquation1": "f(1)=-2",
+        "textFieldEquation2": "f'(3)=0",
+        "textFieldEquation3": "f''(4)=0",
+        "textFieldEquation4": "f(-7)=5",
+        "textFieldEquation5": "",
+        "sampleSolutionCollaborativeWork": ""
+      },
+      "dotDescription": "digraph G { bgcolor=transparent  a->b; b->c; c->a; }"
+    }
   }
 }
 

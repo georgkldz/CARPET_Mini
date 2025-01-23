@@ -4,16 +4,16 @@ import { useApplicationStore } from "./applicationStore";
 import type { AvailableTasks } from "./applicationStore";
 import type { SerialisedTask } from "./applicationStore";
 import { JSONPath } from "jsonpath-plus";
-import { syncSingleComponentChange } from "stores/sync/automergeSync.ts";
-import type { Task } from "src/models/Task.ts";
+import { syncSingleComponentChange } from "stores/sync/automergeSync";
+import type { Task } from "src/models/Task";
 
 import type {
   StoreAPI,
   JSONPathExpression,
   StoreSetterPayload,
 } from "carpet-component-library";
-import { useAuthStore } from "stores/authStore.ts";
-import { useTasksStore } from "stores/tasksStore.ts";
+import { useAuthStore } from "stores/authStore";
+import { useTasksStore } from "stores/tasksStore";
 
 export interface EventLog {
   interactionEvents: Array<object>;
