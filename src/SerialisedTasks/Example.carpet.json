@@ -83,8 +83,7 @@
                 "dependencies": {
                   "referenceValue": "$.taskData.taskDescription"
                 },
-                "validationConfiguration": {
-                }
+                "validationConfiguration": {}
               },
               "textView2": {
                 "type": "TextView",
@@ -103,13 +102,11 @@
                   ],
                   "fieldValue": ""
                 },
-                "componentConfiguration": {
-                },
+                "componentConfiguration": {},
                 "dependencies": {
                   "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.textView2.component.fieldValue"
                 },
-                "validationConfiguration": {
-                }
+                "validationConfiguration": {}
               },
               "latexInputField1": {
                 "type": "LatexInputField",
@@ -174,13 +171,11 @@
                   ],
                   "fieldValue": ""
                 },
-                "componentConfiguration": {
-                },
+                "componentConfiguration": {},
                 "dependencies": {
                   "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.textView3.state.fieldValue"
                 },
-                "validationConfiguration": {
-                }
+                "validationConfiguration": {}
               },
               "inputField1": {
                 "type": "InputField",
@@ -403,9 +398,7 @@
       }
     },
     "edges": {
-      "0": [
-        1
-      ]
+      "0": [1]
     },
     "layoutSize": "desktop",
     "taskData": {
@@ -423,7 +416,8 @@
       },
       "dotDescription": "digraph G { bgcolor=transparent  a->b; b->c; c->a; }"
     }
+  },
+  "edges": {
+
   }
 }
-
-

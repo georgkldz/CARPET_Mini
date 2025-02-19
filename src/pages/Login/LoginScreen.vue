@@ -1,48 +1,50 @@
 <template>
- <q-layout>
-  <q-page-container>
-  <q-page class="flex flex-center">
-    <q-card class="q-pa-md" style="max-width: 400px; width: 100%;">
-      <q-card-section>
-        <div class="text-h5 text-center">Anmeldung</div>
-      </q-card-section>
+  <q-layout>
+    <q-page-container>
+      <q-page class="flex flex-center">
+        <q-card class="q-pa-md" style="max-width: 400px; width: 100%">
+          <q-card-section>
+            <div class="text-h5 text-center">Anmeldung</div>
+          </q-card-section>
 
-      <q-card-section>
-        <q-form @submit.prevent="handleSubmit">
-          <q-input
-            filled
-            type="email"
-            label="E-Mail-Adresse"
-            v-model="email"
-            class="q-mb-md"
-            :disable="loading"
-            required
-          />
-          <q-input
-            filled
-            type="password"
-            label="Passwort"
-            v-model="password"
-            class="q-mb-md"
-            :disable="loading"
-            required
-          />
-          <div class="text-center">
-            <q-btn
-              color="primary"
-              label="Anmelden"
-              type="submit"
-              :loading="loading"
-              :disable="loading"
-            />
-          </div>
-        </q-form>
-        <div v-if="error" class="q-mt-md text-negative text-center">{{ error }}</div>
-      </q-card-section>
-    </q-card>
-  </q-page>
- </q-page-container>
- </q-layout>
+          <q-card-section>
+            <q-form @submit.prevent="handleSubmit">
+              <q-input
+                filled
+                type="email"
+                label="E-Mail-Adresse"
+                v-model="email"
+                class="q-mb-md"
+                :disable="loading"
+                required
+              />
+              <q-input
+                filled
+                type="password"
+                label="Passwort"
+                v-model="password"
+                class="q-mb-md"
+                :disable="loading"
+                required
+              />
+              <div class="text-center">
+                <q-btn
+                  color="primary"
+                  label="Anmelden"
+                  type="submit"
+                  :loading="loading"
+                  :disable="loading"
+                />
+              </div>
+            </q-form>
+            <div v-if="error" class="q-mt-md text-negative text-center">
+              {{ error }}
+            </div>
+          </q-card-section>
+        </q-card>
+      </q-page>
+    </q-page-container>
+  </q-layout>
 </template>
 
 <script setup lang="ts">

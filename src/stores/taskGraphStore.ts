@@ -123,21 +123,20 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       // Im loadDBTaskIntoGraph():
       this.setProperty({
         path: "$.taskData.degree",
-        value: foundTask.degree
+        value: foundTask.degree,
       });
       this.setProperty({
         path: "$.taskData.symmetry",
-        value: foundTask.symmetry
+        value: foundTask.symmetry,
       });
       this.setProperty({
         path: "$.taskData.solutions.textFieldEquation1",
-        value: foundTask.textFieldEquation1 ?? ""
+        value: foundTask.textFieldEquation1 ?? "",
       });
       this.setProperty({
         path: "$.taskData.solutions.sampleSolutionCollaborativeWork",
-        value: foundTask.sampleSolutionCollaborativeWork ?? ""
+        value: foundTask.sampleSolutionCollaborativeWork ?? "",
       });
-
 
       // Ggf. weitere Felder
       console.log("loadDBTaskIntoGraph: Task übernommen:", foundTask);
@@ -181,8 +180,15 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
 
       // optional Logging
       process.env.NODE_ENV === "development" && console.log(path, value);
-      if (!applicationStore.isRemoteUpdate && path.startsWith("$.nodes.0.components")) {
-        console.log("setProperty ruft syncSinglePathValue auf mit ", path, value);
+      if (
+        !applicationStore.isRemoteUpdate &&
+        path.startsWith("$.nodes.0.components")
+      ) {
+        console.log(
+          "setProperty ruft syncSinglePathValue auf mit ",
+          path,
+          value,
+        );
         syncSingleComponentChange(path, value);
       }
     },
@@ -202,7 +208,10 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
         for (const [key, value] of Object.entries(currentTask)) {
           this.setProperty({ path: `$.${key}`, value });
         }
-        this.setProperty({ path: "$.currentNode", value: currentTask.rootNode });
+        this.setProperty({
+          path: "$.currentNode",
+          value: currentTask.rootNode,
+        });
       }
 
       // Ruft nun unsere neue Action auf,

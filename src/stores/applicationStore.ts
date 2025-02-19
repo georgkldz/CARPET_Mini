@@ -3,21 +3,18 @@ import { ref } from "vue";
 import type { Ref } from "vue";
 import serialisedTaskSchema from "../schemas/zodSchemas/SerialisedTaskSchema";
 
-import type {
-  SerializedDOTGraphComponent,
-  SerializedFormComponent,
-  SerializedButtonComponent,
-  SerializedInputFieldComponent //, JSONPathExpression
-} from "carpet-component-library";
-
+import type { SerializedCARPETComponents } from "carpet-component-library";
 
 import ExampleTask from "../SerialisedTasks/Example.carpet.json";
-import { SerializedLatexInputFieldComponent } from "carpet-component-library";
-import {SerializedTextViewComponent} from "carpet-component-library";
+// import { SerializedLatexInputFieldComponent } from "carpet-component-library";
+// import { SerializedTextViewComponent } from "carpet-component-library";
 
 const staticTasks = { Example: serialisedTaskSchema.parse(ExampleTask) };
-import {  useTaskGraphStore } from "./taskGraphStore";
-import {joinSession, syncSingleComponentChange} from "stores/sync/automergeSync";
+import { useTaskGraphStore } from "./taskGraphStore";
+import {
+  joinSession,
+  syncSingleComponentChange,
+} from "stores/sync/automergeSync";
 
 /**
  * The available tasks in the current application.
@@ -25,13 +22,13 @@ import {joinSession, syncSingleComponentChange} from "stores/sync/automergeSync"
 export type AvailableTasks = keyof typeof staticTasks;
 
 export interface SerialisedComponents {
-  [id: number]:
-    | SerializedDOTGraphComponent
-    | SerializedLatexInputFieldComponent
-    | SerializedFormComponent
-    | SerializedButtonComponent
-    | SerializedInputFieldComponent
-    | SerializedTextViewComponent;
+  [id: number]: SerializedCARPETComponents;
+  // | SerializedDOTGraphComponent
+  // | SerializedLatexInputFieldComponent
+  // | SerializedFormComponent
+  // | SerializedButtonComponent
+  // | SerializedInputFieldComponent
+  // | SerializedTextViewComponent;
 }
 
 export type LayoutSizes = "phone" | "tablet" | "desktop";
@@ -112,7 +109,6 @@ const SESSION_ID = 43;
 
 //Composition API
 export const useApplicationStore = defineStore("applicationStore", () => {
-
   const documentReady = ref(false);
   const isRemoteUpdate = ref(false);
   const sessionId = ref<number | null>(SESSION_ID);
@@ -120,7 +116,6 @@ export const useApplicationStore = defineStore("applicationStore", () => {
   function setSessionId(id: number) {
     sessionId.value = id;
   }
-
 
   /**
    * (Mocked) Getter for reading all serialised tasks from the file system.
@@ -139,7 +134,6 @@ export const useApplicationStore = defineStore("applicationStore", () => {
   const toggleDarkMode = () => {
     darkMode.value = !darkMode.value;
   };
-
 
   function joinSessionWrapper() {
     const taskGraphStore = useTaskGraphStore();
@@ -170,4 +164,3 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     isRemoteUpdate,
   };
 });
-

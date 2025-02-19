@@ -4,6 +4,5 @@ import vue from "@vitejs/plugin-vue";
 import topLevelAwait from "vite-plugin-top-level-await";
 
 export default defineConfig({
-  plugins: [ wasm(),vue(), topLevelAwait],
-
+  plugins: [wasm(), vue(), topLevelAwait],
 });

@@ -40,7 +40,10 @@ const repo = new Repo({
 /**
  * joinSession - initializes the Automerge-Session
  */
-export async function joinSession(  sessionId: number,   taskGraphStore: ReturnType<typeof useTaskGraphStore>) {
+export async function joinSession(
+  sessionId: number,
+  taskGraphStore: ReturnType<typeof useTaskGraphStore>,
+) {
   if (isJoinSessionProcessing) {
     console.log("joinSession läuft gerade, breche erneuten Aufruf ab");
     return;
@@ -62,15 +65,14 @@ export async function joinSession(  sessionId: number,   taskGraphStore: ReturnT
     }
     const data = await response.json();
     documentId = data.documentUrl;
-  } catch (error) {
-  }
+  } catch (error) {}
   if (!documentId) {
     return;
   }
   handle = repo.find(documentId);
   handle.whenReady().then(() => {
     documentReady.value = true;
-    console.log("DocHandle ist bereit "+handle.documentId);
+    console.log("DocHandle ist bereit " + handle.documentId);
     // Check, if Document has NO componentsData
     const doc = handle.docSync();
     if (!doc?.componentsData) {
@@ -87,7 +89,10 @@ export async function joinSession(  sessionId: number,   taskGraphStore: ReturnT
         for (const { id, data } of componentData) {
           doc.componentsData![id.toString()] = JSON.parse(JSON.stringify(data));
         }
-        console.log("Automerge-Dokument initial angelegt: ", doc.componentsData)
+        console.log(
+          "Automerge-Dokument initial angelegt: ",
+          doc.componentsData,
+        );
       });
     }
   });
@@ -96,7 +101,7 @@ export async function joinSession(  sessionId: number,   taskGraphStore: ReturnT
     syncFromDocComponents(d.doc, taskGraphStore);
   });
   isJoinSessionProcessing = false;
-};
+}
 
 /**
  * syncSingleComponentChange - writes path+value from store to Automerge-Document
@@ -118,15 +123,17 @@ export async function syncSingleComponentChange(path: string, value: any) {
   });
   console.log("syncSingleComponentChange -> Path: ${path}, Value:", value);
   isRemoteUpdate.value = false;
-};
+}
 
 /**
  * syncFromDocComponents - compares doc.componentsData with lastComponentsDataCache
  * and applies changes from Automerge to the Store
  */
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export function syncFromDocComponents(  doc: { componentsData?: Record<string, any> },
-  taskGraphStore: ReturnType<typeof useTaskGraphStore>
+
+export function syncFromDocComponents(
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  doc: { componentsData?: Record<string, any> },
+  taskGraphStore: ReturnType<typeof useTaskGraphStore>,
 ) {
   console.log("syncFromDocComponents aufgerufen", doc);
   if (!doc.componentsData) return;
@@ -139,7 +146,10 @@ export function syncFromDocComponents(  doc: { componentsData?: Record<string, a
 
   // 1) Find changed or new Keys
   for (const [key, val] of Object.entries(newComponents)) {
-    if (!oldComponents.value || JSON.stringify(oldComponents.value[key]) !== JSON.stringify(val)) {
+    if (
+      !oldComponents.value ||
+      JSON.stringify(oldComponents.value[key]) !== JSON.stringify(val)
+    ) {
       changedEntries.push({ pathOrId: key, data: val });
     }
   }
@@ -182,5 +192,3 @@ export function syncFromDocComponents(  doc: { componentsData?: Record<string, a
   });
   isRemoteUpdate.value = false;
 }
-
-

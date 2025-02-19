@@ -1,13 +1,10 @@
 <template>
   <div>
-   <router-view/>
-
+    <router-view />
   </div>
 </template>
 
 <script setup lang="ts">
-
-
 import "@vue-flow/core/dist/style.css";
 import "carpet-component-library/style.css";
 
@@ -50,13 +47,12 @@ a {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   opacity: 0.95;
-  z-index: 9999;  /* Erhöht den z-index */
+  z-index: 9999; /* Erhöht den z-index */
   transition: opacity 0.3s ease-in-out;
 }
 
 .form__elements {
-  align-items: flex-start ;
+  align-items: flex-start;
   width: 100%;
 }
-
 </style>

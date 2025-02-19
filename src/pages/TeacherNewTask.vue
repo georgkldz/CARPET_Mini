@@ -2,7 +2,6 @@
   <q-layout>
     <q-page-container>
       <q-page class="q-pa-md">
-
         <div class="row justify-center">
           <div class="col-12 col-sm-8 col-md-6">
             <q-card>
@@ -12,7 +11,6 @@
 
               <q-card-section>
                 <q-form @submit.prevent="handleCreateTask" class="q-gutter-md">
-
                   <!-- Aufgabenbeschreibung -->
                   <q-input
                     filled
@@ -78,7 +76,9 @@
                     v-model="formData.textFieldEquation5"
                   />
 
-                  <div class="q-mt-md text-h6">Musterlösung der weiteren Aufgabenbearbeitung</div>
+                  <div class="q-mt-md text-h6">
+                    Musterlösung der weiteren Aufgabenbearbeitung
+                  </div>
                   <q-input
                     filled
                     type="textarea"
@@ -88,14 +88,17 @@
                   />
 
                   <div class="row justify-center q-mt-md">
-                    <q-btn color="primary" label="Aufgabe erstellen" type="submit" />
+                    <q-btn
+                      color="primary"
+                      label="Aufgabe erstellen"
+                      type="submit"
+                    />
                   </div>
                 </q-form>
               </q-card-section>
             </q-card>
           </div>
         </div>
-
       </q-page>
     </q-page-container>
   </q-layout>
@@ -152,7 +155,7 @@ const degreeMax = computed(() => {
   } else if (formData.symmetry === "odd") {
     return 5; // max 5
   }
-  return 6;   // standard: 6 (z.B. wenn symmetry = 'even' oder was anderes)
+  return 6; // standard: 6 (z.B. wenn symmetry = 'even' oder was anderes)
 });
 
 function validateForm() {
@@ -176,7 +179,8 @@ async function handleCreateTask() {
       textFieldEquation3: formData.textFieldEquation3 ?? "",
       textFieldEquation4: formData.textFieldEquation4 ?? "",
       textFieldEquation5: formData.textFieldEquation5 ?? "",
-      sampleSolutionCollaborativeWork: formData.sampleSolutionCollaborativeWork ?? "",
+      sampleSolutionCollaborativeWork:
+        formData.sampleSolutionCollaborativeWork ?? "",
       // Falls es noch weitere Spalten gibt (z.B. createdAt),
       // handled das der Server/die DB.
     } as Task);
@@ -187,7 +191,7 @@ async function handleCreateTask() {
     $q.notify({
       color: "negative",
       message: "Erstellen fehlgeschlagen!",
-      position: "top"
+      position: "top",
     });
   }
 }

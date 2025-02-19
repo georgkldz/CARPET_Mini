@@ -5,7 +5,7 @@ import axios from "axios";
 
 export const useTasksStore = defineStore("tasksStore", {
   state: () => ({
-    tasks: [] as Task[]
+    tasks: [] as Task[],
   }),
   getters: {
     // Optional: z. B. gefilterte Listen oder einzelne Task-Finder
@@ -28,14 +28,16 @@ export const useTasksStore = defineStore("tasksStore", {
     async createTask(newTask: Omit<Task, "taskId">) {
       // Omit: Weil taskId normalerweise von der DB vergeben wird
       try {
-        const response = await axios.post<Task>("http://localhost:3000/tasks", newTask);
+        const response = await axios.post<Task>(
+          "http://localhost:3000/tasks",
+          newTask,
+        );
         // Der Server gibt das erstellte Task-Objekt (mit taskId) zurück
         this.tasks.push(response.data);
       } catch (error) {
         console.error("Fehler beim Erstellen der Aufgabe:", error);
         throw error;
       }
-    }
-  }
+    },
+  },
 });
-
