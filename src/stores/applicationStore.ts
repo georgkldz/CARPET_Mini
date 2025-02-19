@@ -96,7 +96,7 @@ export const useApplicationStore = defineStore("applicationStore", () => {
    * (Mocked) Getter for reading all serialised tasks from the file system.
    * @returns A dictionary of tasks, where the key is the task name and the value is the serialised task.
    */
-  const tasks: Ref<Record<AvailableTasks, SerialisedTask>> = ref(staticTasks);
+  const tasks = ref(staticTasks);
 
   const SNAP_GRID: Ref<[x: number, y: number]> = ref([30, 30]);
 
