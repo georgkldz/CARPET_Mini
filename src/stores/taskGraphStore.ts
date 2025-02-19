@@ -62,7 +62,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     nodes: {},
     edges: {},
   }),
-
   getters: {
     getPropertyFromPath: (state) => (path: JSONPathExpression) => {
       if (typeof path !== "string") {
@@ -82,7 +81,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       return authStore.getCurrentTaskId;
     },
   },
-
   actions: {
     /**
      * Extra-Action, um den Task aus der DB (bzw. tasksStore) zu laden
@@ -157,27 +155,31 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     },
 
     setCurrentTask(taskName: string) {
-      console.log("setCurrentTask betreten");
       this.currentTask = taskName;
     },
-
     setProperty(payload: StoreSetterPayload) {
       const applicationStore = useApplicationStore();
       const { path, value } = payload;
       const splitPath = JSONPath.toPathArray(path).slice(1);
       let subState = this.$state as StateTree;
-
       for (let depth = 0; depth < splitPath.length; depth++) {
         if (depth === splitPath.length - 1) {
           // only update the value if it is different
           if (subState[splitPath[depth]] != value) {
             subState[splitPath[depth]] = value;
+
+            // Log the state change in the replayLog
+            this.replayLog.interactionEvents.push(payload);
+
+            /**
+             * Log the state change in development mode.
+             */
+            process.env.NODE_ENV === "development" && console.log(path, value);
           }
         } else {
           subState = subState[splitPath[depth]];
         }
       }
-
       // optional Logging
       process.env.NODE_ENV === "development" && console.log(path, value);
       if (
@@ -192,14 +194,18 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
         syncSingleComponentChange(path, value);
       }
     },
-
+    /**
+     * Required helper functions, as it is not possible to define getters that receive arguments.
+     * This is due to getters being simply computed properties.
+     * By returning a function from a getter, we can achieve the same functionality, but at the cost of not being able to cache the computed properties.
+     * See https://pinia.vuejs.org/core-concepts/getters.html#Passing-arguments-to-getters.
+     * @param path JSONPathExpression
+     * @returns ComputedRef<any>
+     */
     getProperty(path: JSONPathExpression) {
       return this.getPropertyFromPath(path);
     },
-
     fetchTaskGraph() {
-      // Beispiel: Falls du zusätzlich noch den ApplicationStore-Task laden willst
-      // (z. B. das statische Example.carpet.json)
       const applicationStore = useApplicationStore();
       const tasks = applicationStore.tasks;
       const currentTask = tasks[this.currentTask as AvailableTasks];

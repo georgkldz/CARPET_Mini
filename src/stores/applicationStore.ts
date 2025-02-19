@@ -6,9 +6,6 @@ import serialisedTaskSchema from "../schemas/zodSchemas/SerialisedTaskSchema";
 import type { SerializedCARPETComponents } from "carpet-component-library";
 
 import ExampleTask from "../SerialisedTasks/Example.carpet.json";
-// import { SerializedLatexInputFieldComponent } from "carpet-component-library";
-// import { SerializedTextViewComponent } from "carpet-component-library";
-
 const staticTasks = { Example: serialisedTaskSchema.parse(ExampleTask) };
 import { useTaskGraphStore } from "./taskGraphStore";
 import {
@@ -23,12 +20,6 @@ export type AvailableTasks = keyof typeof staticTasks;
 
 export interface SerialisedComponents {
   [id: number]: SerializedCARPETComponents;
-  // | SerializedDOTGraphComponent
-  // | SerializedLatexInputFieldComponent
-  // | SerializedFormComponent
-  // | SerializedButtonComponent
-  // | SerializedInputFieldComponent
-  // | SerializedTextViewComponent;
 }
 
 export type LayoutSizes = "phone" | "tablet" | "desktop";
