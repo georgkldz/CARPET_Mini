@@ -209,10 +209,12 @@ const collisionCorrection = (
 </script>
 
 <style>
+/* TODO: Adapt color-scheme https://tailwindcss.com/docs/customizing-colors */
+
 .threadContainer {
   display: flex;
   flex-direction: column;
-  background-color: #e4e9f5;
+  background-color: #eff6ff;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
@@ -225,8 +227,8 @@ const collisionCorrection = (
   height: 30px;
   padding: 5px;
   color: white;
-  background-color: #4a5568;
-  border-bottom: 1px solid grey;
+  background-color: var(--q-primary);
+  border-bottom: 1px solid rgb(128, 128, 128);
   border-radius: 5px 5px 0 0;
   cursor: move;
 }

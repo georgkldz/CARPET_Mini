@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import type { StateTree } from "pinia";
-// import { toRefs } from "vue";
 import { useApplicationStore } from "./applicationStore";
 import type { AvailableTasks } from "./applicationStore";
 import type { SerialisedTask } from "./applicationStore";
@@ -86,6 +85,9 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
           // only update the value if it is different
           if (subState[splitPath[depth]] != value) {
             subState[splitPath[depth]] = value;
+
+            // Log the state change in the replayLog
+            this.replayLog.interactionEvents.push(payload);
 
             /**
              * Log the state change in development mode.

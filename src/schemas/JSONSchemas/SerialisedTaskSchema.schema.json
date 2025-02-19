@@ -16,9 +16,13 @@
             "type": {
               "const": "compareValueFromStatic",
               "type": "string"
+            },
+            "validOnEmptyField": {
+              "description": "Whether empty fields are treated as valid.",
+              "type": "boolean"
             }
           },
-          "required": ["comparisons", "type"],
+          "required": ["comparisons", "type", "validOnEmptyField"],
           "type": "object"
         },
         {
@@ -33,9 +37,13 @@
             "type": {
               "const": "compareValueFromPath",
               "type": "string"
+            },
+            "validOnEmptyField": {
+              "description": "Whether empty fields are treated as valid.",
+              "type": "boolean"
             }
           },
-          "required": ["comparisons", "type"],
+          "required": ["comparisons", "type", "validOnEmptyField"],
           "type": "object"
         },
         {
@@ -47,9 +55,13 @@
             "type": {
               "const": "matchAgainstRegExp",
               "type": "string"
+            },
+            "validOnEmptyField": {
+              "description": "Whether empty fields are treated as valid.",
+              "type": "boolean"
             }
           },
-          "required": ["regExp", "type"],
+          "required": ["regExp", "type", "validOnEmptyField"],
           "type": "object"
         },
         {
@@ -61,29 +73,33 @@
             },
             "url": {
               "type": "string"
+            },
+            "validOnEmptyField": {
+              "description": "Whether empty fields are treated as valid.",
+              "type": "boolean"
             }
           },
-          "required": ["type", "url"],
+          "required": ["type", "url", "validOnEmptyField"],
           "type": "object"
         }
       ],
-      "description": "Configuration for the different InputField validation strategies.\nAs the typescript compiler can't handle \"correlated unions\", it is recommended to refactor to generics as described here: https://stackoverflow.com/questions/79160004/can-typescript-infer-subtypes-of-parameters-based-on-a-dynamic-variable-accessin"
+      "description": "Configuration for the different InputField validation strategies.\nAs the typescript compiler can't handle \"correlated unions\", it is recommended to defer to generics as described here: https://stackoverflow.com/questions/79160004/can-typescript-infer-subtypes-of-parameters-based-on-a-dynamic-variable-accessin"
     },
     "BasicComparisonOperators": {
       "enum": ["!=", "<", "<=", "=", "==", ">", ">="],
       "type": "string"
     },
-    "ButtonComponentData": {
+    "ButtonComponentState": {
       "additionalProperties": false,
       "description": "The Button-component has to display a label. It may display a progress bar or a loading spinner.\nIt can be disabled on invalid input.",
       "properties": {
-        "buttonConfiguration": {
-          "$ref": "#/definitions/ButtonConfiguration"
+        "isCorrect": {
+          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
+          "type": "boolean"
         },
-        "innerComponentLayout": {
-          "description": "Some components may offer a customizable inner component layout. The layout is required to be built with CSS Grid.",
-          "properties": {},
-          "type": "object"
+        "isValid": {
+          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
+          "type": "boolean"
         },
         "label": {
           "description": "The label of the button.",
@@ -98,7 +114,7 @@
           "type": "number"
         }
       },
-      "required": ["buttonConfiguration", "label", "loadingState"],
+      "required": ["isCorrect", "isValid", "label", "loadingState"],
       "type": "object"
     },
     "ButtonConfiguration": {
@@ -125,17 +141,6 @@
         },
         "icon": {
           "description": "Additional icon for the button. Displayed to the left of the label."
-        }
-      },
-      "type": "object"
-    },
-    "DotGraphComponentData": {
-      "additionalProperties": false,
-      "description": "The DOTGraph-component may hold a static dotDescription in its componentData.",
-      "properties": {
-        "dotDescription": {
-          "description": "The dotDescription is a string, that holds the Graphviz-DOT description of the graph.",
-          "type": "string"
         },
         "innerComponentLayout": {
           "description": "Some components may offer a customizable inner component layout. The layout is required to be built with CSS Grid.",
@@ -143,6 +148,104 @@
           "type": "object"
         }
       },
+      "type": "object"
+    },
+    "CodeEditorComponentState": {
+      "additionalProperties": false,
+      "description": "The CodeEditor-component may require state handling. This state is defined here.",
+      "properties": {
+        "code": {
+          "description": "The code-property is a string that contains the user's code.",
+          "type": "string"
+        },
+        "isCorrect": {
+          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
+          "type": "boolean"
+        },
+        "isValid": {
+          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
+          "type": "boolean"
+        }
+      },
+      "required": ["code", "isCorrect", "isValid"],
+      "type": "object"
+    },
+    "CodeEditorConfiguration": {
+      "additionalProperties": false,
+      "description": "The CodeEditor-component may have configuration options. These options are defined here.",
+      "properties": {
+        "darkMode": {
+          "description": "The darkMode-property is a boolean that may be used to determine the dark mode of the CodeEditor.",
+          "type": "boolean"
+        },
+        "innerComponentLayout": {
+          "description": "Some components may offer a customizable inner component layout. The layout is required to be built with CSS Grid.",
+          "properties": {},
+          "type": "object"
+        },
+        "language": {
+          "description": "The language-property is a string that may be used to determine the syntax highlighting of the CodeEditor."
+        }
+      },
+      "type": "object"
+    },
+    "CodeEditorValidationConfiguration<keyofCodeEditorValidationConfigurationMap>": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "validateExternally",
+              "type": "string"
+            }
+          },
+          "required": ["type"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "compareToString",
+              "type": "string"
+            }
+          },
+          "required": ["type"],
+          "type": "object"
+        }
+      ],
+      "description": "The CodeEditor allows for optional validation strategies.\nThe first strategy is a basic string compare.\nThe second strategy is a request-based strategy, which may depend on a user-defined strategy (e.g. test-suite, output comparisons, more complex string comparisons, etc.).\n   As the second strategy may depend on more than just the code, the entire state is accessible."
+    },
+    "ComponentConfiguration": {
+      "additionalProperties": false,
+      "description": "Component configuration. This holds possible configuration options for the component.",
+      "properties": {
+        "innerComponentLayout": {
+          "description": "Some components may offer a customizable inner component layout. The layout is required to be built with CSS Grid.",
+          "properties": {},
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "DotGraphComponentState": {
+      "additionalProperties": false,
+      "description": "The DOTGraph-component may hold a static dotDescription in its componentData.",
+      "properties": {
+        "dotDescription": {
+          "description": "The dotDescription is a string, that holds the Graphviz-DOT description of the graph.",
+          "type": "string"
+        },
+        "isCorrect": {
+          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
+          "type": "boolean"
+        },
+        "isValid": {
+          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
+          "type": "boolean"
+        }
+      },
+      "required": ["isCorrect", "isValid"],
       "type": "object"
     },
     "FieldConfiguration": {
@@ -234,6 +337,11 @@
           "type": "string"
         },
         "icon": {},
+        "innerComponentLayout": {
+          "description": "Some components may offer a customizable inner component layout. The layout is required to be built with CSS Grid.",
+          "properties": {},
+          "type": "object"
+        },
         "inputClass": {
           "$ref": "#/definitions/quasar.VueClassProp",
           "description": "Class definitions to be attributed to the underlying input tag"
@@ -405,16 +513,31 @@
       ],
       "type": "object"
     },
-    "FormComponentData": {
+    "FormComponentState": {
       "additionalProperties": false,
-      "description": "The Form-component may hold nothing.",
+      "description": "The Form-component has additional state properties for validation.",
       "properties": {
-        "innerComponentLayout": {
-          "description": "Some components may offer a customizable inner component layout. The layout is required to be built with CSS Grid.",
-          "properties": {},
-          "type": "object"
+        "dependenciesAreValidAndFormFieldsAreCorrect": {
+          "type": "boolean"
+        },
+        "formFieldsAreValidAndDependenciesAreCorrect": {
+          "type": "boolean"
+        },
+        "isCorrect": {
+          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
+          "type": "boolean"
+        },
+        "isValid": {
+          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
+          "type": "boolean"
         }
       },
+      "required": [
+        "dependenciesAreValidAndFormFieldsAreCorrect",
+        "formFieldsAreValidAndDependenciesAreCorrect",
+        "isCorrect",
+        "isValid"
+      ],
       "type": "object"
     },
     "FormNestedComponents": {
@@ -446,7 +569,7 @@
     },
     "FormValidationConfiguration": {
       "additionalProperties": false,
-      "description": "The form-component is submitable if the validation checks that are governed by the FormValidationConfiguration are passed.\nDefaults to \"dependenciesAreValidAndFormFieldsAreCorrect\".",
+      "description": "The form-component is submitable if the validation checks that are governed by the FormValidationConfiguration are passed.",
       "properties": {
         "submitableWhen": {
           "enum": [
@@ -458,6 +581,7 @@
           "type": "string"
         }
       },
+      "required": ["submitableWhen"],
       "type": "object"
     },
     "Hints": {
@@ -479,13 +603,10 @@
       "required": ["active", "current", "descriptions"],
       "type": "object"
     },
-    "InputFieldComponentData": {
+    "InputFieldComponentState": {
       "additionalProperties": false,
-      "description": "The InputField-component may hold a static dotDescription in its componentData.",
+      "description": "The InputField-component may hold a static dotDescription in its componentState.",
       "properties": {
-        "fieldConfiguration": {
-          "$ref": "#/definitions/FieldConfiguration"
-        },
         "fieldValue": {
           "anyOf": [
             {
@@ -508,13 +629,16 @@
             }
           ]
         },
-        "innerComponentLayout": {
-          "description": "Some components may offer a customizable inner component layout. The layout is required to be built with CSS Grid.",
-          "properties": {},
-          "type": "object"
+        "isCorrect": {
+          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
+          "type": "boolean"
+        },
+        "isValid": {
+          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
+          "type": "boolean"
         }
       },
-      "required": ["fieldConfiguration", "fieldValue"],
+      "required": ["fieldValue", "isCorrect", "isValid"],
       "type": "object"
     },
     "JSONPathExpression": {
@@ -625,6 +749,24 @@
       "required": ["desktop", "phone", "tablet"],
       "type": "object"
     },
+    "MethodReference": {
+      "additionalProperties": false,
+      "description": "A description of a user-facing method of a component.",
+      "properties": {
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": ["description"],
+      "type": "object"
+    },
+    "MethodReferences": {
+      "additionalProperties": {
+        "$ref": "#/definitions/MethodReference"
+      },
+      "description": "A map of method names and their descriptions.",
+      "type": "object"
+    },
     "Modal": {
       "additionalProperties": false,
       "properties": {
@@ -697,11 +839,11 @@
             "$ref": "#/definitions/NestedComponents"
           },
           {
-            "$ref": "#/definitions/SerializedBaseComponent<string,SerialisedDependencies,ComponentData,ValidationConfiguration,SerialisedMethods,SerialisedContextMenu,NestedComponents>"
+            "$ref": "#/definitions/SerializedBaseComponent<string>"
           }
         ]
       },
-      "description": "Possible nested components of a component. The components can be nested arbitrarily",
+      "description": "Possible nested components of a component. The components can be nested arbitrarily.",
       "type": "object"
     },
     "PathComparisonConfiguration": {
@@ -721,24 +863,6 @@
     "SerialisedDependencies": {
       "additionalProperties": false,
       "description": "Serialised dependencies of a component.",
-      "type": "object"
-    },
-    "SerialisedMethod": {
-      "additionalProperties": false,
-      "description": "A description of a user-facing method of a component.",
-      "properties": {
-        "description": {
-          "type": "string"
-        }
-      },
-      "required": ["description"],
-      "type": "object"
-    },
-    "SerialisedMethods": {
-      "additionalProperties": {
-        "$ref": "#/definitions/SerialisedMethod"
-      },
-      "description": "A map of method names and their descriptions.",
       "type": "object"
     },
     "SerialisedNode": {
@@ -775,21 +899,13 @@
       "required": ["components", "layouts"],
       "type": "object"
     },
-    "SerializedBaseComponent<string,SerialisedDependencies,ComponentData,ValidationConfiguration,SerialisedMethods,SerialisedContextMenu,NestedComponents>": {
+    "SerializedBaseComponent<string>": {
       "additionalProperties": false,
       "description": "Generic type description with defaults of a serialised base component.",
       "properties": {
-        "component": {
-          "additionalProperties": false,
-          "description": "The data of the component.",
-          "properties": {
-            "innerComponentLayout": {
-              "description": "Some components may offer a customizable inner component layout. The layout is required to be built with CSS Grid.",
-              "properties": {},
-              "type": "object"
-            }
-          },
-          "type": "object"
+        "componentConfiguration": {
+          "$ref": "#/definitions/ComponentConfiguration",
+          "description": "Configuration options that are specific to the individual component."
         },
         "contextMenu": {
           "additionalProperties": false,
@@ -814,25 +930,33 @@
           "$ref": "#/definitions/SerialisedDependencies",
           "description": "The dependencies of the component."
         },
-        "isCorrect": {
-          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
-          "type": "boolean"
-        },
-        "isValid": {
-          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
-          "type": "boolean"
-        },
         "methods": {
-          "$ref": "#/definitions/SerialisedMethods",
-          "description": "The methods of the component."
+          "$ref": "#/definitions/MethodReferences",
+          "description": "Optional: The methods of the component."
         },
         "name": {
-          "description": "The name of the component. Will be displayed in the component header in CARPET.",
+          "description": "The name of the component instance. Will be displayed in the component header in CARPET.",
           "type": "string"
         },
         "nestedComponents": {
           "$ref": "#/definitions/NestedComponents",
           "description": "Optional: Nested components of the component."
+        },
+        "state": {
+          "additionalProperties": false,
+          "description": "The state of the component.",
+          "properties": {
+            "isCorrect": {
+              "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
+              "type": "boolean"
+            },
+            "isValid": {
+              "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
+              "type": "boolean"
+            }
+          },
+          "required": ["isCorrect", "isValid"],
+          "type": "object"
         },
         "type": {
           "description": "The type of the component.",
@@ -844,24 +968,16 @@
           "type": "object"
         }
       },
-      "required": [
-        "component",
-        "dependencies",
-        "isCorrect",
-        "isValid",
-        "name",
-        "type",
-        "validationConfiguration"
-      ],
+      "required": ["dependencies", "name", "state", "type"],
       "type": "object"
     },
     "SerializedButtonComponent": {
       "additionalProperties": false,
       "description": "The SerializedButtonComponent interface is used to define the serialised properties of the Button component.",
       "properties": {
-        "component": {
-          "$ref": "#/definitions/ButtonComponentData",
-          "description": "The data of the component."
+        "componentConfiguration": {
+          "$ref": "#/definitions/ButtonConfiguration",
+          "description": "Configuration options that are specific to the individual component."
         },
         "contextMenu": {
           "additionalProperties": false,
@@ -886,25 +1002,21 @@
           "$ref": "#/definitions/SerializedButtonDependencies",
           "description": "The dependencies of the component."
         },
-        "isCorrect": {
-          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
-          "type": "boolean"
-        },
-        "isValid": {
-          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
-          "type": "boolean"
-        },
         "methods": {
-          "$ref": "#/definitions/SerialisedMethods",
-          "description": "The methods of the component."
+          "$ref": "#/definitions/MethodReferences",
+          "description": "Optional: The methods of the component."
         },
         "name": {
-          "description": "The name of the component. Will be displayed in the component header in CARPET.",
+          "description": "The name of the component instance. Will be displayed in the component header in CARPET.",
           "type": "string"
         },
         "nestedComponents": {
           "$ref": "#/definitions/NestedComponents",
           "description": "Optional: Nested components of the component."
+        },
+        "state": {
+          "$ref": "#/definitions/ButtonComponentState",
+          "description": "The state of the component."
         },
         "type": {
           "const": "GenericButton",
@@ -918,13 +1030,11 @@
         }
       },
       "required": [
-        "component",
+        "componentConfiguration",
         "dependencies",
-        "isCorrect",
-        "isValid",
         "name",
-        "type",
-        "validationConfiguration"
+        "state",
+        "type"
       ],
       "type": "object"
     },
@@ -942,20 +1052,102 @@
           "$ref": "#/definitions/SerializedDOTGraphComponent"
         },
         {
+          "$ref": "#/definitions/SerializedInputFieldComponent"
+        },
+        {
           "$ref": "#/definitions/SerializedFormComponent"
         },
         {
-          "$ref": "#/definitions/SerializedInputFieldComponent"
+          "$ref": "#/definitions/SerializedCodeEditorComponent"
         }
       ]
+    },
+    "SerializedCodeEditorComponent": {
+      "additionalProperties": false,
+      "description": "The SerializedCodeEditorComponent interface is used to define the serialised properties of the CodeEditor component.",
+      "properties": {
+        "componentConfiguration": {
+          "$ref": "#/definitions/CodeEditorConfiguration",
+          "description": "Configuration options that are specific to the individual component."
+        },
+        "contextMenu": {
+          "additionalProperties": false,
+          "description": "Optional: The context menu of the component.",
+          "properties": {
+            "isOpen": {
+              "description": "Specifies whether the context menu is open.",
+              "type": "boolean"
+            },
+            "usedMethods": {
+              "description": "The methods that will be made available in the context menu.",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "required": ["isOpen", "usedMethods"],
+          "type": "object"
+        },
+        "dependencies": {
+          "$ref": "#/definitions/SerializedCodeEditorDependencies",
+          "description": "The dependencies of the component."
+        },
+        "methods": {
+          "$ref": "#/definitions/MethodReferences",
+          "description": "Optional: The methods of the component."
+        },
+        "name": {
+          "description": "The name of the component instance. Will be displayed in the component header in CARPET.",
+          "type": "string"
+        },
+        "nestedComponents": {
+          "$ref": "#/definitions/NestedComponents",
+          "description": "Optional: Nested components of the component."
+        },
+        "state": {
+          "$ref": "#/definitions/CodeEditorComponentState",
+          "description": "The state of the component."
+        },
+        "type": {
+          "const": "CodeEditor",
+          "description": "The type of the component.",
+          "type": "string"
+        },
+        "validationConfiguration": {
+          "$ref": "#/definitions/CodeEditorValidationConfiguration<keyofCodeEditorValidationConfigurationMap>",
+          "description": "The validation configuration of the component."
+        }
+      },
+      "required": ["dependencies", "name", "state", "type"],
+      "type": "object"
+    },
+    "SerializedCodeEditorDependencies": {
+      "additionalProperties": false,
+      "description": "The CodeEditor-component requires the following dependencies. The paths to the dependencies are defined here via JSONPathExpression.",
+      "properties": {
+        "code": {
+          "$ref": "#/definitions/JSONPathExpression",
+          "description": "The code-property is a JSONPathExpression that may point to the user's code."
+        },
+        "globalDarkMode": {
+          "$ref": "#/definitions/JSONPathExpression",
+          "description": "The globalDarkMode-property is a JSONPathExpression that may point to the user's dark mode preference."
+        },
+        "referenceCode": {
+          "$ref": "#/definitions/JSONPathExpression",
+          "description": "The referenceCode-property is a JSONPathExpression that points to the reference code that the user's code will be compared against."
+        }
+      },
+      "type": "object"
     },
     "SerializedDOTGraphComponent": {
       "additionalProperties": false,
       "description": "The SerializedDOTGraphComponent interface is used to define the serialised properties of the DOTGraph component.",
       "properties": {
-        "component": {
-          "$ref": "#/definitions/DotGraphComponentData",
-          "description": "The data of the component."
+        "componentConfiguration": {
+          "$ref": "#/definitions/ComponentConfiguration",
+          "description": "Configuration options that are specific to the individual component."
         },
         "contextMenu": {
           "additionalProperties": false,
@@ -980,25 +1172,21 @@
           "$ref": "#/definitions/SerializedDOTGraphDependencies",
           "description": "The dependencies of the component."
         },
-        "isCorrect": {
-          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
-          "type": "boolean"
-        },
-        "isValid": {
-          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
-          "type": "boolean"
-        },
         "methods": {
-          "$ref": "#/definitions/SerialisedMethods",
-          "description": "The methods of the component."
+          "$ref": "#/definitions/MethodReferences",
+          "description": "Optional: The methods of the component."
         },
         "name": {
-          "description": "The name of the component. Will be displayed in the component header in CARPET.",
+          "description": "The name of the component instance. Will be displayed in the component header in CARPET.",
           "type": "string"
         },
         "nestedComponents": {
           "$ref": "#/definitions/NestedComponents",
           "description": "Optional: Nested components of the component."
+        },
+        "state": {
+          "$ref": "#/definitions/DotGraphComponentState",
+          "description": "The state of the component."
         },
         "type": {
           "const": "DOTGraph",
@@ -1011,15 +1199,7 @@
           "type": "object"
         }
       },
-      "required": [
-        "component",
-        "dependencies",
-        "isCorrect",
-        "isValid",
-        "name",
-        "type",
-        "validationConfiguration"
-      ],
+      "required": ["dependencies", "name", "state", "type"],
       "type": "object"
     },
     "SerializedDOTGraphDependencies": {
@@ -1038,9 +1218,9 @@
       "additionalProperties": false,
       "description": "The SerializedFormComponent interface is used to define the serialised properties of the Form component.",
       "properties": {
-        "component": {
-          "$ref": "#/definitions/FormComponentData",
-          "description": "The data of the component."
+        "componentConfiguration": {
+          "$ref": "#/definitions/ComponentConfiguration",
+          "description": "Configuration options that are specific to the individual component."
         },
         "contextMenu": {
           "additionalProperties": false,
@@ -1065,31 +1245,21 @@
           "$ref": "#/definitions/SerializedFormDependencies",
           "description": "The dependencies of the component."
         },
-        "dependenciesAreValidAndFormFieldsAreCorrect": {
-          "type": "boolean"
-        },
-        "formFieldsAreValidAndDependenciesAreCorrect": {
-          "type": "boolean"
-        },
-        "isCorrect": {
-          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
-          "type": "boolean"
-        },
-        "isValid": {
-          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
-          "type": "boolean"
-        },
         "methods": {
-          "$ref": "#/definitions/SerialisedMethods",
-          "description": "The methods of the component."
+          "$ref": "#/definitions/MethodReferences",
+          "description": "Optional: The methods of the component."
         },
         "name": {
-          "description": "The name of the component. Will be displayed in the component header in CARPET.",
+          "description": "The name of the component instance. Will be displayed in the component header in CARPET.",
           "type": "string"
         },
         "nestedComponents": {
           "$ref": "#/definitions/FormNestedComponents",
           "description": "Optional: Nested components of the component."
+        },
+        "state": {
+          "$ref": "#/definitions/FormComponentState",
+          "description": "The state of the component."
         },
         "type": {
           "const": "GenericForm",
@@ -1102,13 +1272,10 @@
         }
       },
       "required": [
-        "component",
         "dependencies",
-        "dependenciesAreValidAndFormFieldsAreCorrect",
-        "formFieldsAreValidAndDependenciesAreCorrect",
-        "isCorrect",
-        "isValid",
         "name",
+        "nestedComponents",
+        "state",
         "type",
         "validationConfiguration"
       ],
@@ -1125,9 +1292,9 @@
       "additionalProperties": false,
       "description": "The SerializedInputFieldComponent interface is used to define the serialised properties of the InputField component.",
       "properties": {
-        "component": {
-          "$ref": "#/definitions/InputFieldComponentData",
-          "description": "The data of the component."
+        "componentConfiguration": {
+          "$ref": "#/definitions/FieldConfiguration",
+          "description": "Configuration options that are specific to the individual component."
         },
         "contextMenu": {
           "additionalProperties": false,
@@ -1152,25 +1319,21 @@
           "$ref": "#/definitions/SerializedInputFieldDependencies",
           "description": "The dependencies of the component."
         },
-        "isCorrect": {
-          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
-          "type": "boolean"
-        },
-        "isValid": {
-          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
-          "type": "boolean"
-        },
         "methods": {
-          "$ref": "#/definitions/SerialisedMethods",
-          "description": "The methods of the component."
+          "$ref": "#/definitions/MethodReferences",
+          "description": "Optional: The methods of the component."
         },
         "name": {
-          "description": "The name of the component. Will be displayed in the component header in CARPET.",
+          "description": "The name of the component instance. Will be displayed in the component header in CARPET.",
           "type": "string"
         },
         "nestedComponents": {
           "$ref": "#/definitions/NestedComponents",
           "description": "Optional: Nested components of the component."
+        },
+        "state": {
+          "$ref": "#/definitions/InputFieldComponentState",
+          "description": "The state of the component."
         },
         "type": {
           "const": "InputField",
@@ -1183,11 +1346,10 @@
         }
       },
       "required": [
-        "component",
+        "componentConfiguration",
         "dependencies",
-        "isCorrect",
-        "isValid",
         "name",
+        "state",
         "type",
         "validationConfiguration"
       ],
@@ -1195,7 +1357,7 @@
     },
     "SerializedInputFieldDependencies": {
       "additionalProperties": false,
-      "description": "The InputField-component requires a valid [???] to display.",
+      "description": "The InputField-component may load its value from a reference value.",
       "properties": {
         "referenceValue": {
           "$ref": "#/definitions/JSONPathExpression"

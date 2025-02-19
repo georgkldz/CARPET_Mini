@@ -1,0 +1,9 @@
+<template>
+  <q-expansion-item
+    expand-separator
+    icon="settings"
+    label="Settings"
+    default-closed
+  >
+  </q-expansion-item>
+</template>

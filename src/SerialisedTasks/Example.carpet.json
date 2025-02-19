@@ -14,7 +14,7 @@
           "1": {
             "x": 26,
             "y": 25,
-            "width": 5,
+            "width": 10,
             "height": 5
           },
           "2": {
@@ -49,123 +49,129 @@
       },
       "components": {
         "0": {
-          "component": {},
+          "state": {
+            "isCorrect": true,
+            "isValid": true
+          },
           "dependencies": {
             "dotDescription": "$.taskData.dotDescription"
           },
-          "validationConfiguration": {},
-          "isCorrect": true,
-          "isValid": true,
           "name": "Beispielgraph",
           "type": "DOTGraph"
         },
         "1": {
-          "component": {
-            "fieldConfiguration": {
-              "icon": "10k"
-            },
-            "fieldValue": "test"
+          "name": "Code",
+          "type": "CodeEditor",
+          "state": {
+            "isCorrect": false,
+            "isValid": false,
+            "code": "test"
+          },
+          "dependencies": {
+            "code": "$.nodes.0.components.2.state.fieldValue"
+          },
+          "validationConfiguration": {
+            "type": "compareToString"
+          },
+          "componentConfiguration": {
+            "darkMode": false,
+            "language": "sql"
+          }
+        },
+        "2": {
+          "state": {
+            "fieldValue": "testaa",
+            "isCorrect": false,
+            "isValid": false
+          },
+          "componentConfiguration": {
+            "icon": "10k",
+            "label": "tests",
+            "hint": "asd"
           },
           "dependencies": {},
           "validationConfiguration": {
             "type": "compareValueFromStatic",
-            "comparisons": [{ "value": "test", "operator": "==" }]
+            "comparisons": [{ "value": "test", "operator": "==" }],
+            "validOnEmptyField": true
           },
-          "isCorrect": false,
-          "isValid": false,
-          "name": "test",
-          "type": "InputField"
-        },
-        "2": {
-          "component": {
-            "fieldConfiguration": {
-              "icon": "10k",
-              "label": "test",
-              "hint": "test"
-            },
-            "fieldValue": "test"
-          },
-          "dependencies": {
-            "referenceValue": "$.nodes.0.components.1.component.fieldValue"
-          },
-          "validationConfiguration": {
-            "type": "compareValueFromStatic",
-            "comparisons": [{ "value": "test", "operator": "==" }]
-          },
-          "isCorrect": false,
-          "isValid": false,
           "name": "test",
           "type": "InputField"
         },
         "3": {
           "type": "GenericForm",
           "name": "Example Form",
-          "isValid": true,
-          "isCorrect": true,
-          "dependenciesAreValidAndFormFieldsAreCorrect": false,
-          "formFieldsAreValidAndDependenciesAreCorrect": false,
           "dependencies": {},
           "validationConfiguration": {
-            "submitableWhen": "dependenciesAreValidAndFormFieldsAreCorrect"
+            "submitableWhen": "isValid"
           },
-          "component": {},
+          "state": {
+            "isValid": true,
+            "isCorrect": true,
+            "dependenciesAreValidAndFormFieldsAreCorrect": false,
+            "formFieldsAreValidAndDependenciesAreCorrect": false
+          },
           "nestedComponents": {
             "formComponents": {
               "inputField1": {
                 "type": "InputField",
                 "name": "InputField1",
-                "isValid": false,
-                "isCorrect": false,
-                "component": {
-                  "fieldConfiguration": {
-                    "icon": "10k",
-                    "label": "zB",
-                    "hint": "zB"
-                  },
+                "state": {
+                  "isValid": false,
+                  "isCorrect": false,
                   "fieldValue": "dock"
                 },
                 "dependencies": {},
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
-                  "comparisons": [{ "value": "test", "operator": "==" }]
+                  "comparisons": [{ "value": "test", "operator": "==" }],
+                  "validOnEmptyField": true
+                },
+                "componentConfiguration": {
+                  "icon": "10k",
+                  "label": "zB",
+                  "hint": "zB"
                 }
               },
               "inputField2": {
                 "type": "InputField",
                 "name": "InputField1",
-                "isValid": false,
-                "isCorrect": false,
-                "component": {
-                  "fieldConfiguration": {
-                    "icon": "10k",
-                    "label": "zB",
-                    "hint": "zB"
-                  },
+                "state": {
+                  "isValid": false,
+                  "isCorrect": false,
                   "fieldValue": "dock"
                 },
                 "dependencies": {},
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
-                  "comparisons": [{ "value": "test", "operator": "==" }]
+                  "comparisons": [{ "value": "test", "operator": "==" }],
+                  "validOnEmptyField": true
+                },
+                "componentConfiguration": {
+                  "icon": "10k",
+                  "label": "zB",
+                  "hint": "zB"
                 }
               },
               "inputField3": {
                 "type": "InputField",
                 "name": "InputField1",
-                "isValid": false,
-                "isCorrect": false,
-                "component": {
-                  "fieldConfiguration": {
-                    "icon": "10k",
-                    "label": "zB",
-                    "hint": "zB"
-                  },
+                "state": {
+                  "isValid": false,
+                  "isCorrect": false,
                   "fieldValue": "dock"
                 },
                 "dependencies": {},
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
-                  "comparisons": [{ "value": "test", "operator": "==" }]
+                  "comparisons": [{ "value": "test", "operator": "==" }],
+                  "validOnEmptyField": true
+                },
+
+                "componentConfiguration": {
+                  "icon": "10k",
+                  "label": "zB",
+                  "hint": "zB"
                 }
               }
             },
@@ -173,16 +179,16 @@
               "submit": {
                 "type": "GenericButton",
                 "name": "Submit",
-                "isValid": true,
-                "isCorrect": true,
                 "dependencies": {},
                 "validationConfiguration": {},
-                "component": {
+                "state": {
+                  "isValid": true,
+                  "isCorrect": true,
                   "label": "Submit",
-                  "loadingState": false,
-                  "buttonConfiguration": {
-                    "disableOnInvalid": true
-                  }
+                  "loadingState": false
+                },
+                "componentConfiguration": {
+                  "disableOnInvalid": true
                 }
               }
             }

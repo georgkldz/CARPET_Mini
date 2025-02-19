@@ -12,6 +12,7 @@
       :snap-grid="applicationStore.SNAP_GRID"
       :fit-view-on-init="true"
     >
+      <NavigationComponent :storeObject="taskGraphStore"> </NavigationComponent>
       <Background pattern-color="#aaa" :gap="30" />
       <ControlBar />
       <MiniMap />
@@ -32,6 +33,7 @@ import ControlBar from "./ControlBar.vue";
 import { computed } from "vue";
 
 import ThreadContainer from "./ThreadContainer.vue";
+import NavigationComponent from "./NavigationComponent.vue";
 
 import type { LayoutSizes } from "src/stores/applicationStore";
 import { useApplicationStore } from "src/stores/applicationStore";
