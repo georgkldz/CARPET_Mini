@@ -26,7 +26,7 @@ export default boot(({ app }) => {
     locale: "en-US",
     legacy: false,
     messages,
-  });
+  }) ;
 
   // Set i18n instance on app
   app.use(i18n);
