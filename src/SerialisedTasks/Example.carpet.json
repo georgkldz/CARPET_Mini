@@ -63,16 +63,159 @@
           },
           "nestedComponents": {
             "formComponents": {
-
+              "textView1": {
+                "type": "TextView",
+                "name": "TextView1",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "HatnichtgeklapptHatnichtgeklappt"
+                    }
+                  ],
+                  "fieldValue": "",
+                  "fieldConfiguration": {
+                  }
+                },
+                "componentConfiguration": {
+                },
+                "dependencies": {
+                  "referenceValue": "$.taskData.taskDescription"
+                },
+                "validationConfiguration": {}
+              },
+              "textView2": {
+                "type": "TextView",
+                "name": "TextView2",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "1. Schritt: ",
+                      "bold": true
+                    },
+                    {
+                      "text": "Ansatz"
+                    }
+                  ],
+                  "fieldValue": "",
+                  "fieldConfiguration": {
+                  }
+                },
+                "componentConfiguration": {},
+                "dependencies": {
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.textView2.state.fieldValue"
+                },
+                "validationConfiguration": {}
+              },
+              "latexInputField1": {
+                "type": "LatexInputField",
+                "name": "LatexInputField1",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {
+                  }
+                },
+                "componentConfiguration": {
+                  "prepend": "f(x)=",
+                  "placeholder": "z.B. x³ + ..."
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.latexInputField1.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "comparisons": [
+                  ]
+                }
+              },
+              "latexInputField2": {
+                "type": "LatexInputField",
+                "name": "LatexInputField2",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {
+                  }
+                },
+                "componentConfiguration": {
+                  "prepend": "f'(x)="
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.latexInputField2.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "comparisons": [
+                  ]
+                }
+              },
+              "latexInputField3": {
+                "type": "LatexInputField",
+                "name": "LatexInputField3",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {
+                  }
+                },
+                "componentConfiguration": {
+                  "prepend": "f''(x)="
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.latexInputField3.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "comparisons": [
+                  ]
+                }
+              },
+              "textView3": {
+                "type": "TextView",
+                "name": "TextView3",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "2. Schritt: ",
+                      "bold": true
+                    },
+                    {
+                      "text": "notiere Gleichungen"
+                    }
+                  ],
+                  "fieldValue": "",
+                  "fieldConfiguration": {
+                  }
+                },
+                "componentConfiguration": {},
+                "dependencies": {
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.textView3.state.fieldValue"
+                },
+                "validationConfiguration": {}
+              },
               "inputField1": {
                 "type": "InputField",
                 "name": "InputField1",
                 "state": {
                   "isValid": false,
                   "isCorrect": false,
-                  "fieldValue": "dock"
+                  "fieldValue": ""
                 },
-                "dependencies": {},
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "z. B. f(7) = 11"
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.inputField1.state.fieldValue"
+                },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
                   "comparisons": [
@@ -81,23 +224,26 @@
                       "operator": "=="
                     }
                   ],
-                  "validOnEmptyField": true
-                },
-                "componentConfiguration": {
-                  "icon": "10k",
-                  "label": "zB",
-                  "hint": "zB"
+                  "validOnEmptyField": false
                 }
               },
               "inputField2": {
                 "type": "InputField",
-                "name": "InputField1",
+                "name": "InputField2",
                 "state": {
-                  "isValid": false,
+                  "isValid": true,
                   "isCorrect": false,
-                  "fieldValue": "dock"
+                  "fieldValue": ""
                 },
-                "dependencies": {},
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.inputField2.state.fieldValue"
+                },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
                   "comparisons": [
@@ -106,23 +252,26 @@
                       "operator": "=="
                     }
                   ],
-                  "validOnEmptyField": true
-                },
-                "componentConfiguration": {
-                  "icon": "10k",
-                  "label": "zB",
-                  "hint": "zB"
+                  "validOnEmptyField": false
                 }
               },
               "inputField3": {
                 "type": "InputField",
-                "name": "InputField1",
+                "name": "InputField3",
                 "state": {
-                  "isValid": false,
+                  "isValid": true,
                   "isCorrect": false,
-                  "fieldValue": "dock"
+                  "fieldValue": ""
                 },
-                "dependencies": {},
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.inputField3.state.fieldValue"
+                },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
                   "comparisons": [
@@ -131,12 +280,63 @@
                       "operator": "=="
                     }
                   ],
-                  "validOnEmptyField": true
+                  "validOnEmptyField": false
+                }
+              },
+              "inputField4": {
+                "type": "InputField",
+                "name": "InputField4",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
                 },
                 "componentConfiguration": {
-                  "icon": "10k",
-                  "label": "zB",
-                  "hint": "zB"
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.inputField4.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": false
+                }
+              },
+              "inputField5": {
+                "type": "InputField",
+                "name": "InputField5",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.inputField5.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": false
                 }
               }
             },
@@ -149,13 +349,19 @@
                 "state": {
                   "isValid": true,
                   "isCorrect": true,
-                  "label": "Submit",
+                  "label": "an Gruppe senden",
                   "loadingState": false
                 },
                 "componentConfiguration": {
                   "disableOnInvalid": true
                 }
               }
+            }
+          },
+          "actions": {
+            "submit": {
+              "action": "",
+              "type": "fetch"
             }
           }
         },
@@ -203,7 +409,16 @@
             "hint": "asd"
           }
         },
-        "3": {}
+        "3": {
+          "dependencies": {},
+          "name": "",
+          "state": {
+            "code": "",
+            "isCorrect": false,
+            "isValid": false
+          },
+          "type": "CodeEditor"
+        }
       }
     }
   },

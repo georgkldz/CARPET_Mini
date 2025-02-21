@@ -107,7 +107,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       //    z. B. an JSON-Pfade für description/hint
       //  (Passe diese Pfade an deine JSON-Struktur an!)
       this.setProperty({
-        path: "$.nodes.0.components.0.nestedComponents.formComponents.textView1.component.textSegments[0].text",
+        path: "$.nodes.0.components.0.nestedComponents.formComponents.textView1.state.textSegments[0].text",
         value: foundTask.description,
       });
       this.setProperty({
