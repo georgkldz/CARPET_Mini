@@ -203,7 +203,7 @@
                 "type": "InputField",
                 "name": "InputField1",
                 "state": {
-                  "isValid": false,
+                  "isValid": true,
                   "isCorrect": false,
                   "fieldValue": ""
                 },
@@ -252,7 +252,7 @@
                       "operator": "=="
                     }
                   ],
-                  "validOnEmptyField": false
+                  "validOnEmptyField": true
                 }
               },
               "inputField3": {
@@ -280,7 +280,7 @@
                       "operator": "=="
                     }
                   ],
-                  "validOnEmptyField": false
+                  "validOnEmptyField": true
                 }
               },
               "inputField4": {
@@ -308,7 +308,7 @@
                       "operator": "=="
                     }
                   ],
-                  "validOnEmptyField": false
+                  "validOnEmptyField": true
                 }
               },
               "inputField5": {
@@ -336,7 +336,7 @@
                       "operator": "=="
                     }
                   ],
-                  "validOnEmptyField": false
+                  "validOnEmptyField": true
                 }
               }
             },
