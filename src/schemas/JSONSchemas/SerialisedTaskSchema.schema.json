@@ -216,6 +216,24 @@
       ],
       "description": "The CodeEditor allows for optional validation strategies.\nThe first strategy is a basic string compare.\nThe second strategy is a request-based strategy, which may depend on a user-defined strategy (e.g. test-suite, output comparisons, more complex string comparisons, etc.).\n   As the second strategy may depend on more than just the code, the entire state is accessible."
     },
+    "ComponentAction": {
+      "additionalProperties": false,
+      "description": "The serialized configuration of a component action.",
+      "properties": {
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": ["type"],
+      "type": "object"
+    },
+    "ComponentActions": {
+      "additionalProperties": {
+        "$ref": "#/definitions/ComponentAction"
+      },
+      "description": "The serialized configuration for the actions of a component.",
+      "type": "object"
+    },
     "ComponentConfiguration": {
       "additionalProperties": false,
       "description": "Component configuration. This holds possible configuration options for the component.",
@@ -513,6 +531,17 @@
       ],
       "type": "object"
     },
+    "FormActions": {
+      "additionalProperties": false,
+      "description": "The FormComponent allows to emit a fetch-action on submitting the form.",
+      "properties": {
+        "submit": {
+          "$ref": "#/definitions/SubmitAction"
+        }
+      },
+      "required": ["submit"],
+      "type": "object"
+    },
     "FormComponentState": {
       "additionalProperties": false,
       "description": "The Form-component has additional state properties for validation.",
@@ -561,6 +590,7 @@
           "additionalProperties": {
             "$ref": "#/definitions/SerializedInputFieldComponent"
           },
+          "description": "Components used as formComponents MUST expose their user input value as fieldValue in their componentState. See InputField for an example.",
           "type": "object"
         }
       },
@@ -605,7 +635,7 @@
     },
     "InputFieldComponentState": {
       "additionalProperties": false,
-      "description": "The InputField-component may hold a static dotDescription in its componentState.",
+      "description": "The InputField-component holds a fieldValue in its componentState.",
       "properties": {
         "fieldValue": {
           "anyOf": [
@@ -903,6 +933,10 @@
       "additionalProperties": false,
       "description": "Generic type description with defaults of a serialised base component.",
       "properties": {
+        "actions": {
+          "$ref": "#/definitions/ComponentActions",
+          "description": "Optional: Actions that can be emitted by the component."
+        },
         "componentConfiguration": {
           "$ref": "#/definitions/ComponentConfiguration",
           "description": "Configuration options that are specific to the individual component."
@@ -975,6 +1009,10 @@
       "additionalProperties": false,
       "description": "The SerializedButtonComponent interface is used to define the serialised properties of the Button component.",
       "properties": {
+        "actions": {
+          "$ref": "#/definitions/ComponentActions",
+          "description": "Optional: Actions that can be emitted by the component."
+        },
         "componentConfiguration": {
           "$ref": "#/definitions/ButtonConfiguration",
           "description": "Configuration options that are specific to the individual component."
@@ -1066,6 +1104,10 @@
       "additionalProperties": false,
       "description": "The SerializedCodeEditorComponent interface is used to define the serialised properties of the CodeEditor component.",
       "properties": {
+        "actions": {
+          "$ref": "#/definitions/ComponentActions",
+          "description": "Optional: Actions that can be emitted by the component."
+        },
         "componentConfiguration": {
           "$ref": "#/definitions/CodeEditorConfiguration",
           "description": "Configuration options that are specific to the individual component."
@@ -1145,6 +1187,10 @@
       "additionalProperties": false,
       "description": "The SerializedDOTGraphComponent interface is used to define the serialised properties of the DOTGraph component.",
       "properties": {
+        "actions": {
+          "$ref": "#/definitions/ComponentActions",
+          "description": "Optional: Actions that can be emitted by the component."
+        },
         "componentConfiguration": {
           "$ref": "#/definitions/ComponentConfiguration",
           "description": "Configuration options that are specific to the individual component."
@@ -1218,6 +1264,10 @@
       "additionalProperties": false,
       "description": "The SerializedFormComponent interface is used to define the serialised properties of the Form component.",
       "properties": {
+        "actions": {
+          "$ref": "#/definitions/FormActions",
+          "description": "Optional: Actions that can be emitted by the component."
+        },
         "componentConfiguration": {
           "$ref": "#/definitions/ComponentConfiguration",
           "description": "Configuration options that are specific to the individual component."
@@ -1272,6 +1322,7 @@
         }
       },
       "required": [
+        "actions",
         "dependencies",
         "name",
         "nestedComponents",
@@ -1292,6 +1343,10 @@
       "additionalProperties": false,
       "description": "The SerializedInputFieldComponent interface is used to define the serialised properties of the InputField component.",
       "properties": {
+        "actions": {
+          "$ref": "#/definitions/ComponentActions",
+          "description": "Optional: Actions that can be emitted by the component."
+        },
         "componentConfiguration": {
           "$ref": "#/definitions/FieldConfiguration",
           "description": "Configuration options that are specific to the individual component."
@@ -1377,6 +1432,23 @@
         }
       },
       "required": ["operator", "value"],
+      "type": "object"
+    },
+    "SubmitAction": {
+      "additionalProperties": false,
+      "properties": {
+        "externalValues": {
+          "additionalProperties": {
+            "$ref": "#/definitions/JSONPathExpression"
+          },
+          "type": "object"
+        },
+        "type": {
+          "const": "fetch",
+          "type": "string"
+        }
+      },
+      "required": ["type"],
       "type": "object"
     },
     "TaskData": {
