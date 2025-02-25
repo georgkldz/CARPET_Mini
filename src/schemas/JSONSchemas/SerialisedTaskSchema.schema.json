@@ -216,23 +216,15 @@
       ],
       "description": "The CodeEditor allows for optional validation strategies.\nThe first strategy is a basic string compare.\nThe second strategy is a request-based strategy, which may depend on a user-defined strategy (e.g. test-suite, output comparisons, more complex string comparisons, etc.).\n   As the second strategy may depend on more than just the code, the entire state is accessible."
     },
-    "ComparisonConfiguration": {
-      "additionalProperties": false,
-      "description": "Configuration for basic comparison operations with static values.",
-      "type": "object"
-    },
     "ComponentAction": {
       "additionalProperties": false,
       "description": "The serialized configuration of a component action.",
       "properties": {
-        "action": {
-          "type": "string"
-        },
         "type": {
           "type": "string"
         }
       },
-      "required": ["action", "type"],
+      "required": ["type"],
       "type": "object"
     },
     "ComponentActions": {
@@ -539,17 +531,6 @@
       ],
       "type": "object"
     },
-    "FormActions": {
-      "additionalProperties": false,
-      "description": "The FormComponent allows to emit a fetch-action on submitting the form.",
-      "properties": {
-        "submit": {
-          "$ref": "#/definitions/SubmitAction"
-        }
-      },
-      "required": ["submit"],
-      "type": "object"
-    },
     "FormComponentState": {
       "additionalProperties": false,
       "description": "The Form-component has additional state properties for validation.",
@@ -596,19 +577,8 @@
         },
         "formComponents": {
           "additionalProperties": {
-            "anyOf": [
-              {
-                "$ref": "#/definitions/SerializedInputFieldComponent"
-              },
-              {
-                "$ref": "#/definitions/SerializedLatexInputFieldComponent"
-              },
-              {
-                "$ref": "#/definitions/SerializedTextViewComponent"
-              }
-            ]
+            "$ref": "#/definitions/SerializedInputFieldComponent"
           },
-          "description": "Components used as formComponents MUST expose their user input value as fieldValue in their componentState. See InputField for an example.",
           "type": "object"
         }
       },
@@ -653,7 +623,7 @@
     },
     "InputFieldComponentState": {
       "additionalProperties": false,
-      "description": "The InputField-component holds a fieldValue in its componentState.",
+      "description": "The InputField-component may hold a static dotDescription in its componentState.",
       "properties": {
         "fieldValue": {
           "anyOf": [
@@ -1225,10 +1195,6 @@
       "additionalProperties": false,
       "description": "Generic type description with defaults of a serialised base component.",
       "properties": {
-        "actions": {
-          "$ref": "#/definitions/ComponentActions",
-          "description": "Optional: Actions that can be emitted by the component."
-        },
         "componentConfiguration": {
           "$ref": "#/definitions/ComponentConfiguration",
           "description": "Configuration options that are specific to the individual component."
@@ -1891,9 +1857,6 @@
     "SubmitAction": {
       "additionalProperties": false,
       "properties": {
-        "action": {
-          "type": "string"
-        },
         "externalValues": {
           "additionalProperties": {
             "$ref": "#/definitions/JSONPathExpression"
@@ -1905,7 +1868,7 @@
           "type": "string"
         }
       },
-      "required": ["action", "type"],
+      "required": ["type"],
       "type": "object"
     },
     "TaskData": {
@@ -2526,14 +2489,14 @@
     "quasar.VueClassProp": {
       "anyOf": [
         {
+          "additionalProperties": {},
+          "type": "object"
+        },
+        {
           "items": {
             "$ref": "#/definitions/quasar.VueClassProp"
           },
           "type": "array"
-        },
-        {
-          "additionalProperties": {},
-          "type": "object"
         },
         {
           "type": "string"

@@ -22,6 +22,7 @@
           setProperty: taskGraphStore.setProperty,
         }"
         :componentPath="`$.nodes.${currentNodeId}.components.${props.id}`"
+        @action="actionHandler"
       >
         <!-- TODO: See if this is really necessary/smart to solve with slots? Only relevant when layout is to be configurable? -->
         <!-- <template
@@ -59,12 +60,6 @@ import type { Layout } from "src/stores/applicationStore";
 import { useApplicationStore } from "src/stores/applicationStore";
 import { useVueFlow } from "@vue-flow/core";
 import { unref, ref } from "vue";
-
-// interface Data {
-//   componentId: number;
-//   width: number;
-//   height: number;
-// }
 
 type ThreadContainerProps = NodeProps;
 
@@ -194,6 +189,11 @@ const collisionCorrection = (
   }
 
   return { newX, newY };
+};
+
+const actionHandler = (event: Event, payload: object) => {
+  console.error(event);
+  console.error(payload);
 };
 
 // TODO: Implement configurable Handles/Ports (for connecting Containers via edges)

@@ -36,13 +36,12 @@ const props = defineProps<{ storeObject: StoreAPI }>();
 
 const { getProperty, setProperty } = props.storeObject;
 
-const taskMode = getProperty("$.taskMode");
 const router = useRouter();
 const rootNode = getProperty("$.rootNode");
-const currentNode = getProperty("$.currentNode");
+const currentNode = computed(() => getProperty("$.currentNode"));
 
 const next = computed(() => {
-  const edges = getProperty("$.edges")[currentNode];
+  const edges = getProperty("$.edges")[unref(currentNode)];
   if (edges) return edges[0];
   return null;
 });
@@ -50,7 +49,7 @@ const previous = computed(() => {
   return getProperty("$.previousNode");
 });
 
-const isRootNode = rootNode == currentNode;
+const isRootNode = computed(() => rootNode == unref(currentNode));
 
 const findPrevious = (to: number) => {
   const edges: { [id: number]: Array<number> } = getProperty("$.edges");
@@ -66,51 +65,20 @@ const findPrevious = (to: number) => {
   return previousId;
 };
 
-// type ComponentValidites = Array<boolean>;
-
 const components = computed(
-  () => <SerialisedComponents>getProperty(`$.nodes.${currentNode}.components`),
+  () =>
+    <SerialisedComponents>(
+      getProperty(`$.nodes.${unref(currentNode)}.components`)
+    ),
 );
-
-// const componentValidities: ComputedRef<ComponentValidites> = computed(() => {
-//   const edges = getProperty("$.edges");
-//   if (edges && edges[currentNode]) {
-//     if (edges[currentNode].length > 1) return [true];
-//     const components = <TaskGraphState>(
-//       getProperty(`$.nodes.${currentNode}.components`)
-//     );
-//     if (components)
-//       return Object.values(components).map((component) => {
-//         if (taskMode === "practice") {
-//           return component.isValid && "isCorrect" in component
-//             ? component.isCorrect
-//             : true;
-//         } else {
-//           return component.isValid;
-//         }
-//       });
-//   }
-//   return [false];
-// });
 
 const validateComponents = () => {
   const isCorrect = (<Array<SerializedCARPETComponents>>(
     Object.values(unref(components))
-  )).every((component) => {
-    // not every component requires a correctness check, so skip those
-
-    if (component.state.isCorrect === undefined) return true;
-    return component.state.isCorrect;
-  });
-  const isValid =
-    taskMode.value === "practice"
-      ? isCorrect &&
-        (<Array<SerializedCARPETComponents>>(
-          Object.values(unref(components))
-        )).every((component) => component.state.isValid)
-      : (<Array<SerializedCARPETComponents>>(
-          Object.values(unref(components))
-        )).every((component) => component.state.isValid);
+  )).every((component) => component.state.isCorrect);
+  const isValid = (<Array<SerializedCARPETComponents>>(
+    Object.values(unref(components))
+  )).every((component) => component.state.isValid);
 
   return { isValid, isCorrect };
 };
@@ -142,11 +110,14 @@ watch(
   () => {
     setTimeout(() => {
       const { isValid, isCorrect } = validateComponents();
-      const currentNodeElement = getProperty(`$.nodes.${currentNode}`);
-      setProperty({ path: `$.nodes.${currentNode}.isValid`, value: isValid });
+      const currentNodeElement = getProperty(`$.nodes.${unref(currentNode)}`);
+      setProperty({
+        path: `$.nodes.${unref(currentNode)}.isValid`,
+        value: isValid,
+      });
       if ("isCorrect" in currentNodeElement)
         setProperty({
-          path: `$.nodes.${currentNode}.isCorrect`,
+          path: `$.nodes.${unref(currentNode)}.isCorrect`,
           value: isCorrect,
         });
 
