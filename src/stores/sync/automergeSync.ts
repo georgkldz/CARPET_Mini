@@ -143,21 +143,44 @@ export function syncFromDocComponents(
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const changedEntries: Array<{ pathOrId: string; data: any }> = [];
+  // Behalte Formulare, die eine Neuvalidierung benötigen
+  const formsToValidate = new Set<{ nodeId: number; componentId: number }>();
 
-  // 1) Find changed or new Keys
+  // 1) Finde geänderte oder neue Schlüssel
   for (const [key, val] of Object.entries(newComponents)) {
     if (
       !oldComponents.value ||
       JSON.stringify(oldComponents.value[key]) !== JSON.stringify(val)
     ) {
       changedEntries.push({ pathOrId: key, data: val });
+
+      // Prüfe, ob dies eine Änderung an einer verschachtelten Formularkomponente ist
+      if (typeof key === "string" && key.includes(".nestedComponents.formComponents.")) {
+        const pathMatch = key.match(/\$\.nodes\.(\d+)\.components\.(\d+)/);
+        if (pathMatch && pathMatch.length === 3) {
+          const nodeId = parseInt(pathMatch[1]);
+          const componentId = parseInt(pathMatch[2]);
+          formsToValidate.add({ nodeId, componentId });
+        }
+      }
     }
   }
-  // 2) Find deleted Keys
+
+  // 2) Finde gelöschte Schlüssel
   if (oldComponents.value) {
-    for (const key of Object.keys(oldComponents)) {
+    for (const key of Object.keys(oldComponents.value)) {
       if (!(key in newComponents)) {
         changedEntries.push({ pathOrId: key, data: undefined });
+
+        // Prüfe, ob dies eine Änderung an einer verschachtelten Formularkomponente ist
+        if (typeof key === "string" && key.includes(".nestedComponents.formComponents.")) {
+          const pathMatch = key.match(/\$\.nodes\.(\d+)\.components\.(\d+)/);
+          if (pathMatch && pathMatch.length === 3) {
+            const nodeId = parseInt(pathMatch[1]);
+            const componentId = parseInt(pathMatch[2]);
+            formsToValidate.add({ nodeId, componentId });
+          }
+        }
       }
     }
   }
@@ -166,17 +189,20 @@ export function syncFromDocComponents(
     console.log("Keine echten Änderungen in componentsData");
     return;
   }
+
   console.log("Echte Änderungen:", changedEntries);
-  // Update local cache
+  // Aktualisiere den lokalen Cache
   lastComponentsDataCache.value = JSON.parse(JSON.stringify(newComponents));
   isRemoteUpdate.value = true;
+
+  // Wende zunächst alle Änderungen an
   changedEntries.forEach(({ pathOrId, data }) => {
-    // 1) data === undefined? => skip
+    // 1) data === undefined? => überspringen
     if (data === undefined) {
       console.log("Ignoriere Patch, da data===undefined:", pathOrId);
       return;
     }
-    // If "id" => {component data}:
+    // Wenn "id" => {component data}:
     const idNum = Number(pathOrId);
     console.log("pathOrId", pathOrId);
     console.log("idNum ", idNum);
@@ -190,5 +216,12 @@ export function syncFromDocComponents(
       });
     }
   });
+
+  // Nach dem Anwenden aller Änderungen, validiere die betroffenen Formulare
+  formsToValidate.forEach(({ nodeId, componentId }) => {
+    console.log(`Validating form for node ${nodeId}, component ${componentId} after sync`);
+    taskGraphStore.validateFormAfterChange(nodeId, componentId);
+  });
+
   isRemoteUpdate.value = false;
 }

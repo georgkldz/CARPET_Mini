@@ -11,16 +11,30 @@
               </q-card-section>
               <q-separator />
 
-              <q-card-actions align="center">
+              <q-card-actions align="center" class="q-pa-md column q-gutter-y-md">
                 <q-btn
                   color="primary"
                   label="Neue Aufgabe erstellen"
                   @click="goToNewTask"
+                  class="full-width"
                 />
                 <q-btn
                   color="secondary"
                   label="Zurückliegende Bearbeitungen kommentieren"
                   @click="notImplemented"
+                  class="full-width"
+                />
+                <q-btn
+                  color="deep-purple"
+                  label="Assessment anleiten"
+                  @click="guideAssessment"
+                  class="full-width"
+                />
+                <q-btn
+                  color="teal"
+                  label="Assessment konfigurieren"
+                  @click="configureAssessment"
+                  class="full-width"
                 />
               </q-card-actions>
             </q-card>
@@ -42,5 +56,13 @@ function goToNewTask() {
 
 function notImplemented() {
   //TODO
+}
+
+function guideAssessment() {
+  router.push("/guide-assessment");
+}
+
+function configureAssessment() {
+  router.push("/configure-assessment");
 }
 </script>

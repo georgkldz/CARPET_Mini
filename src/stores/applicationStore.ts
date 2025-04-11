@@ -5,7 +5,7 @@ import serialisedTaskSchema from "../schemas/zodSchemas/SerialisedTaskSchema";
 
 import type { SerializedCARPETComponents } from "carpet-component-library";
 
-import ExampleTask from "../SerialisedTasks/Example.carpet.json";
+import ExampleTask from "../SerialisedTasks/Kleditz.carpet.json";
 const staticTasks = { Example: serialisedTaskSchema.parse(ExampleTask) };
 import { useTaskGraphStore } from "./taskGraphStore";
 import {

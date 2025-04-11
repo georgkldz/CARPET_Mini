@@ -10,7 +10,7 @@ import type { Task } from "src/models/Task";
 import type {
   StoreAPI,
   JSONPathExpression,
-  StoreSetterPayload,
+  StoreSetterPayload, SerializedBaseComponent
 } from "carpet-component-library";
 import { useAuthStore } from "stores/authStore";
 import { useTasksStore } from "stores/tasksStore";
@@ -180,10 +180,32 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
           subState = subState[splitPath[depth]];
         }
       }
+
       // optional Logging
       process.env.NODE_ENV === "development" && console.log(path, value);
+
+      // Prüfen, ob die Änderung die Validität eines Formulars beeinflussen könnte
+      if (typeof path === "string" &&
+        path.includes(".nestedComponents.formComponents.") &&
+        (path.includes(".state.isValid") || path.includes(".state.isCorrect") ||
+          path.includes(".state.fieldValue"))) {
+
+        // Extrahiere Node- und Komponenten-IDs aus dem Pfad
+        // Pfadformat: $.nodes.{nodeId}.components.{componentId}.nestedComponents.formComponents...
+        const pathMatch = path.match(/\$\.nodes\.(\d+)\.components\.(\d+)/);
+        if (pathMatch && pathMatch.length === 3) {
+          const nodeId = parseInt(pathMatch[1]);
+          const componentId = parseInt(pathMatch[2]);
+
+          // Validiere das übergeordnete Formular nach der Änderung
+          this.validateFormAfterChange(nodeId, componentId);
+          console.log(`Form validation triggered after change to ${path}`);
+        }
+      }
+
       if (
         !applicationStore.isRemoteUpdate &&
+        typeof path === "string" &&
         path.startsWith("$.nodes.0.components")
       ) {
         console.log(
@@ -212,10 +234,10 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       if (currentTask) {
         // übernimm "Example.carpet.json" in den State
         for (const [key, value] of Object.entries(currentTask)) {
-          this.setProperty({ path: `$.${key}`, value });
+          this.setProperty({ path: `$.${key}` as JSONPathExpression, value });
         }
         this.setProperty({
-          path: "$.currentNode",
+          path: "$.currentNode" as JSONPathExpression,
           value: currentTask.rootNode,
         });
       }
@@ -223,6 +245,39 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       // Ruft nun unsere neue Action auf,
       // um einen DB-Task (basierend auf authStore.currentTaskId) einzubinden:
       this.loadDBTaskIntoGraph();
+
+      // Initialisiere Formularvaliditäten nach dem Laden des Tasks
+      this.initializeFormValidation();
+    },
+
+    /**
+     * Initialisiert die Validitätszustände aller Formularkomponenten in der Aufgabe.
+     * Dies sollte nach dem Laden einer Aufgabe aufgerufen werden, um sicherzustellen,
+     * dass alle Formularvaliditäten von Anfang an korrekt berechnet werden.
+     */
+    /**
+     * Initialisiert die Validitätszustände aller Formularkomponenten in der Aufgabe.
+     * Dies sollte nach dem Laden einer Aufgabe aufgerufen werden, um sicherzustellen,
+     * dass alle Formularvaliditäten von Anfang an korrekt berechnet werden.
+     */
+    initializeFormValidation() {
+      // Finde alle GenericForms in der Aufgabe
+      for (const [nodeIdStr, node] of Object.entries(this.$state.nodes)) {
+        const nodeId = parseInt(nodeIdStr);
+
+        if (node.components) {
+          for (const [componentIdStr, componentData] of Object.entries(node.components)) {
+            const componentId = parseInt(componentIdStr);
+            const component = componentData as SerializedBaseComponent;
+
+            if (component.type === "GenericForm") {
+              // Validiere dieses Formular
+              this.validateFormAfterChange(nodeId, componentId);
+              console.log(`Initialisierte Formularvalidität für Node ${nodeId}, Komponente ${componentId}`);
+            }
+          }
+        }
+      }
     },
 
     trackMouse(mouseEvent: { x: number; y: number; timestamp: number }) {
@@ -231,6 +286,75 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
 
     toggleLoading() {
       this.isLoading = !this.isLoading;
+    },
+    /**
+     * Triggers the validation of a form component after its nested components have changed.
+     * This method gets the form component from the store and directly calls its validate method.
+     *
+     * @param nodeId The ID of the node that contains the form
+     * @param componentId The ID of the form component
+     */
+    validateFormAfterChange(nodeId: number, componentId: number) {
+      // Der Komponenten-Pfad im Store
+      const componentsPath = `$.nodes.${nodeId}.components.${componentId}` as JSONPathExpression;
+
+      try {
+        // Holen der Komponente aus dem Store
+        const formComponentResult = this.getProperty(componentsPath);
+
+        if (!formComponentResult || formComponentResult.type !== "GenericForm") {
+          console.warn(`GenericForm not found at path: ${componentsPath}`);
+          return;
+        }
+
+        // Wir erstellen ein temporäres FormComponent-Objekt
+        // und rufen dessen validate-Methode auf
+        const formComponent = {
+          serialisedBaseComponentPath: componentsPath,
+          serializedBaseComponent: { value: formComponentResult },
+          storeObject: { value: this },
+          dependencies: { value: {} },
+          getNestedComponents: () => formComponentResult.nestedComponents || { formComponents: {} },
+          validate: function() {
+            // Diese Implementierung basiert auf der validate-Methode in FormComponent
+            const dependencies = Object.values(this.dependencies.value) as SerializedBaseComponent[];
+            const formComponents = Object.values(this.getNestedComponents().formComponents) as SerializedBaseComponent[];
+
+            // Validiere alle Abhängigkeiten
+            const areDependenciesValid = dependencies.every(dep => dep.state && dep.state.isValid === true);
+            const areDependenciesCorrect = dependencies.every(dep => dep.state && dep.state.isCorrect === true);
+
+            // Validiere alle Formularkomponenten
+            const areFormComponentsValid = formComponents.every(comp => comp.state && comp.state.isValid === true);
+            const areFormComponentsCorrect = formComponents.every(comp => comp.state && comp.state.isCorrect === true);
+
+            // Berechne die kombinierten Validitätszustände
+            const validationResult = {
+              isValid: areDependenciesValid && areFormComponentsValid,
+              isCorrect: areDependenciesCorrect && areFormComponentsCorrect,
+              dependenciesAreValidAndFormFieldsAreCorrect: areDependenciesValid && areFormComponentsCorrect,
+              formFieldsAreValidAndDependenciesAreCorrect: areFormComponentsValid && areDependenciesCorrect
+            };
+
+            // Aktualisiere den Store mit den Validierungsergebnissen
+            Object.entries(validationResult).forEach(([key, value]) => {
+              this.storeObject.value.setProperty({
+                path: `${this.serialisedBaseComponentPath}.state.${key}` as JSONPathExpression,
+                value
+              });
+            });
+
+            console.log(`Form validation updated for ${componentsPath}:`, validationResult);
+            return validationResult;
+          }
+        };
+
+        // Führe die Validierung durch
+        formComponent.validate();
+
+      } catch (error) {
+        console.error(`Error validating form at ${componentsPath}:`, error);
+      }
     },
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
