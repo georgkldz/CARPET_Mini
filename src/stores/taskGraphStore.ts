@@ -290,6 +290,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     /**
      * Triggers the validation of a form component after its nested components have changed.
      * This method gets the form component from the store and directly calls its validate method.
+     * It also updates the button state based on the form validity.
      *
      * @param nodeId The ID of the node that contains the form
      * @param componentId The ID of the form component
@@ -336,12 +337,14 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
               formFieldsAreValidAndDependenciesAreCorrect: areFormComponentsValid && areDependenciesCorrect
             };
 
-            // Aktualisiere den Store mit den Validierungsergebnissen
-            Object.entries(validationResult).forEach(([key, value]) => {
-              this.storeObject.value.setProperty({
-                path: `${this.serialisedBaseComponentPath}.state.${key}` as JSONPathExpression,
-                value
-              });
+            // Aktualisiere den Store mit den Validierungsergebnissen als vollständiges Objekt
+            // Dies kann helfen, Reaktivität zu verbessern
+            this.storeObject.value.setProperty({
+              path: `${this.serialisedBaseComponentPath}.state` as JSONPathExpression,
+              value: {
+                ...formComponentResult.state,
+                ...validationResult
+              }
             });
 
             console.log(`Form validation updated for ${componentsPath}:`, validationResult);
@@ -350,10 +353,75 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
         };
 
         // Führe die Validierung durch
-        formComponent.validate();
+        const validationResult = formComponent.validate();
+
+        // Aktualisiere den Status des Submit-Buttons - verwende die komplette updateSubmitButtonValidity Methode
+        this.updateSubmitButtonValidity(nodeId, componentId, validationResult.isValid);
+
+        // Erzwinge einen Re-Render indem wir ein nicht-sichtbares Feld aktualisieren
+        // Dies kann Reaktivitätsprobleme in Vue umgehen
+        this.setProperty({
+          path: `$.currentNode` as JSONPathExpression,
+          value: this.getProperty(`$.currentNode` as JSONPathExpression)
+        });
 
       } catch (error) {
         console.error(`Error validating form at ${componentsPath}:`, error);
+      }
+    },
+
+    /**
+     * Aktualisiert den Validitätsstatus des Submit-Buttons basierend auf der Formularvalidität.
+     * Dieser Ansatz stellt sicher, dass die State-Änderungen korrekt an die Props der
+     * Vue-Komponente weitergegeben werden.
+     *
+     * @param nodeId Die ID des Knotens, der das Formular enthält
+     * @param componentId Die ID der Formularkomponente
+     * @param isFormValid Der Validitätsstatus des Formulars
+     */
+    updateSubmitButtonValidity(nodeId: number, componentId: number, isFormValid: boolean) {
+      // 1. Path zum Formular-State
+      const formStatePath = `$.nodes.${nodeId}.components.${componentId}.state` as JSONPathExpression;
+
+      // 2. Path zum Submit-Button
+      const submitButtonPath = `$.nodes.${nodeId}.components.${componentId}.nestedComponents.actionComponents.submit` as JSONPathExpression;
+
+      try {
+        // Hole den aktuellen Submit-Button
+        const submitButton = this.getProperty(submitButtonPath);
+
+        if (!submitButton) {
+          console.warn(`Submit button not found at path: ${submitButtonPath}`);
+          return;
+        }
+
+        // Aktualisiere den Form-State - dies ist wichtig für Vue-Reaktivität
+        this.setProperty({
+          path: formStatePath,
+          value: {
+            ...this.getProperty(formStatePath),
+            isValid: isFormValid
+          }
+        });
+
+        // Der GenericForm-Button bekommt seinen isValid-Wert über Props vom Parent
+        // Also müssen wir sicherstellen, dass der GenericForm.state.isValid korrekt ist
+        console.log(`Updated form validity to ${isFormValid} at ${formStatePath}`);
+
+        // Zusätzlich aktualisieren wir auch den Button-State für Fälle,
+        // wo der Button direkt seinen State abfragt
+        this.setProperty({
+          path: `${submitButtonPath}.state.isValid` as JSONPathExpression,
+          value: isFormValid
+        });
+
+        console.log(`Updated button state to ${isFormValid} at ${submitButtonPath}.state.isValid`);
+
+        // Füge Debug-Logs hinzu, um die aktuellen Props-Werte zu sehen
+        console.log("Aktueller Form-State:", this.getProperty(formStatePath));
+        console.log("Aktueller Button-State:", this.getProperty(`${submitButtonPath}.state` as JSONPathExpression));
+      } catch (error) {
+        console.error(`Error updating button validity:`, error);
       }
     },
 

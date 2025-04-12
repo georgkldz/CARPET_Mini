@@ -6,11 +6,11 @@
       "layouts": {
         "desktop": {
 
-          "3": {
-            "x": 30,
-            "y": 32,
-            "width": 5,
-            "height": 5
+          "0": {
+            "x": 5,
+            "y": 5,
+            "width": 15,
+            "height": 25
           }
         },
         "phone": {
@@ -32,56 +32,6 @@
       },
       "components": {
         "0": {
-          "state": {
-            "isCorrect": true,
-            "isValid": true
-          },
-          "dependencies": {
-            "dotDescription": "$.taskData.dotDescription"
-          },
-          "name": "Beispielgraph",
-          "type": "DOTGraph"
-        },
-        "1": {
-          "name": "Code",
-          "type": "CodeEditor",
-          "state": {
-            "isCorrect": true,
-            "isValid": true,
-            "code": "test"
-          },
-          "dependencies": {
-            "code": "$.nodes.0.components.2.state.fieldValue"
-          },
-          "validationConfiguration": {
-            "type": "compareToString"
-          },
-          "componentConfiguration": {
-            "darkMode": false,
-            "language": "sql"
-          }
-        },
-        "2": {
-          "state": {
-            "fieldValue": "test",
-            "isCorrect": false,
-            "isValid": false
-          },
-          "componentConfiguration": {
-            "icon": "10k",
-            "label": "tests",
-            "hint": "asd"
-          },
-          "dependencies": {},
-          "validationConfiguration": {
-            "type": "compareValueFromStatic",
-            "comparisons": [{ "value": "test", "operator": "==" }],
-            "validOnEmptyField": true
-          },
-          "name": "test",
-          "type": "InputField"
-        },
-        "3": {
           "type": "GenericForm",
           "name": "Einzelbearbeitung",
           "dependencies": {},
@@ -516,6 +466,18 @@
   },
   "layoutSize": "desktop",
   "taskData": {
+    "taskDescription": "",
+    "degree": 3,
+    "symmetry": "none",
+    "hint": "",
+    "solutions": {
+      "textFieldEquation1": "f(1)=-2",
+      "textFieldEquation2": "f'(3)=0",
+      "textFieldEquation3": "f''(4)=0",
+      "textFieldEquation4": "f(-7)=5",
+      "textFieldEquation5": "",
+      "sampleSolutionCollaborativeWork": ""
+    },
     "dotDescription": "digraph G { bgcolor=transparent  a->b; b->c; c->a; }"
   }
 }
