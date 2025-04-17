@@ -81,7 +81,24 @@ export async function joinSession(
         doc.componentsData = {};
 
         // Get TaskGraphStore and read complete Subtree
-        const componentData = taskGraphStore.extractComponentData();
+        const fieldValues = taskGraphStore.extractFieldValues();
+// Wenn nötig, Transformation zum erwarteten Format:
+        const componentData = fieldValues.map(item => {
+          // Hier Transformation je nach Bedarf
+          return {
+            id: extractIdFromPath(item.path), // Annahme: Hilfsfunktion, die ID aus Pfad extrahiert
+            data: item.value
+          };
+        });
+
+// 3. Hilfsfunktion zum Extrahieren einer Komponenten-ID aus einem Pfad
+// Falls benötigt (Beispielimplementierung):
+        function extractIdFromPath(path: string): string {
+          // Beispiel: Extrahiere die ID aus einem Pfad wie "$.nodes.0.components.123.state.fieldValue"
+          const match = path.match(/\.components\.([^.]+)/);
+          return match ? match[1] : "";
+        }
+
         console.log("Sub-State beim initialen Voll-Sync: ", componentData);
         // => z. B. [{ id: number, data: any }, ...]
 
@@ -143,44 +160,21 @@ export function syncFromDocComponents(
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const changedEntries: Array<{ pathOrId: string; data: any }> = [];
-  // Behalte Formulare, die eine Neuvalidierung benötigen
-  const formsToValidate = new Set<{ nodeId: number; componentId: number }>();
 
-  // 1) Finde geänderte oder neue Schlüssel
+  // 1) Find changed or new Keys
   for (const [key, val] of Object.entries(newComponents)) {
     if (
       !oldComponents.value ||
       JSON.stringify(oldComponents.value[key]) !== JSON.stringify(val)
     ) {
       changedEntries.push({ pathOrId: key, data: val });
-
-      // Prüfe, ob dies eine Änderung an einer verschachtelten Formularkomponente ist
-      if (typeof key === "string" && key.includes(".nestedComponents.formComponents.")) {
-        const pathMatch = key.match(/\$\.nodes\.(\d+)\.components\.(\d+)/);
-        if (pathMatch && pathMatch.length === 3) {
-          const nodeId = parseInt(pathMatch[1]);
-          const componentId = parseInt(pathMatch[2]);
-          formsToValidate.add({ nodeId, componentId });
-        }
-      }
     }
   }
-
-  // 2) Finde gelöschte Schlüssel
+  // 2) Find deleted Keys
   if (oldComponents.value) {
-    for (const key of Object.keys(oldComponents.value)) {
+    for (const key of Object.keys(oldComponents)) {
       if (!(key in newComponents)) {
         changedEntries.push({ pathOrId: key, data: undefined });
-
-        // Prüfe, ob dies eine Änderung an einer verschachtelten Formularkomponente ist
-        if (typeof key === "string" && key.includes(".nestedComponents.formComponents.")) {
-          const pathMatch = key.match(/\$\.nodes\.(\d+)\.components\.(\d+)/);
-          if (pathMatch && pathMatch.length === 3) {
-            const nodeId = parseInt(pathMatch[1]);
-            const componentId = parseInt(pathMatch[2]);
-            formsToValidate.add({ nodeId, componentId });
-          }
-        }
       }
     }
   }
@@ -189,20 +183,23 @@ export function syncFromDocComponents(
     console.log("Keine echten Änderungen in componentsData");
     return;
   }
-
   console.log("Echte Änderungen:", changedEntries);
-  // Aktualisiere den lokalen Cache
+  // Update local cache
   lastComponentsDataCache.value = JSON.parse(JSON.stringify(newComponents));
   isRemoteUpdate.value = true;
-
-  // Wende zunächst alle Änderungen an
   changedEntries.forEach(({ pathOrId, data }) => {
-    // 1) data === undefined? => überspringen
+    // Überspringe gelöschte Einträge
     if (data === undefined) {
       console.log("Ignoriere Patch, da data===undefined:", pathOrId);
       return;
     }
-    // Wenn "id" => {component data}:
+
+    // Nur Patches, die tatsächlich ".fieldValue" enthalten, anwenden:
+    if (!pathOrId.endsWith(".fieldValue")) {
+      console.log("Ignoriere Patch, da kein fieldValue:", pathOrId);
+      return;
+    }
+
     const idNum = Number(pathOrId);
     console.log("pathOrId", pathOrId);
     console.log("idNum ", idNum);
@@ -217,11 +214,6 @@ export function syncFromDocComponents(
     }
   });
 
-  // Nach dem Anwenden aller Änderungen, validiere die betroffenen Formulare
-  formsToValidate.forEach(({ nodeId, componentId }) => {
-    console.log(`Validating form for node ${nodeId}, component ${componentId} after sync`);
-    taskGraphStore.validateFormAfterChange(nodeId, componentId);
-  });
-
+  // 6) isRemoteUpdate zurück auf false
   isRemoteUpdate.value = false;
 }

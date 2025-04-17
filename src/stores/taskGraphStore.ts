@@ -10,7 +10,7 @@ import type { Task } from "src/models/Task";
 import type {
   StoreAPI,
   JSONPathExpression,
-  StoreSetterPayload, SerializedBaseComponent
+  StoreSetterPayload,
 } from "carpet-component-library";
 import { useAuthStore } from "stores/authStore";
 import { useTasksStore } from "stores/tasksStore";
@@ -139,6 +139,43 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       // Ggf. weitere Felder
       console.log("loadDBTaskIntoGraph: Task übernommen:", foundTask);
     },
+// Dies ersetzt die alte extractComponentData()-Methode
+    extractFieldValues() {
+      // JSONPath durchsucht alles nach "fieldValue"
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+      const results = JSONPath<Array<{ path: string | (string | number)[]; value: any }>>({
+        path: "$..fieldValue",
+        json: this.$state,
+        resultType: "all",
+      });
+
+      // Verarbeite die Ergebnisse und normalisiere die Pfade
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+      return results.map(({ path, value }: { path: string | (string | number)[]; value: any }) => {
+        // Pfad normalisieren - kann je nach JSONPath-Implementierung ein String oder Array sein
+        let normalizedPath: string;
+
+        if (typeof path === "string") {
+          // Wenn path bereits ein String ist, verwenden wir ihn direkt
+          normalizedPath = path;
+        } else if (Array.isArray(path)) {
+          // Wenn path ein Array ist, konvertieren wir es wie zuvor
+          normalizedPath = "$" + path
+            .slice(1)
+            .map(segment => "." + segment)
+            .join("");
+        } else {
+          // Fallback für unerwartete Typen
+          console.error("Unerwarteter Pfadtyp in extractFieldValues:", path);
+          normalizedPath = String(path); // Versuch einer Konvertierung
+        }
+
+        return {
+          path: normalizedPath,
+          value,
+        };
+      });
+    },
 
     extractComponentData() {
       const componentsPath = "$.nodes.0.components";
@@ -180,33 +217,11 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
           subState = subState[splitPath[depth]];
         }
       }
-
       // optional Logging
       process.env.NODE_ENV === "development" && console.log(path, value);
-
-      // Prüfen, ob die Änderung die Validität eines Formulars beeinflussen könnte
-      if (typeof path === "string" &&
-        path.includes(".nestedComponents.formComponents.") &&
-        (path.includes(".state.isValid") || path.includes(".state.isCorrect") ||
-          path.includes(".state.fieldValue"))) {
-
-        // Extrahiere Node- und Komponenten-IDs aus dem Pfad
-        // Pfadformat: $.nodes.{nodeId}.components.{componentId}.nestedComponents.formComponents...
-        const pathMatch = path.match(/\$\.nodes\.(\d+)\.components\.(\d+)/);
-        if (pathMatch && pathMatch.length === 3) {
-          const nodeId = parseInt(pathMatch[1]);
-          const componentId = parseInt(pathMatch[2]);
-
-          // Validiere das übergeordnete Formular nach der Änderung
-          this.validateFormAfterChange(nodeId, componentId);
-          console.log(`Form validation triggered after change to ${path}`);
-        }
-      }
-
       if (
         !applicationStore.isRemoteUpdate &&
-        typeof path === "string" &&
-        path.startsWith("$.nodes.0.components")
+        path.endsWith(".fieldValue")
       ) {
         console.log(
           "setProperty ruft syncSinglePathValue auf mit ",
@@ -234,10 +249,10 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       if (currentTask) {
         // übernimm "Example.carpet.json" in den State
         for (const [key, value] of Object.entries(currentTask)) {
-          this.setProperty({ path: `$.${key}` as JSONPathExpression, value });
+          this.setProperty({ path: `$.${key}`, value });
         }
         this.setProperty({
-          path: "$.currentNode" as JSONPathExpression,
+          path: "$.currentNode",
           value: currentTask.rootNode,
         });
       }
@@ -245,39 +260,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       // Ruft nun unsere neue Action auf,
       // um einen DB-Task (basierend auf authStore.currentTaskId) einzubinden:
       this.loadDBTaskIntoGraph();
-
-      // Initialisiere Formularvaliditäten nach dem Laden des Tasks
-      this.initializeFormValidation();
-    },
-
-    /**
-     * Initialisiert die Validitätszustände aller Formularkomponenten in der Aufgabe.
-     * Dies sollte nach dem Laden einer Aufgabe aufgerufen werden, um sicherzustellen,
-     * dass alle Formularvaliditäten von Anfang an korrekt berechnet werden.
-     */
-    /**
-     * Initialisiert die Validitätszustände aller Formularkomponenten in der Aufgabe.
-     * Dies sollte nach dem Laden einer Aufgabe aufgerufen werden, um sicherzustellen,
-     * dass alle Formularvaliditäten von Anfang an korrekt berechnet werden.
-     */
-    initializeFormValidation() {
-      // Finde alle GenericForms in der Aufgabe
-      for (const [nodeIdStr, node] of Object.entries(this.$state.nodes)) {
-        const nodeId = parseInt(nodeIdStr);
-
-        if (node.components) {
-          for (const [componentIdStr, componentData] of Object.entries(node.components)) {
-            const componentId = parseInt(componentIdStr);
-            const component = componentData as SerializedBaseComponent;
-
-            if (component.type === "GenericForm") {
-              // Validiere dieses Formular
-              this.validateFormAfterChange(nodeId, componentId);
-              console.log(`Initialisierte Formularvalidität für Node ${nodeId}, Komponente ${componentId}`);
-            }
-          }
-        }
-      }
     },
 
     trackMouse(mouseEvent: { x: number; y: number; timestamp: number }) {
@@ -286,143 +268,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
 
     toggleLoading() {
       this.isLoading = !this.isLoading;
-    },
-    /**
-     * Triggers the validation of a form component after its nested components have changed.
-     * This method gets the form component from the store and directly calls its validate method.
-     * It also updates the button state based on the form validity.
-     *
-     * @param nodeId The ID of the node that contains the form
-     * @param componentId The ID of the form component
-     */
-    validateFormAfterChange(nodeId: number, componentId: number) {
-      // Der Komponenten-Pfad im Store
-      const componentsPath = `$.nodes.${nodeId}.components.${componentId}` as JSONPathExpression;
-
-      try {
-        // Holen der Komponente aus dem Store
-        const formComponentResult = this.getProperty(componentsPath);
-
-        if (!formComponentResult || formComponentResult.type !== "GenericForm") {
-          console.warn(`GenericForm not found at path: ${componentsPath}`);
-          return;
-        }
-
-        // Wir erstellen ein temporäres FormComponent-Objekt
-        // und rufen dessen validate-Methode auf
-        const formComponent = {
-          serialisedBaseComponentPath: componentsPath,
-          serializedBaseComponent: { value: formComponentResult },
-          storeObject: { value: this },
-          dependencies: { value: {} },
-          getNestedComponents: () => formComponentResult.nestedComponents || { formComponents: {} },
-          validate: function() {
-            // Diese Implementierung basiert auf der validate-Methode in FormComponent
-            const dependencies = Object.values(this.dependencies.value) as SerializedBaseComponent[];
-            const formComponents = Object.values(this.getNestedComponents().formComponents) as SerializedBaseComponent[];
-
-            // Validiere alle Abhängigkeiten
-            const areDependenciesValid = dependencies.every(dep => dep.state && dep.state.isValid === true);
-            const areDependenciesCorrect = dependencies.every(dep => dep.state && dep.state.isCorrect === true);
-
-            // Validiere alle Formularkomponenten
-            const areFormComponentsValid = formComponents.every(comp => comp.state && comp.state.isValid === true);
-            const areFormComponentsCorrect = formComponents.every(comp => comp.state && comp.state.isCorrect === true);
-
-            // Berechne die kombinierten Validitätszustände
-            const validationResult = {
-              isValid: areDependenciesValid && areFormComponentsValid,
-              isCorrect: areDependenciesCorrect && areFormComponentsCorrect,
-              dependenciesAreValidAndFormFieldsAreCorrect: areDependenciesValid && areFormComponentsCorrect,
-              formFieldsAreValidAndDependenciesAreCorrect: areFormComponentsValid && areDependenciesCorrect
-            };
-
-            // Aktualisiere den Store mit den Validierungsergebnissen als vollständiges Objekt
-            // Dies kann helfen, Reaktivität zu verbessern
-            this.storeObject.value.setProperty({
-              path: `${this.serialisedBaseComponentPath}.state` as JSONPathExpression,
-              value: {
-                ...formComponentResult.state,
-                ...validationResult
-              }
-            });
-
-            console.log(`Form validation updated for ${componentsPath}:`, validationResult);
-            return validationResult;
-          }
-        };
-
-        // Führe die Validierung durch
-        const validationResult = formComponent.validate();
-
-        // Aktualisiere den Status des Submit-Buttons - verwende die komplette updateSubmitButtonValidity Methode
-        this.updateSubmitButtonValidity(nodeId, componentId, validationResult.isValid);
-
-        // Erzwinge einen Re-Render indem wir ein nicht-sichtbares Feld aktualisieren
-        // Dies kann Reaktivitätsprobleme in Vue umgehen
-        this.setProperty({
-          path: `$.currentNode` as JSONPathExpression,
-          value: this.getProperty(`$.currentNode` as JSONPathExpression)
-        });
-
-      } catch (error) {
-        console.error(`Error validating form at ${componentsPath}:`, error);
-      }
-    },
-
-    /**
-     * Aktualisiert den Validitätsstatus des Submit-Buttons basierend auf der Formularvalidität.
-     * Dieser Ansatz stellt sicher, dass die State-Änderungen korrekt an die Props der
-     * Vue-Komponente weitergegeben werden.
-     *
-     * @param nodeId Die ID des Knotens, der das Formular enthält
-     * @param componentId Die ID der Formularkomponente
-     * @param isFormValid Der Validitätsstatus des Formulars
-     */
-    updateSubmitButtonValidity(nodeId: number, componentId: number, isFormValid: boolean) {
-      // 1. Path zum Formular-State
-      const formStatePath = `$.nodes.${nodeId}.components.${componentId}.state` as JSONPathExpression;
-
-      // 2. Path zum Submit-Button
-      const submitButtonPath = `$.nodes.${nodeId}.components.${componentId}.nestedComponents.actionComponents.submit` as JSONPathExpression;
-
-      try {
-        // Hole den aktuellen Submit-Button
-        const submitButton = this.getProperty(submitButtonPath);
-
-        if (!submitButton) {
-          console.warn(`Submit button not found at path: ${submitButtonPath}`);
-          return;
-        }
-
-        // Aktualisiere den Form-State - dies ist wichtig für Vue-Reaktivität
-        this.setProperty({
-          path: formStatePath,
-          value: {
-            ...this.getProperty(formStatePath),
-            isValid: isFormValid
-          }
-        });
-
-        // Der GenericForm-Button bekommt seinen isValid-Wert über Props vom Parent
-        // Also müssen wir sicherstellen, dass der GenericForm.state.isValid korrekt ist
-        console.log(`Updated form validity to ${isFormValid} at ${formStatePath}`);
-
-        // Zusätzlich aktualisieren wir auch den Button-State für Fälle,
-        // wo der Button direkt seinen State abfragt
-        this.setProperty({
-          path: `${submitButtonPath}.state.isValid` as JSONPathExpression,
-          value: isFormValid
-        });
-
-        console.log(`Updated button state to ${isFormValid} at ${submitButtonPath}.state.isValid`);
-
-        // Füge Debug-Logs hinzu, um die aktuellen Props-Werte zu sehen
-        console.log("Aktueller Form-State:", this.getProperty(formStatePath));
-        console.log("Aktueller Button-State:", this.getProperty(`${submitButtonPath}.state` as JSONPathExpression));
-      } catch (error) {
-        console.error(`Error updating button validity:`, error);
-      }
     },
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any

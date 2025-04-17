@@ -5,12 +5,29 @@
     "0": {
       "layouts": {
         "desktop": {
-
           "0": {
-            "x": 5,
-            "y": 5,
-            "width": 15,
-            "height": 25
+            "x": 20,
+            "y": 20,
+            "width": 5,
+            "height": 5
+          },
+          "1": {
+            "x": 26,
+            "y": 25,
+            "width": 10,
+            "height": 5
+          },
+          "2": {
+            "x": 26,
+            "y": 32,
+            "width": 5,
+            "height": 5
+          },
+          "3": {
+            "x": 30,
+            "y": 32,
+            "width": 5,
+            "height": 5
           }
         },
         "phone": {
@@ -32,17 +49,76 @@
       },
       "components": {
         "0": {
+          "state": {
+            "isCorrect": true,
+            "isValid": true
+          },
+          "dependencies": {
+            "dotDescription": "$.taskData.dotDescription"
+          },
+          "name": "Beispielgraph",
+          "type": "DOTGraph"
+        },
+        "1": {
+          "name": "Code",
+          "type": "CodeEditor",
+          "state": {
+            "isCorrect": true,
+            "isValid": true,
+            "code": "test"
+          },
+          "dependencies": {
+            "code": "$.nodes.0.components.2.state.fieldValue"
+          },
+          "validationConfiguration": {
+            "type": "compareToString"
+          },
+          "componentConfiguration": {
+            "darkMode": false,
+            "language": "sql"
+          }
+        },
+        "2": {
+          "state": {
+            "fieldValue": "test",
+            "isCorrect": false,
+            "isValid": false
+          },
+          "componentConfiguration": {
+            "icon": "10k",
+            "label": "tests",
+            "hint": "asd"
+          },
+          "dependencies": {
+            "referenceValue": "$.nodes.0.components.2.state.fieldValue"
+          },
+          "validationConfiguration": {
+            "type": "compareValueFromStatic",
+            "comparisons": [{ "value": "test", "operator": "==" }],
+            "validOnEmptyField": true
+          },
+          "name": "test",
+          "type": "InputField"
+        },
+        "3": {
           "type": "GenericForm",
-          "name": "Einzelbearbeitung",
-          "dependencies": {},
+          "name": "Example Form",
+          "dependencies": {
+
+          },
           "validationConfiguration": {
             "submitableWhen": "isValid"
           },
           "state": {
-            "isValid": true,
+            "isValid": false,
             "isCorrect": true,
             "dependenciesAreValidAndFormFieldsAreCorrect": false,
             "formFieldsAreValidAndDependenciesAreCorrect": false
+          },
+          "actions": {
+            "submit": {
+              "type": "fetch"
+            }
           },
           "nestedComponents": {
             "formComponents": {
@@ -54,125 +130,59 @@
                   "isCorrect": false,
                   "fieldValue": ""
                 },
-                "componentConfiguration": {
-                  "placeholder": "z. B. f(7) = 11"
-                },
                 "dependencies": {
-                  "referenceValue": "$.nodes.2.components.1.nestedComponents.formComponents.inputField1.state.fieldValue"
+                  "referenceValue": "$.nodes.0.components.3.nestedComponents.formComponents.inputField1.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
-                  "comparisons": [
-                    {
-                      "value": "test",
-                      "operator": "=="
-                    }
-                  ],
+                  "comparisons": [{ "value": "test", "operator": "==" }],
                   "validOnEmptyField": false
+                },
+                "componentConfiguration": {
+                  "icon": "10k",
+                  "label": "zB",
+                  "hint": "zB"
                 }
               },
               "inputField2": {
                 "type": "InputField",
-                "name": "InputField2",
+                "name": "InputField1",
                 "state": {
                   "isValid": false,
                   "isCorrect": false,
-                  "fieldValue": ""
-                },
-                "componentConfiguration": {
-                  "icon": "",
-                  "label": "",
-                  "hint": "",
-                  "placeholder": ""
+                  "fieldValue": "test"
                 },
                 "dependencies": {},
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
-                  "comparisons": [
-                    {
-                      "value": "test",
-                      "operator": "=="
-                    }
-                  ],
+                  "comparisons": [{ "value": "test", "operator": "==" }],
                   "validOnEmptyField": true
+                },
+                "componentConfiguration": {
+                  "icon": "10k",
+                  "label": "zB",
+                  "hint": "zB"
                 }
               },
               "inputField3": {
                 "type": "InputField",
-                "name": "InputField3",
+                "name": "InputField1",
                 "state": {
                   "isValid": false,
                   "isCorrect": false,
-                  "fieldValue": ""
-                },
-                "componentConfiguration": {
-                  "icon": "",
-                  "label": "",
-                  "hint": "",
-                  "placeholder": ""
+                  "fieldValue": "test"
                 },
                 "dependencies": {},
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
-                  "comparisons": [
-                    {
-                      "value": "test",
-                      "operator": "=="
-                    }
-                  ],
-                  "validOnEmptyField": true
-                }
-              },
-              "inputField4": {
-                "type": "InputField",
-                "name": "InputField4",
-                "state": {
-                  "isValid": false,
-                  "isCorrect": false,
-                  "fieldValue": ""
+                  "comparisons": [{ "value": "test", "operator": "==" }],
+                  "validOnEmptyField": false
                 },
+
                 "componentConfiguration": {
-                  "icon": "",
-                  "label": "",
-                  "hint": "",
-                  "placeholder": ""
-                },
-                "dependencies": {},
-                "validationConfiguration": {
-                  "type": "compareValueFromStatic",
-                  "comparisons": [
-                    {
-                      "value": "test",
-                      "operator": "=="
-                    }
-                  ],
-                  "validOnEmptyField": true
-                }
-              },
-              "inputField5": {
-                "type": "InputField",
-                "name": "InputField5",
-                "state": {
-                  "isValid": true,
-                  "isCorrect": false,
-                  "fieldValue": ""
-                },
-                "componentConfiguration": {
-                  "icon": "",
-                  "label": "",
-                  "hint": "",
-                  "placeholder": ""
-                },
-                "dependencies": {},
-                "validationConfiguration": {
-                  "type": "compareValueFromStatic",
-                  "comparisons": [
-                    {
-                      "value": "test",
-                      "operator": "=="
-                    }
-                  ],
-                  "validOnEmptyField": true
+                  "icon": "10k",
+                  "label": "zB",
+                  "hint": "zB"
                 }
               }
             },
@@ -185,18 +195,13 @@
                 "state": {
                   "isValid": true,
                   "isCorrect": true,
-                  "label": "an Gruppe senden",
+                  "label": "Submit",
                   "loadingState": false
                 },
                 "componentConfiguration": {
                   "disableOnInvalid": true
                 }
               }
-            }
-          },
-          "actions": {
-            "submit": {
-              "type": "fetch"
             }
           }
         }
@@ -466,18 +471,6 @@
   },
   "layoutSize": "desktop",
   "taskData": {
-    "taskDescription": "",
-    "degree": 3,
-    "symmetry": "none",
-    "hint": "",
-    "solutions": {
-      "textFieldEquation1": "f(1)=-2",
-      "textFieldEquation2": "f'(3)=0",
-      "textFieldEquation3": "f''(4)=0",
-      "textFieldEquation4": "f(-7)=5",
-      "textFieldEquation5": "",
-      "sampleSolutionCollaborativeWork": ""
-    },
     "dotDescription": "digraph G { bgcolor=transparent  a->b; b->c; c->a; }"
   }
 }
