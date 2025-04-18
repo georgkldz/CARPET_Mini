@@ -177,25 +177,12 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       });
     },
 
-    extractComponentData() {
-      const componentsPath = "$.nodes.0.components";
-      const components = JSONPath({ path: componentsPath, json: this.$state });
-
-      if (!components || !components[0]) {
-        console.warn("Keine Komponenten gefunden unter", componentsPath);
-        return [];
-      }
-      return Object.entries(components[0]).map(([id, data]) => ({
-        id: Number(id),
-        data,
-      }));
-    },
 
     setCurrentTask(taskName: string) {
       this.currentTask = taskName;
     },
     setProperty(payload: StoreSetterPayload) {
-      const applicationStore = useApplicationStore();
+      // const applicationStore = useApplicationStore();
       const { path, value } = payload;
       const splitPath = JSONPath.toPathArray(path).slice(1);
       let subState = this.$state as StateTree;
@@ -220,7 +207,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       // optional Logging
       process.env.NODE_ENV === "development" && console.log(path, value);
       if (
-        !applicationStore.isRemoteUpdate &&
         path.endsWith(".fieldValue")
       ) {
         console.log(
@@ -270,13 +256,5 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       this.isLoading = !this.isLoading;
     },
 
-    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    applySynchronizedChanges(changes: { id: number; data: any }[]) {
-      console.log("applySynchronizedChanges aufgerufen", changes);
-      changes.forEach(({ id, data }) => {
-        // Bestehende Komponente aktualisieren
-        this.$state.nodes[0].components[id] = data;
-      });
-    },
   },
 });

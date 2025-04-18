@@ -26,7 +26,6 @@ const lastComponentsDataCache = ref<Record<string, any> | null>(null);
 let documentId: AnyDocumentId;
 let handle: DocHandle<ComponentDoc>;
 const documentReady = ref(false);
-const isRemoteUpdate = ref(false);
 let isJoinSessionProcessing = false;
 
 const repo = new Repo({
@@ -36,6 +35,53 @@ const repo = new Repo({
   ],
   storage: new IndexedDBStorageAdapter(),
 });
+
+/**
+ * Verbesserte Funktion zum Entfernen aller Vue-internen Eigenschaften
+ * Extrahiert auch .value aus Ref-Objekten
+ */
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+function extractCleanValue(value: any): any {
+  // Wenn es ein Ref-Objekt ist, extrahiere .value
+  if (value && typeof value === "object" && value.__v_isRef === true) {
+    return extractCleanValue(value.value);
+  }
+
+  // Für primitive Typen direkt zurückgeben
+  if (value === null ||
+    value === undefined ||
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean") {
+    return value;
+  }
+
+  // Bei Arrays jeden Eintrag rekursiv verarbeiten
+  if (Array.isArray(value)) {
+    return value.map(item => extractCleanValue(item));
+  }
+
+  // Bei Objekten Vue-spezifische Eigenschaften entfernen
+  if (typeof value === "object") {
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    const result: Record<string, any> = {};
+    for (const [key, val] of Object.entries(value)) {
+      // Vue-interne Eigenschaften überspringen
+      if (
+        key === "dep" ||
+        key.startsWith("__v_") ||
+        (key.startsWith("_") && ["_rawValue", "_value"].includes(key))
+      ) {
+        continue;
+      }
+      result[key] = extractCleanValue(val);
+    }
+    return result;
+  }
+
+  // Fallback
+  return value;
+}
 
 /**
  * joinSession - initializes the Automerge-Session
@@ -82,29 +128,33 @@ export async function joinSession(
 
         // Get TaskGraphStore and read complete Subtree
         const fieldValues = taskGraphStore.extractFieldValues();
-// Wenn nötig, Transformation zum erwarteten Format:
+        // Wenn nötig, Transformation zum erwarteten Format:
         const componentData = fieldValues.map(item => {
           // Hier Transformation je nach Bedarf
           return {
-            id: extractIdFromPath(item.path), // Annahme: Hilfsfunktion, die ID aus Pfad extrahiert
+            id: extractIdFromPath(item.path), // Hilfsfunktion, die ID aus Pfad extrahiert
             data: item.value
           };
         });
 
-// 3. Hilfsfunktion zum Extrahieren einer Komponenten-ID aus einem Pfad
-// Falls benötigt (Beispielimplementierung):
         function extractIdFromPath(path: string): string {
-          // Beispiel: Extrahiere die ID aus einem Pfad wie "$.nodes.0.components.123.state.fieldValue"
+          // Extrahiere die ID aus einem Pfad wie "$.nodes.0.components.123.state.fieldValue"
           const match = path.match(/\.components\.([^.]+)/);
           return match ? match[1] : "";
         }
 
         console.log("Sub-State beim initialen Voll-Sync: ", componentData);
-        // => z. B. [{ id: number, data: any }, ...]
 
-        // Write everything to Automerge-Dokument
+        // Write everything to Automerge-Dokument, nur relevante fieldValue-Pfade
         for (const { id, data } of componentData) {
-          doc.componentsData![id.toString()] = JSON.parse(JSON.stringify(data));
+          // Bereinigen und nur relevante Werte synchronisieren
+          const cleanData = extractCleanValue(data);
+
+          // Prüfe ob ID gültig und sinnvoll ist
+          if (id && id.trim() !== "") {
+            // Speichere bereinigten Wert
+            doc.componentsData![id.toString()] = cleanData;
+          }
         }
         console.log(
           "Automerge-Dokument initial angelegt: ",
@@ -129,24 +179,29 @@ export async function syncSingleComponentChange(path: string, value: any) {
     console.warn("Dokument noch nicht bereit, kann nicht syncen");
     return;
   }
-  if (isRemoteUpdate.value) {
+
+  // WICHTIG: Nur Pfade, die auf .fieldValue enden, werden synchronisiert
+  if (!path.endsWith(".fieldValue")) {
+    console.log("Ignoriere Sync, da kein fieldValue-Pfad:", path);
     return;
   }
+
+  // Extrahiere sauberen Wert ohne Vue-interne Eigenschaften
+  const cleanVal = extractCleanValue(value);
+
   handle.change((doc) => {
     if (!doc.componentsData) {
       doc.componentsData = {}; // nur ein Mal anlegen
     }
-    doc.componentsData[path] = JSON.parse(JSON.stringify(value));
+    doc.componentsData[path] = cleanVal;
   });
-  console.log("syncSingleComponentChange -> Path: ${path}, Value:", value);
-  isRemoteUpdate.value = false;
+  console.log(`syncSingleComponentChange -> Path: ${path}, Value:`, cleanVal);
 }
 
 /**
  * syncFromDocComponents - compares doc.componentsData with lastComponentsDataCache
  * and applies changes from Automerge to the Store
  */
-
 export function syncFromDocComponents(
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   doc: { componentsData?: Record<string, any> },
@@ -155,24 +210,45 @@ export function syncFromDocComponents(
   console.log("syncFromDocComponents aufgerufen", doc);
   if (!doc.componentsData) return;
 
-  const newComponents = doc.componentsData;
+  const newComponentsRaw = doc.componentsData;
+
+  // 1) Filtere Vue-spezifische Keys heraus und nur .fieldValue-Pfade beibehalten
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  const newComponents: Record<string, any> = {};
+  for (const [key, val] of Object.entries(newComponentsRaw)) {
+    // Überspringe Vue-interne Eigenschaften und nicht-fieldValue Pfade
+    if (key === "dep" ||
+      key.startsWith("__v_") ||
+      (key.startsWith("_") && ["_rawValue", "_value"].includes(key)) ||
+      !key.endsWith(".fieldValue")) {
+      continue;
+    }
+    // Bereinigen der Werte
+    newComponents[key] = extractCleanValue(val);
+  }
+
   const oldComponents = lastComponentsDataCache;
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const changedEntries: Array<{ pathOrId: string; data: any }> = [];
 
-  // 1) Find changed or new Keys
+  // 2) Find changed or new Keys
   for (const [key, val] of Object.entries(newComponents)) {
     if (
       !oldComponents.value ||
+      oldComponents.value[key] === undefined ||
       JSON.stringify(oldComponents.value[key]) !== JSON.stringify(val)
     ) {
       changedEntries.push({ pathOrId: key, data: val });
     }
   }
-  // 2) Find deleted Keys
+  // 3) Find deleted Keys
   if (oldComponents.value) {
-    for (const key of Object.keys(oldComponents)) {
+    for (const key of Object.keys(oldComponents.value)) {
+      // Nur fieldValue-Pfade berücksichtigen
+      if (!key.endsWith(".fieldValue")) {
+        continue;
+      }
       if (!(key in newComponents)) {
         changedEntries.push({ pathOrId: key, data: undefined });
       }
@@ -184,9 +260,10 @@ export function syncFromDocComponents(
     return;
   }
   console.log("Echte Änderungen:", changedEntries);
+
   // Update local cache
   lastComponentsDataCache.value = JSON.parse(JSON.stringify(newComponents));
-  isRemoteUpdate.value = true;
+
   changedEntries.forEach(({ pathOrId, data }) => {
     // Überspringe gelöschte Einträge
     if (data === undefined) {
@@ -194,26 +271,17 @@ export function syncFromDocComponents(
       return;
     }
 
-    // Nur Patches, die tatsächlich ".fieldValue" enthalten, anwenden:
+    // DOPPELTE ABSICHERUNG: Nochmals prüfen, ob es ein fieldValue-Pfad ist
     if (!pathOrId.endsWith(".fieldValue")) {
       console.log("Ignoriere Patch, da kein fieldValue:", pathOrId);
       return;
     }
 
-    const idNum = Number(pathOrId);
-    console.log("pathOrId", pathOrId);
-    console.log("idNum ", idNum);
-    if (!isNaN(idNum)) {
-      taskGraphStore.applySynchronizedChanges([{ id: idNum, data }]);
-    } else {
-      console.log("Wende Pfad an:", pathOrId);
-      taskGraphStore.setProperty({
-        path: pathOrId as JSONPathExpression,
-        value: data,
-      });
-    }
+    console.log("Übernehme fieldValue-Patch:", pathOrId, data);
+    // Direkt setProperty verwenden, applySynchronizedChanges ist nicht mehr nötig
+    taskGraphStore.setProperty({
+      path: pathOrId as JSONPathExpression,
+      value: data,
+    });
   });
-
-  // 6) isRemoteUpdate zurück auf false
-  isRemoteUpdate.value = false;
 }
