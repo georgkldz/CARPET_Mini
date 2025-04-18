@@ -11,7 +11,10 @@
               </q-card-section>
               <q-separator />
 
-              <q-card-actions align="center" class="q-pa-md column q-gutter-y-md">
+              <q-card-actions
+                align="center"
+                class="q-pa-md column q-gutter-y-md"
+              >
                 <q-btn
                   color="primary"
                   label="Neue Aufgabe erstellen"

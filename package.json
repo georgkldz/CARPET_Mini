@@ -12,7 +12,7 @@
     "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
     "build": "quasar build",
-    "build:schema": "typescript-json-schema ./src/stores/applicationStore.ts \"SerialisedTask\" --ignoreErrors  --noExtraProps --required --out ./src/schemas/JSONSchemas/SerialisedTaskSchema.schema.json && json-schema-to-zod -i ./src/schemas/JSONSchemas/SerialisedTaskSchema.schema.json -o ./src/schemas/zodSchemas/SerialisedTaskSchema.ts && prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore"
+    "build:schema": "npx typescript-json-schema ./src/stores/applicationStore.ts \"SerialisedTask\" --ignoreErrors --noExtraProps --required --out ./src/schemas/JSONSchemas/SerialisedTaskSchema.schema.json && npx json-schema-to-zod -i ./src/schemas/JSONSchemas/SerialisedTaskSchema.schema.json -o ./src/schemas/zodSchemas/SerialisedTaskSchema.ts && prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore"
   },
   "dependencies": {
     "@automerge/automerge-repo": "^1.2.1",
@@ -55,6 +55,7 @@
     "json-schema-to-zod": "^2.6.0",
     "prettier": "^3.0.3",
     "typescript": "~5.5.3",
+    "typescript-json-schema": "^0.65.1",
     "vite-plugin-checker": "^0.7.2",
     "vite-plugin-vue-devtools": "^7.4.6",
     "vite-plugin-wasm": "^3.3.0",

@@ -48,17 +48,19 @@ function extractCleanValue(value: any): any {
   }
 
   // Für primitive Typen direkt zurückgeben
-  if (value === null ||
+  if (
+    value === null ||
     value === undefined ||
     typeof value === "string" ||
     typeof value === "number" ||
-    typeof value === "boolean") {
+    typeof value === "boolean"
+  ) {
     return value;
   }
 
   // Bei Arrays jeden Eintrag rekursiv verarbeiten
   if (Array.isArray(value)) {
-    return value.map(item => extractCleanValue(item));
+    return value.map((item) => extractCleanValue(item));
   }
 
   // Bei Objekten Vue-spezifische Eigenschaften entfernen
@@ -129,11 +131,11 @@ export async function joinSession(
         // Get TaskGraphStore and read complete Subtree
         const fieldValues = taskGraphStore.extractFieldValues();
         // Wenn nötig, Transformation zum erwarteten Format:
-        const componentData = fieldValues.map(item => {
+        const componentData = fieldValues.map((item) => {
           // Hier Transformation je nach Bedarf
           return {
             id: extractIdFromPath(item.path), // Hilfsfunktion, die ID aus Pfad extrahiert
-            data: item.value
+            data: item.value,
           };
         });
 
@@ -217,10 +219,12 @@ export function syncFromDocComponents(
   const newComponents: Record<string, any> = {};
   for (const [key, val] of Object.entries(newComponentsRaw)) {
     // Überspringe Vue-interne Eigenschaften und nicht-fieldValue Pfade
-    if (key === "dep" ||
+    if (
+      key === "dep" ||
       key.startsWith("__v_") ||
       (key.startsWith("_") && ["_rawValue", "_value"].includes(key)) ||
-      !key.endsWith(".fieldValue")) {
+      !key.endsWith(".fieldValue")
+    ) {
       continue;
     }
     // Bereinigen der Werte

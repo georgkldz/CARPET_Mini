@@ -139,44 +139,56 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       // Ggf. weitere Felder
       console.log("loadDBTaskIntoGraph: Task übernommen:", foundTask);
     },
-// Dies ersetzt die alte extractComponentData()-Methode
+    // Dies ersetzt die alte extractComponentData()-Methode
     extractFieldValues() {
       // JSONPath durchsucht alles nach "fieldValue"
-      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-      const results = JSONPath<Array<{ path: string | (string | number)[]; value: any }>>({
+      const results = JSONPath<
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+        Array<{ path: string | (string | number)[]; value: any }>
+      >({
         path: "$..fieldValue",
         json: this.$state,
         resultType: "all",
       });
 
       // Verarbeite die Ergebnisse und normalisiere die Pfade
-      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-      return results.map(({ path, value }: { path: string | (string | number)[]; value: any }) => {
-        // Pfad normalisieren - kann je nach JSONPath-Implementierung ein String oder Array sein
-        let normalizedPath: string;
 
-        if (typeof path === "string") {
-          // Wenn path bereits ein String ist, verwenden wir ihn direkt
-          normalizedPath = path;
-        } else if (Array.isArray(path)) {
-          // Wenn path ein Array ist, konvertieren wir es wie zuvor
-          normalizedPath = "$" + path
-            .slice(1)
-            .map(segment => "." + segment)
-            .join("");
-        } else {
-          // Fallback für unerwartete Typen
-          console.error("Unerwarteter Pfadtyp in extractFieldValues:", path);
-          normalizedPath = String(path); // Versuch einer Konvertierung
-        }
-
-        return {
-          path: normalizedPath,
+      return results.map(
+        ({
+          path,
           value,
-        };
-      });
-    },
+        }: {
+          path: string | (string | number)[];
+          // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+          value: any;
+        }) => {
+          // Pfad normalisieren - kann je nach JSONPath-Implementierung ein String oder Array sein
+          let normalizedPath: string;
 
+          if (typeof path === "string") {
+            // Wenn path bereits ein String ist, verwenden wir ihn direkt
+            normalizedPath = path;
+          } else if (Array.isArray(path)) {
+            // Wenn path ein Array ist, konvertieren wir es wie zuvor
+            normalizedPath =
+              "$" +
+              path
+                .slice(1)
+                .map((segment) => "." + segment)
+                .join("");
+          } else {
+            // Fallback für unerwartete Typen
+            console.error("Unerwarteter Pfadtyp in extractFieldValues:", path);
+            normalizedPath = String(path); // Versuch einer Konvertierung
+          }
+
+          return {
+            path: normalizedPath,
+            value,
+          };
+        },
+      );
+    },
 
     setCurrentTask(taskName: string) {
       this.currentTask = taskName;
@@ -206,9 +218,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       }
       // optional Logging
       process.env.NODE_ENV === "development" && console.log(path, value);
-      if (
-        path.endsWith(".fieldValue")
-      ) {
+      if (path.endsWith(".fieldValue")) {
         console.log(
           "setProperty ruft syncSinglePathValue auf mit ",
           path,
@@ -255,6 +265,5 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     toggleLoading() {
       this.isLoading = !this.isLoading;
     },
-
   },
 });
