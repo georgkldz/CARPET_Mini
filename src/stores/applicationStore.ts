@@ -8,10 +8,8 @@ import type { SerializedCARPETComponents } from "carpet-component-library";
 import ExampleTask from "../SerialisedTasks/Kleditz.carpet.json";
 const staticTasks = { Example: serialisedTaskSchema.parse(ExampleTask) };
 import { useTaskGraphStore } from "./taskGraphStore";
-import {
-  joinSession,
-  syncSingleComponentChange,
-} from "stores/sync/automergeSync";
+import {  joinSession,   syncSingleComponentChange, } from "stores/sync/automergeSync";
+import {useCollaborationStore} from "stores/collaborationStore";
 
 /**
  * The available tasks in the current application.
@@ -96,17 +94,13 @@ export interface SerialisedTask {
   taskData?: TaskData;
 }
 
-const SESSION_ID = 43;
 
 //Composition API
 export const useApplicationStore = defineStore("applicationStore", () => {
   const documentReady = ref(false);
   const isRemoteUpdate = ref(false);
-  const sessionId = ref<number | null>(SESSION_ID);
+  const collaborationMode = ref(false);
 
-  function setSessionId(id: number) {
-    sessionId.value = id;
-  }
 
   /**
    * (Mocked) Getter for reading all serialised tasks from the file system.
@@ -127,30 +121,49 @@ export const useApplicationStore = defineStore("applicationStore", () => {
   };
 
   function joinSessionWrapper() {
-    const taskGraphStore = useTaskGraphStore();
-    if (sessionId.value === null) {
-      console.error("Keine Session-ID vorhanden.");
+    if (!collaborationMode.value) {
+      console.log("Collaboration OFF – skip joinSession");
       return;
     }
-    joinSession(sessionId.value, taskGraphStore);
+    // z.B. aus collaborationStore
+    const collab = useCollaborationStore();
+    const sessionId = collab.sessionId;
+    if (!sessionId) {
+      console.warn("Keine SessionID vorhanden, kann nicht joinSession aufrufen.");
+      return;
+    }
+    const taskGraphStore = useTaskGraphStore();
+    joinSession(sessionId, taskGraphStore);
+  }
+
+  function toggleCollaborationMode() {
+    collaborationMode.value = !collaborationMode.value;
+  }
+
+  function setCollaborationMode(mode: boolean) {
+    collaborationMode.value = mode;
   }
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   function syncSingleComponentWrapper(path: string, value: any) {
+    if (!collaborationMode.value) {
+      return; // kein Automerge
+    }
     syncSingleComponentChange(path, value);
   }
 
   return {
-    sessionId,
+    collaborationMode,
     leftDrawerOpen,
     toggleLeftDrawer,
     darkMode,
     toggleDarkMode,
     tasks,
     SNAP_GRID,
-    setSessionId,
     joinSession: joinSessionWrapper,
     syncSingleComponentChange: syncSingleComponentWrapper,
+    toggleCollaborationMode,
+    setCollaborationMode,
     documentReady,
     isRemoteUpdate,
   };

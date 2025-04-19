@@ -12,7 +12,7 @@ import type {
   JSONPathExpression,
   StoreSetterPayload,
 } from "carpet-component-library";
-import { useAuthStore } from "stores/authStore";
+//import { useAuthStore } from "stores/authStore";
 import { useTasksStore } from "stores/tasksStore";
 
 export interface EventLog {
@@ -77,8 +77,8 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
 
     // Ruft den Getter aus dem authStore auf, der die ID der aktuellen Aufgabe liefert
     getCurrentTaskId(): number | null {
-      const authStore = useAuthStore();
-      return authStore.getCurrentTaskId;
+      const tasksStore = useTasksStore();
+      return tasksStore.getCurrentTaskId;
     },
   },
   actions: {
@@ -88,13 +88,14 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
      * (z.B. description, hint, etc.).
      */
     loadDBTaskIntoGraph() {
+      console.log("loadDBTaskIntoGraph gestartet");
       // 1. Task-ID holen
       const taskId = this.getCurrentTaskId;
       if (!taskId) {
         console.warn("Keine aktuelle Task-ID definiert.");
         return;
       }
-
+      console.log("currentTaskId ist ", taskId);
       // 2. tasksStore importieren + Task finden
       const tasksStore = useTasksStore();
       const foundTask: Task | undefined = tasksStore.getTaskById(taskId);
@@ -219,12 +220,11 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       // optional Logging
       process.env.NODE_ENV === "development" && console.log(path, value);
       if (path.endsWith(".fieldValue")) {
-        console.log(
-          "setProperty ruft syncSinglePathValue auf mit ",
-          path,
-          value,
-        );
-        syncSingleComponentChange(path, value);
+        const applicationStore = useApplicationStore();
+        if (applicationStore.collaborationMode) {
+          console.log("setProperty ruft syncSinglePathValue auf mit ", path, value,);
+          syncSingleComponentChange(path, value);
+        }
       }
     },
     /**

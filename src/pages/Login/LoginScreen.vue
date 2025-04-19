@@ -49,11 +49,11 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-// Beispiel: du verwendest einen separaten authStore:
-import { useAuthStore } from "src/stores/authStore";
-import { useRouter } from "vue-router";
 
-const authStore = useAuthStore();
+import { useRouter } from "vue-router";
+import { useUserStore } from "stores/userStore";
+
+const userStore = useUserStore();
 const router = useRouter();
 
 const email = ref("");
@@ -65,12 +65,12 @@ async function handleSubmit() {
   error.value = null;
   loading.value = true;
   try {
-    await authStore.login(email.value, password.value);
+    await userStore.login(email.value, password.value);
     // Nach Login -> Rolle checken
-    if (authStore.currentUser?.role === 1) {
+    if (userStore.currentUser?.role === 1) {
       // Student
       router.push("/student-selection");
-    } else if (authStore.currentUser?.role === 2) {
+    } else if (userStore.currentUser?.role === 2) {
       // Lehrende
       router.push("/teacher-selection");
     } else {
