@@ -130,11 +130,27 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       });
       this.setProperty({
         path: "$.taskData.solutions.textFieldEquation1",
-        value: foundTask.textFieldEquation1 ?? "",
+        value: foundTask.solutions?.textFieldEquation1 ?? "",
+      });
+      this.setProperty({
+        path: "$.taskData.solutions.textFieldEquation2",
+        value: foundTask.solutions?.textFieldEquation2 ?? "",
+      });
+      this.setProperty({
+        path: "$.taskData.solutions.textFieldEquation3",
+        value: foundTask.solutions?.textFieldEquation3 ?? "",
+      });
+      this.setProperty({
+        path: "$.taskData.solutions.textFieldEquation4",
+        value: foundTask.solutions?.textFieldEquation4 ?? "",
+      });
+      this.setProperty({
+        path: "$.taskData.solutions.textFieldEquation5",
+        value: foundTask.solutions?.textFieldEquation5 ?? "",
       });
       this.setProperty({
         path: "$.taskData.solutions.sampleSolutionCollaborativeWork",
-        value: foundTask.sampleSolutionCollaborativeWork ?? "",
+        value: foundTask.solutions?.sampleSolutionCollaborativeWork ?? "",
       });
 
       // Ggf. weitere Felder
@@ -252,11 +268,22 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
           value: currentTask.rootNode,
         });
       }
-
       // Ruft nun unsere neue Action auf,
       // um einen DB-Task (basierend auf authStore.currentTaskId) einzubinden:
       this.loadDBTaskIntoGraph();
     },
+
+    async submitForEvaluation() {
+      try {
+        const { postEvaluation } = await import("../services/evaluationService");
+        await postEvaluation();
+        return true;
+      } catch (error) {
+        console.error("Fehler bei der Einreichung der Bewertung:", error);
+        return false;
+      }
+    },
+
 
     trackMouse(mouseEvent: { x: number; y: number; timestamp: number }) {
       this.replayLog.mouseEvents.push(mouseEvent);

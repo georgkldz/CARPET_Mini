@@ -24,14 +24,29 @@ export const useTasksStore = defineStore("tasksStore", {
   },
 
   actions: {
+// tasksStore.ts
     async loadTasks() {
       try {
-        const response = await axios.get<Task[]>("http://localhost:3000/tasks");
-        this.tasks = response.data;
-      } catch (error) {
-        console.error("Fehler beim Laden der Tasks:", error);
-      }
-    },
+        const rows = await axios.get("http://localhost:3000/tasks");
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+        this.tasks = rows.data.map((r: any) => ({
+          taskId:      r.taskId,
+          description: r.description,
+          hint:        r.hint,
+          degree:      r.degree,
+          symmetry:    r.symmetry,
+          solutions: {
+            textFieldEquation1:             r.textFieldEquation1,
+            textFieldEquation2:             r.textFieldEquation2,
+            textFieldEquation3:             r.textFieldEquation3,
+            textFieldEquation4:             r.textFieldEquation4,
+            textFieldEquation5:             r.textFieldEquation5,
+            sampleSolutionCollaborativeWork: r.sampleSolutionCollaborativeWork
+          }
+        })) as Task[];
+      } catch (e) {  }
+    }
+,
 
     async determineCurrentTaskForUser(userId: number) {
       // Zuerst alle Tasks laden

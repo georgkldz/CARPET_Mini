@@ -191,10 +191,34 @@ const collisionCorrection = (
   return { newX, newY };
 };
 
-const actionHandler = (event: Event, payload: object) => {
-  console.error(event);
-  console.error(payload);
-};
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+const actionHandler = async (actionType: string, payload: any) => {
+  console.log("[ThreadContainer] action:", actionType, payload);
+
+  switch (actionType) {
+    case "evaluate":
+      // 1) User‑Eingaben sind schon im Store; jetzt nur noch zum Server:
+      try {
+        await taskGraphStore.submitForEvaluation();          // → ruft evaluationService
+        // oder direkt:  await submitForEvaluation();
+        console.log("Evaluation abgeschickt");
+      } catch (e) {
+        console.error("Evaluation fehlgeschlagen:", e);
+      }
+      break;
+      case "fetch":
+        // Beispiel – falls du weiterhin "fetch" verwendest
+        console.log("fetch‑payload", payload);
+        break;
+
+      default:
+        console.warn(`Unhandled action type '${actionType}'`, payload);
+    }
+    return;
+  }
+
+
+
 
 // TODO: Implement configurable Handles/Ports (for connecting Containers via edges)
 // import type { CSSProperties } from "vue";

@@ -49,31 +49,31 @@
                     filled
                     type="text"
                     label="Gleichung 1"
-                    v-model="formData.textFieldEquation1"
+                    v-model="formData.solutions.textFieldEquation1"
                   />
                   <q-input
                     filled
                     type="text"
                     label="Gleichung 2"
-                    v-model="formData.textFieldEquation2"
+                    v-model="formData.solutions.textFieldEquation2"
                   />
                   <q-input
                     filled
                     type="text"
                     label="Gleichung 3"
-                    v-model="formData.textFieldEquation3"
+                    v-model="formData.solutions.textFieldEquation3"
                   />
                   <q-input
                     filled
                     type="text"
                     label="Gleichung 4"
-                    v-model="formData.textFieldEquation4"
+                    v-model="formData.solutions.textFieldEquation4"
                   />
                   <q-input
                     filled
                     type="text"
                     label="Gleichung 5"
-                    v-model="formData.textFieldEquation5"
+                    v-model="formData.solutions.textFieldEquation5"
                   />
 
                   <div class="q-mt-md text-h6">
@@ -84,7 +84,7 @@
                     type="textarea"
                     label="(optional)"
                     autogrow
-                    v-model="formData.sampleSolutionCollaborativeWork"
+                    v-model="formData.solutions.sampleSolutionCollaborativeWork"
                   />
 
                   <div class="row justify-center q-mt-md">
@@ -115,79 +115,83 @@ const router = useRouter();
 const tasksStore = useTasksStore();
 const $q = useQuasar();
 
-interface FormData extends Partial<Task> {
+/* ---------- Typen ---------- */
+interface FormData {
+  description: string;
+  hint: string;
   symmetry: "even" | "odd" | "none";
   degree: number;
+  solutions: {
+    textFieldEquation1: string;
+    textFieldEquation2: string;
+    textFieldEquation3: string;
+    textFieldEquation4: string;
+    textFieldEquation5: string;
+    sampleSolutionCollaborativeWork: string;
+  };
 }
 interface Errors {
   description: string;
 }
 
-// Reaktives Objekt
+/* ---------- Reaktiver State ---------- */
 const formData = reactive<FormData>({
   description: "",
   hint: "",
   symmetry: "none",
   degree: 2,
-  textFieldEquation1: "",
-  textFieldEquation2: "",
-  textFieldEquation3: "",
-  textFieldEquation4: "",
-  textFieldEquation5: "",
-  sampleSolutionCollaborativeWork: "",
+  solutions: {
+    textFieldEquation1: "",
+    textFieldEquation2: "",
+    textFieldEquation3: "",
+    textFieldEquation4: "",
+    textFieldEquation5: "",
+    sampleSolutionCollaborativeWork: "",
+  },
 });
 
-const errors = reactive<Errors>({
-  description: "",
-});
+const errors = reactive<Errors>({ description: "" });
 
-// Radiobutton-Optionen
+/* ---------- UI‑Konstanten ---------- */
 const symmetryOptions = [
-  { label: "gerade", value: "even" },
-  { label: "ungerade", value: "odd" },
-  { label: "keine", value: "none" },
+  { label: "gerade",   value: "even" },
+  { label: "ungerade", value: "odd"  },
+  { label: "keine",    value: "none" },
 ];
 
-// Dynamisch berechnetes `max` für degree
 const degreeMax = computed(() => {
-  if (formData.symmetry === "none") {
-    return 4; // max 4
-  } else if (formData.symmetry === "odd") {
-    return 5; // max 5
-  }
-  return 6; // standard: 6 (z.B. wenn symmetry = 'even' oder was anderes)
+  return formData.symmetry === "none"
+    ? 4
+    : formData.symmetry === "odd"
+      ? 5
+      : 6;
 });
 
+/* ---------- Validierung ---------- */
 function validateForm() {
   errors.description = formData.description ? "" : "Bitte eingeben!";
   return !errors.description;
 }
 
+/* ---------- Absenden ---------- */
 async function handleCreateTask() {
   if (!validateForm()) return;
 
-  try {
-    // Da du "Task" erweiterst, hier anlegen:
-    await tasksStore.createTask({
-      // Nicht alle Felder in Task sind mandatory => Partial<Task>
-      description: formData.description as string,
-      hint: formData.hint ?? "",
-      degree: formData.degree,
-      symmetry: formData.symmetry,
-      textFieldEquation1: formData.textFieldEquation1 ?? "",
-      textFieldEquation2: formData.textFieldEquation2 ?? "",
-      textFieldEquation3: formData.textFieldEquation3 ?? "",
-      textFieldEquation4: formData.textFieldEquation4 ?? "",
-      textFieldEquation5: formData.textFieldEquation5 ?? "",
-      sampleSolutionCollaborativeWork:
-        formData.sampleSolutionCollaborativeWork ?? "",
-      // Falls es noch weitere Spalten gibt (z.B. createdAt),
-      // handled das der Server/die DB.
-    } as Task);
+  // ❶  newTask OHNE taskId typisieren
+  const newTask: Omit<Task, "taskId"> = {
+    description: formData.description,
+    hint:        formData.hint,
+    degree:      formData.degree,
+    symmetry:    formData.symmetry,
+    solutions:   { ...formData.solutions }
+  };
 
+  try {
+    // ❷  createTask erwartet bereits Omit<Task,"taskId"> – passt also
+    await tasksStore.createTask(newTask);
     router.push("/teacher-selection");
   } catch (error) {
-    console.error("Fehler beim Erstellen der Aufgabe:", error);
+    console.error("Fehler beim Erstellen:", error);
     $q.notify({
       color: "negative",
       message: "Erstellen fehlgeschlagen!",
@@ -195,7 +199,9 @@ async function handleCreateTask() {
     });
   }
 }
+
 </script>
+
 
 <style scoped>
 /* ggf. eigenes CSS */

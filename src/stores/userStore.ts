@@ -1,8 +1,14 @@
 // src/stores/userStore.ts
 import { defineStore } from "pinia";
 import axios from "axios";
-import {useTasksStore} from "stores/tasksStore";
+import { useTasksStore } from "stores/tasksStore";
 import type { User } from "src/models/User";
+
+// Interface für das Leistungsvermögen
+export interface Proficiency {
+  taskId: number;
+  score: number;
+}
 
 export const useUserStore = defineStore("userStore", {
   state: () => ({
@@ -10,6 +16,8 @@ export const useUserStore = defineStore("userStore", {
     isAuthenticated: false,
     loading: false,
     errorMessage: null as string | null,
+    // Neue Eigenschaft für die Speicherung der Bewertungen
+    proficiencies: [] as Proficiency[],
   }),
 
   getters: {
@@ -18,6 +26,10 @@ export const useUserStore = defineStore("userStore", {
     },
     roleId: (state): number | null => {
       return state.currentUser?.role ?? null;
+    },
+    // Neuer Getter für die Abfrage der Leistungsbewertung
+    getProficiencyByTaskId: (state) => (taskId: number) => {
+      return state.proficiencies.find((p) => p.taskId === taskId)?.score ?? null;
     },
   },
 
@@ -62,6 +74,22 @@ export const useUserStore = defineStore("userStore", {
       this.errorMessage = null;
       // Ggf. Server-Logout
       // axios.post("http://localhost:3000/logout");
+    },
+
+    // Neue Methode zum Speichern der Leistungsbewertung
+    setProficiency(proficiency: Proficiency) {
+      // Bestehenden Eintrag suchen und aktualisieren, oder neuen hinzufügen
+      const index = this.proficiencies.findIndex(p => p.taskId === proficiency.taskId);
+      if (index >= 0) {
+        this.proficiencies[index] = proficiency;
+      } else {
+        this.proficiencies.push(proficiency);
+      }
+
+      // Optional: Zum Server senden, falls später gewünscht
+      // axios.post("http://localhost:3000/proficiencies", proficiency);
+
+      console.log(`Leistungsvermögen gespeichert: Task ${proficiency.taskId}, Score ${proficiency.score}/7`);
     },
   },
 });

@@ -5,12 +5,12 @@ export interface Task {
 
   degree: number;
   symmetry: "even" | "odd" | "none";
-
-  textFieldEquation1?: string;
-  textFieldEquation2?: string;
-  textFieldEquation3?: string;
-  textFieldEquation4?: string;
-  textFieldEquation5?: string;
-
-  sampleSolutionCollaborativeWork?: string;
+  solutions: {
+    textFieldEquation1?: string;
+    textFieldEquation2?: string;
+    textFieldEquation3?: string;
+    textFieldEquation4?: string;
+    textFieldEquation5?: string;
+    sampleSolutionCollaborativeWork?: string;
+  };
 }
