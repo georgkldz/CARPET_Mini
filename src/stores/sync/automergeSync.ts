@@ -14,7 +14,8 @@ import { useTaskGraphStore } from "stores/taskGraphStore.js";
 import { JSONPathExpression } from "carpet-component-library";
 
 // Server-Endpunkt
-const SERVER_URL = "http://localhost:3000"; // Passe die URL an deinen Server an
+const API_BASE = "http://localhost:3000/api/v1";   // REST + SSE
+const WS_URL   = "ws://localhost:3000/sync";       // Automerge‑Socket
 
 interface ComponentDoc {
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -30,7 +31,7 @@ let isJoinSessionProcessing = false;
 
 const repo = new Repo({
   network: [
-    new BrowserWebSocketClientAdapter("ws://localhost:3000"),
+    new BrowserWebSocketClientAdapter(WS_URL),
     new BroadcastChannelNetworkAdapter(),
   ],
   storage: new IndexedDBStorageAdapter(),
@@ -101,7 +102,7 @@ export async function joinSession(
     return;
   }
   try {
-    const response = await fetch(`${SERVER_URL}/joinSession`, {
+    const response = await fetch(`${API_BASE}/joinSession`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

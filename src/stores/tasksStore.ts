@@ -27,7 +27,7 @@ export const useTasksStore = defineStore("tasksStore", {
 // tasksStore.ts
     async loadTasks() {
       try {
-        const rows = await axios.get("http://localhost:3000/tasks");
+        const rows = await axios.get("http://localhost:3000/api/v1/tasks");
         // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         this.tasks = rows.data.map((r: any) => ({
           taskId:      r.taskId,
@@ -55,7 +55,7 @@ export const useTasksStore = defineStore("tasksStore", {
       // Dann erfrage, welche Tasks der User schon erledigt hat
       try {
         const res = await axios.get(
-          `http://localhost:3000/userTasks/${userId}`,
+          `http://localhost:3000/api/v1/userTasks/${userId}`,
         );
         const completed = res.data as Array<{ userTaskId: number; taskId: number }>;
         const completedTaskIds = completed.map((c) => c.taskId);
@@ -77,7 +77,7 @@ export const useTasksStore = defineStore("tasksStore", {
       // Omit: Weil taskId normalerweise von der DB vergeben wird
       try {
         const response = await axios.post<Task>(
-          "http://localhost:3000/tasks",
+          "http://localhost:3000/api/v1/tasks",
           newTask,
         );
         // Der Server gibt das erstellte Task-Objekt (mit taskId) zurück

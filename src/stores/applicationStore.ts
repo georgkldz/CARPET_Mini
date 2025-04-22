@@ -6,7 +6,10 @@ import serialisedTaskSchema from "../schemas/zodSchemas/SerialisedTaskSchema";
 import type { SerializedCARPETComponents } from "carpet-component-library";
 
 import ExampleTask from "../SerialisedTasks/Kleditz.carpet.json";
-const staticTasks = { Example: serialisedTaskSchema.parse(ExampleTask) };
+const staticTasks = {
+  Example: serialisedTaskSchema.parse(ExampleTask),
+  Example2: serialisedTaskSchema.parse(ExampleTask)
+};
 import { useTaskGraphStore } from "./taskGraphStore";
 import {  joinSession,   syncSingleComponentChange, } from "stores/sync/automergeSync";
 import {useCollaborationStore} from "stores/collaborationStore";
@@ -99,7 +102,7 @@ export interface SerialisedTask {
 export const useApplicationStore = defineStore("applicationStore", () => {
   const documentReady = ref(false);
   const isRemoteUpdate = ref(false);
-  const collaborationMode = ref(false);
+  const collaborationMode = ref(true);
 
 
   /**

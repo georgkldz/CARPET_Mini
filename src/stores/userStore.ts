@@ -39,7 +39,7 @@ export const useUserStore = defineStore("userStore", {
       this.errorMessage = null;
 
       try {
-        const response = await axios.post("http://localhost:3000/login", {
+        const response = await axios.post("http://localhost:3000/api/v1/login", {
           email,
           password,
         });
@@ -89,7 +89,7 @@ export const useUserStore = defineStore("userStore", {
       // Optional: Zum Server senden, falls später gewünscht
       // axios.post("http://localhost:3000/proficiencies", proficiency);
 
-      console.log(`Leistungsvermögen gespeichert: Task ${proficiency.taskId}, Score ${proficiency.score}/7`);
+      console.log(`Leistungsvermögen gespeichert: Task ${proficiency.taskId}, Score ${proficiency.score}/8`);
     },
   },
 });
