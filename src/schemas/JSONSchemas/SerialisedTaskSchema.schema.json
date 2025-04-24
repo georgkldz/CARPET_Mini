@@ -1494,6 +1494,17 @@
     "SerialisedNode": {
       "additionalProperties": false,
       "properties": {
+        "collaboration": {
+          "additionalProperties": false,
+          "properties": {
+            "mode": {
+              "enum": ["single", "groupBuilding", "collaboration"],
+              "type": "string"
+            }
+          },
+          "required": ["mode"],
+          "type": "object"
+        },
         "components": {
           "additionalProperties": false,
           "patternProperties": {
@@ -2211,6 +2222,44 @@
     },
     "TaskData": {
       "additionalProperties": {},
+      "properties": {
+        "taskDescription": {
+          "type": "string"
+        },
+        "degree": {
+          "type": "number"
+        },
+        "symmetry": {
+          "type": "string"
+        },
+        "hint": {
+          "type": "string"
+        },
+        "solutions": {
+          "additionalProperties": {},
+          "properties": {
+            "textFieldEquation1": {
+              "type": "string"
+            },
+            "textFieldEquation2": {
+              "type": "string"
+            },
+            "textFieldEquation3": {
+              "type": "string"
+            },
+            "textFieldEquation4": {
+              "type": "string"
+            },
+            "textFieldEquation5": {
+              "type": "string"
+            },
+            "sampleSolutionCollaborativeWork": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
       "type": "object"
     },
     "TextSegment": {

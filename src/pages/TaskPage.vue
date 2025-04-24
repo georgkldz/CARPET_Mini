@@ -1,9 +1,27 @@
 <template>
   <div class="task">
-    <transition name="fade">
-      <LoadingSpinner v-if="isLoading" />
-    </transition>
-    <LOOM v-if="!isLoading" :key="currentNode" :storeObject="taskStore" />
+    <template v-if="isLoading">
+      <transition name="fade">
+        <LoadingSpinner />
+      </transition>
+    </template>
+    <template v-else>
+      <!-- Komponenten nur anzeigen, wenn NICHT loading -->
+      <LOOM
+        v-if="collaborationMode === 'single'"
+        :key="`single-${currentNode}`"
+        :storeObject="taskStore"
+      />
+      <WaitingRoom
+        v-else-if="collaborationMode === 'groupBuilding'"
+        :key="`groupBuilding-${currentNode}`"
+      />
+      <CollaborationLoom
+        v-else-if="collaborationMode === 'collaboration'"
+        :key="`collaboration-${currentNode}`"
+        :storeObject="taskStore"
+      />
+    </template>
   </div>
 </template>
 
@@ -20,6 +38,7 @@ import LOOM from "src/components/LOOM/LOOM.vue";
 import LoadingSpinner from "src/components/LoadingSpinner.vue";
 import { useTaskGraphStore } from "src/stores/taskGraphStore";
 import { useApplicationStore } from "stores/applicationStore";
+import WaitingRoom from "components/LOOM/WaitingRoom.vue";
 
 const taskStore = useTaskGraphStore();
 const applicationStore = useApplicationStore();
@@ -29,6 +48,15 @@ const route = useRoute();
 const currentNode = getProperty("$.currentNode");
 
 const isLoading = computed(() => taskStore.isLoading);
+const CollaborationLoom = LOOM;
+
+
+// Compute the collaboration mode of the current node
+const collaborationMode = computed(() => {
+  const currentNodeObj = taskStore.getCurrentNode;
+  console.log("collaborationMode ist ", currentNodeObj?.collaboration?.mode || "single");
+  return currentNodeObj?.collaboration?.mode || "single";
+});
 
 /**
  * Both onMounted and watch are required to either initialize or update the current taskName and load the task when the route changes.

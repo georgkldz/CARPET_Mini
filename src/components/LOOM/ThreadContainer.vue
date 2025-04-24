@@ -202,6 +202,57 @@ const actionHandler = async (actionType: string, payload: any) => {
         await taskGraphStore.submitForEvaluation();          // → ruft evaluationService
         // oder direkt:  await submitForEvaluation();
         console.log("Evaluation abgeschickt");
+
+        const currentNodeId = taskGraphStore.currentNode;
+        if (currentNodeId === null) {
+          console.error("Aktueller Node ist null, kann nicht zum nächsten Node wechseln!");
+          return;
+        }
+
+        const { joinCollaboration } = await import("../../services/collaborationService");
+        await joinCollaboration();
+        console.log("Gruppenbildungsanfrage versendet");
+
+        // 4) Den Node-Wechsel verzögern, um Vue Zeit zur DOM-Aktualisierung zu geben
+        setTimeout(() => {
+          // Loading-Zustand aktivieren während des Übergangs
+          taskGraphStore.toggleLoading();
+
+          // Speichere den aktuellen Node als previous
+          taskGraphStore.setProperty({
+            path: "$.previousNode",
+            value: currentNodeId
+          });
+
+          // Ermittle und setze den nächsten Node (basierend auf der edges-Struktur)
+          const edges = taskGraphStore.getProperty("$.edges");
+
+          if (!edges || !edges[currentNodeId]) {
+            console.error(`Keine Edges für Node ${currentNodeId} gefunden!`);
+            taskGraphStore.toggleLoading();
+            return;
+          }
+
+          const nextNodes = edges[currentNodeId];
+
+          if (nextNodes && nextNodes.length > 0) {
+            // Setze den ersten verfügbaren nächsten Node als aktuellen Node
+            taskGraphStore.setProperty({
+              path: "$.currentNode",
+              value: nextNodes[0]
+            });
+            console.log(`Node-Wechsel durchgeführt: ${currentNodeId} -> ${nextNodes[0]}`);
+
+            // Nach kurzer Verzögerung den Loading-Status aufheben
+            setTimeout(() => {
+              taskGraphStore.toggleLoading();
+            }, 100);
+          } else {
+            console.warn(`Kein nächster Node für Node ${currentNodeId} gefunden!`);
+            taskGraphStore.toggleLoading();
+          }
+        }, 50); // Eine kleine Verzögerung vor dem Node-Wechsel
+
       } catch (e) {
         console.error("Evaluation fehlgeschlagen:", e);
       }

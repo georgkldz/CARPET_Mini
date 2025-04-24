@@ -69,9 +69,14 @@ export interface Modal {
 }
 export type Modals = Array<Modal>;
 
+export type CollaborationMode = "single" | "groupBuilding" | "collaboration";
+
 export interface SerialisedNode {
   layouts: Layouts;
   components: SerialisedComponents;
+  collaboration?: {
+    mode: CollaborationMode;
+  };
   hints?: Hints;
   modal?: Modals;
   isValid?: boolean;
