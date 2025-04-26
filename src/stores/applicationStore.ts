@@ -107,7 +107,6 @@ export interface SerialisedTask {
 export const useApplicationStore = defineStore("applicationStore", () => {
   const documentReady = ref(false);
   const isRemoteUpdate = ref(false);
-  const collaborationMode = ref(true);
 
 
   /**
@@ -129,8 +128,11 @@ export const useApplicationStore = defineStore("applicationStore", () => {
   };
 
   function joinSessionWrapper() {
-    if (!collaborationMode.value) {
-      console.log("Collaboration OFF – skip joinSession");
+    const taskGraphStore = useTaskGraphStore();
+    const currentMode = taskGraphStore.getCurrentNode?.collaboration?.mode ?? "single";
+
+    if (currentMode !== "collaboration") {
+      console.log("Not in collaboration mode – skip joinSession");
       return;
     }
     // z.B. aus collaborationStore
@@ -140,28 +142,21 @@ export const useApplicationStore = defineStore("applicationStore", () => {
       console.warn("Keine SessionID vorhanden, kann nicht joinSession aufrufen.");
       return;
     }
-    const taskGraphStore = useTaskGraphStore();
+
     joinSession(sessionId, taskGraphStore);
-  }
-
-  function toggleCollaborationMode() {
-    collaborationMode.value = !collaborationMode.value;
-  }
-
-  function setCollaborationMode(mode: boolean) {
-    collaborationMode.value = mode;
   }
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   function syncSingleComponentWrapper(path: string, value: any) {
-    if (!collaborationMode.value) {
-      return; // kein Automerge
+    const taskGraphStore = useTaskGraphStore();
+    const currentMode = taskGraphStore.getCurrentNode?.collaboration?.mode ?? "single";
+    if (currentMode !== "collaboration") {
+      return;
     }
     syncSingleComponentChange(path, value);
   }
 
   return {
-    collaborationMode,
     leftDrawerOpen,
     toggleLeftDrawer,
     darkMode,
@@ -170,8 +165,6 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     SNAP_GRID,
     joinSession: joinSessionWrapper,
     syncSingleComponentChange: syncSingleComponentWrapper,
-    toggleCollaborationMode,
-    setCollaborationMode,
     documentReady,
     isRemoteUpdate,
   };

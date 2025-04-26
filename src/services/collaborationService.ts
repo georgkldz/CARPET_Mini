@@ -19,7 +19,6 @@ interface GroupMember {
  */
 export async function joinCollaboration(): Promise<void> {
   const userStore = useUserStore();
-  const applicationStore = useApplicationStore();
 
   // Direkter Zugriff auf tasksStore statt über Getter
   const tasksStore = useTasksStore();
@@ -48,9 +47,6 @@ export async function joinCollaboration(): Promise<void> {
     });
 
     console.log("Proficiency erfolgreich gesendet, warte auf Gruppenzuweisung...");
-
-    // Wechsel in den Kollaborationsmodus
-    applicationStore.setCollaborationMode(true);
 
     // SSE-Verbindung aufbauen, um auf Gruppenzuweisung zu warten
     setupSSEListener(userId);

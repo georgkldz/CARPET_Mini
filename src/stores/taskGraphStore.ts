@@ -75,12 +75,17 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       return state.nodes[state.currentNode as number];
     },
 
+    getCurrentCollaborationMode: (state: TaskGraphState): "single" | "groupBuilding" | "collaboration" => {
+      if (state.currentNode === null) return "single";
+      return state.nodes[state.currentNode]?.collaboration?.mode ?? "single";
+    },
     // Ruft den Getter aus dem authStore auf, der die ID der aktuellen Aufgabe liefert
     getCurrentTaskId(): number | null {
       const tasksStore = useTasksStore();
       return tasksStore.getCurrentTaskId;
     },
   },
+
   actions: {
     /**
      * Extra-Action, um den Task aus der DB (bzw. tasksStore) zu laden
@@ -236,9 +241,9 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       // optional Logging
       process.env.NODE_ENV === "development" && console.log(path, value);
       if (path.endsWith(".fieldValue")) {
-        const applicationStore = useApplicationStore();
-        if (applicationStore.collaborationMode) {
-          console.log("setProperty ruft syncSinglePathValue auf mit ", path, value,);
+        const mode = this.getCurrentCollaborationMode;
+        if (mode === "collaboration") {
+          console.log("setProperty → syncSingleComponentChange", path, value);
           syncSingleComponentChange(path, value);
         }
       }
