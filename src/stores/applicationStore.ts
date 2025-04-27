@@ -128,6 +128,7 @@ export const useApplicationStore = defineStore("applicationStore", () => {
   };
 
   function joinSessionWrapper() {
+    console.log("joinSessionWrapper gestartet");
     const taskGraphStore = useTaskGraphStore();
     const currentMode = taskGraphStore.getCurrentNode?.collaboration?.mode ?? "single";
 

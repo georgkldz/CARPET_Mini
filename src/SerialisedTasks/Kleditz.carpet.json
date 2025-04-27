@@ -350,7 +350,7 @@
           "4": {
             "x": 1,
             "y": 1,
-            "width": 15,
+            "width": 25,
             "height": 10
           }
         },
@@ -374,13 +374,13 @@
       "components": {
         "4": {
           "type": "TextView",
-          "name": "TextView1",
+          "name": "Warte auf Gruppenzuweisung",
           "state": {
             "isValid": true,
             "isCorrect": false,
             "textSegments": [
               {
-                "text": "Deine Antworten wurden ausgewertet und wir suchen passende Teammitglieder für dich.\n Bitte warte einen Moment, bis die Gruppenzuweisung abgeschlossen ist."
+                "text": "Deine Antworten wurden ausgewertet und wir suchen passende Teammitglieder für dich. Bitte warte einen Moment, bis die Gruppenzuweisung abgeschlossen ist."
               }
             ],
             "fieldValue": "",

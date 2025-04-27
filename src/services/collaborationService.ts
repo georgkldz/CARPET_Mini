@@ -36,6 +36,9 @@ export async function joinCollaboration(): Promise<void> {
     throw new Error("Keine Proficiency für diese Aufgabe vorhanden");
   }
 
+  // SSE-Verbindung aufbauen, um auf Gruppenzuweisung zu warten
+  setupSSEListener(userId);
+
   try {
     console.log(`Sende Proficiency an Backend: userId=${userId}, taskId=${taskId}, score=${score}`);
 
@@ -48,8 +51,6 @@ export async function joinCollaboration(): Promise<void> {
 
     console.log("Proficiency erfolgreich gesendet, warte auf Gruppenzuweisung...");
 
-    // SSE-Verbindung aufbauen, um auf Gruppenzuweisung zu warten
-    setupSSEListener(userId);
 
     return;
   } catch (error) {
@@ -80,7 +81,7 @@ function setupSSEListener(userId: number): void {
         const member = data.members.find((m: GroupMember) => m.userId === userId);
 
         if (member) {
-          console.log(`Gruppenzuweisung erhalten: Gruppe ${data.groupId}, Rolle ${member.roleId}`);
+          console.log("Gruppenzuweisung erhalten: Gruppe ${data.groupId}, Rolle ${member.roleId}");
 
           // Daten im collaborationStore speichern
           collaborationStore.setCollaborationData(
@@ -91,14 +92,8 @@ function setupSSEListener(userId: number): void {
 
           // Verbindung schließen, da keine weiteren Updates benötigt werden
           eventSource.close();
+          console.log("eventSource geschlossen, wechsle Node");
 
-          // TaskPage aktualisieren, damit sie den Kollaborationsmodus anzeigt
-          applicationStore.joinSession();
-
-          // *** NEU: Wechsel zum nächsten Node mit Verzögerung ***
-          setTimeout(() => {
-            // Loading-Zustand aktivieren während des Übergangs
-            taskGraphStore.toggleLoading();
 
             // Aktuellen Node ermitteln (sollte der "groupBuilding"-Node sein)
             const currentNodeId = taskGraphStore.currentNode;
@@ -120,7 +115,7 @@ function setupSSEListener(userId: number): void {
             const edges = taskGraphStore.getProperty("$.edges");
 
             if (!edges || !edges[currentNodeId]) {
-              console.error(`Keine Edges für Node ${currentNodeId} gefunden!`);
+              console.error("Keine Edges für Node ${currentNodeId} gefunden!");
               taskGraphStore.toggleLoading();
               return;
             }
@@ -133,17 +128,15 @@ function setupSSEListener(userId: number): void {
                 path: "$.currentNode",
                 value: nextNodes[0]
               });
-              console.log(`Node-Wechsel nach Gruppenzuweisung: ${currentNodeId} -> ${nextNodes[0]}`);
+              console.log("Node-Wechsel nach Gruppenzuweisung: ${currentNodeId} -> ${nextNodes[0]}");
 
-              // Nach kurzer Verzögerung den Loading-Status aufheben
-              setTimeout(() => {
-                taskGraphStore.toggleLoading();
-              }, 100);
             } else {
-              console.warn(`Kein nächster Node für Node ${currentNodeId} gefunden!`);
+              console.warn("Kein nächster Node für Node ${currentNodeId} gefunden!");
               taskGraphStore.toggleLoading();
             }
-          }, 50); // Eine kleine Verzögerung vor dem Node-Wechsel
+          console.log("Rufe joinSessionWrapper vom collaborationService auf ")
+            // TaskPage aktualisieren, damit sie den Kollaborationsmodus anzeigt
+          applicationStore.joinSession();
         }
       }
     } catch (error) {

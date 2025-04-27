@@ -93,6 +93,7 @@ export async function joinSession(
   sessionId: number,
   taskGraphStore: ReturnType<typeof useTaskGraphStore>,
 ) {
+  console.log("joining session mit sessionId", sessionId);
   if (isJoinSessionProcessing) {
     console.log("joinSession läuft gerade, breche erneuten Aufruf ab");
     return;
