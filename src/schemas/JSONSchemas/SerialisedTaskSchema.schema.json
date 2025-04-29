@@ -681,6 +681,14 @@
         "isValid": {
           "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
           "type": "boolean"
+        },
+        "fieldValueByUser": {
+          "description": "Map with user IDs (digits only) as keys and their inputs as strings or numbers. It is extended at runtime as needed.",
+          "type": "object",
+          "patternProperties": {
+            "^[0-9]+$": { "type": ["string", "number"] }
+          },
+          "additionalProperties": false
         }
       },
       "required": ["fieldValue", "isCorrect", "isValid"],
@@ -716,6 +724,14 @@
         "isValid": {
           "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
           "type": "boolean"
+        },
+        "fieldValueByUser": {
+          "description": "Map with user IDs (digits only) as keys and their inputs as strings or numbers. It is extended at runtime as needed.",
+          "type": "object",
+          "patternProperties": {
+            "^[0-9]+$": { "type": ["string", "number"] }
+          },
+          "additionalProperties": false
         }
       },
       "required": ["fieldConfiguration", "fieldValue", "isCorrect", "isValid"],

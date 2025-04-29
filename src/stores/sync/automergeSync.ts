@@ -5,6 +5,7 @@ import { BroadcastChannelNetworkAdapter } from "@automerge/automerge-repo-networ
 import { BrowserWebSocketClientAdapter } from "@automerge/automerge-repo-network-websocket";
 import wasmUrl from "@automerge/automerge/automerge.wasm?url";
 import { next as Automerge } from "@automerge/automerge/slim";
+import {isEqual} from "lodash";
 
 (async () => {
   await Automerge.initializeWasm(wasmUrl);
@@ -178,18 +179,18 @@ export async function joinSession(
  * syncSingleComponentChange - writes path+value from store to Automerge-Document
  */
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export async function syncSingleComponentChange(path: string, value: any) {
+export async function syncSingleComponentChange(path: string, value: any, uid?: number) {
   if (!documentReady.value) {
     console.warn("Dokument noch nicht bereit, kann nicht syncen");
     return;
   }
+  const isSingle = path.endsWith(".fieldValue")
+  const isMap    = path.includes(".fieldValueByUser.")
 
-  // WICHTIG: Nur Pfade, die auf .fieldValue enden, werden synchronisiert
-  if (!path.endsWith(".fieldValue")) {
-    console.log("Ignoriere Sync, da kein fieldValue-Pfad:", path);
+  if (!isSingle && !isMap) {
+    console.log("Ignoriere Sync, da kein relevantes Feld:", path);
     return;
   }
-
   // Extrahiere sauberen Wert ohne Vue-interne Eigenschaften
   const cleanVal = extractCleanValue(value);
 
@@ -197,9 +198,16 @@ export async function syncSingleComponentChange(path: string, value: any) {
     if (!doc.componentsData) {
       doc.componentsData = {}; // nur ein Mal anlegen
     }
-    doc.componentsData[path] = cleanVal;
+    if (isSingle) {
+      doc.componentsData[path] = cleanVal          // Alt-Fall
+    } else if (isMap) {
+      // Pfad zum Map-Objekt ermitteln
+      const basePath = path.replace(/\.[0-9]+$/, "")     // kappt ".<uid>"
+      doc.componentsData[basePath] ??= {}                // Map anlegen
+      doc.componentsData[basePath][uid!] = cleanVal      // Slot setzen
+    }
   });
-  console.log(`syncSingleComponentChange -> Path: ${path}, Value:`, cleanVal);
+  console.log("syncSingleComponentChange -> Path: ${path}, Value:", cleanVal);
 }
 
 /**
@@ -225,7 +233,7 @@ export function syncFromDocComponents(
       key === "dep" ||
       key.startsWith("__v_") ||
       (key.startsWith("_") && ["_rawValue", "_value"].includes(key)) ||
-      !key.endsWith(".fieldValue")
+      (!key.endsWith(".fieldValue") && !key.includes(".fieldValueByUser."))
     ) {
       continue;
     }
@@ -236,30 +244,30 @@ export function syncFromDocComponents(
   const oldComponents = lastComponentsDataCache;
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const changedEntries: Array<{ pathOrId: string; data: any }> = [];
+  const changedEntries: Array<{ path: string; data: any }> = [];
 
   // 2) Find changed or new Keys
   for (const [key, val] of Object.entries(newComponents)) {
-    if (
-      !oldComponents.value ||
-      oldComponents.value[key] === undefined ||
-      JSON.stringify(oldComponents.value[key]) !== JSON.stringify(val)
-    ) {
-      changedEntries.push({ pathOrId: key, data: val });
+    if (!oldComponents.value || !isEqual(oldComponents.value[key], val)) {
+      changedEntries.push({ path: key, data: val })
     }
   }
   // 3) Find deleted Keys
   if (oldComponents.value) {
     for (const key of Object.keys(oldComponents.value)) {
-      // Nur fieldValue-Pfade berücksichtigen
-      if (!key.endsWith(".fieldValue")) {
-        continue;
+      if (
+        !key.endsWith(".fieldValue") &&
+        !key.includes(".fieldValueByUser.")
+      ) {
+        continue
       }
       if (!(key in newComponents)) {
-        changedEntries.push({ pathOrId: key, data: undefined });
+        changedEntries.push({ path: key, data: undefined })
       }
     }
   }
+
+
 
   if (changedEntries.length === 0) {
     console.log("Keine echten Änderungen in componentsData");
@@ -270,24 +278,25 @@ export function syncFromDocComponents(
   // Update local cache
   lastComponentsDataCache.value = JSON.parse(JSON.stringify(newComponents));
 
-  changedEntries.forEach(({ pathOrId, data }) => {
-    // Überspringe gelöschte Einträge
+  changedEntries.forEach(({ path, data }) => {
     if (data === undefined) {
-      console.log("Ignoriere Patch, da data===undefined:", pathOrId);
-      return;
+      console.log("Ignoriere Patch (delete):", path)
+      return
     }
 
-    // DOPPELTE ABSICHERUNG: Nochmals prüfen, ob es ein fieldValue-Pfad ist
-    if (!pathOrId.endsWith(".fieldValue")) {
-      console.log("Ignoriere Patch, da kein fieldValue:", pathOrId);
-      return;
+    // Sicherheits­check für beide Typen
+    if (
+      !path.endsWith(".fieldValue") &&
+      !path.includes(".fieldValueByUser.")
+    ) {
+      console.log("Ignoriere Patch, keiner der erlaubten Pfade:", path)
+      return
     }
 
-    console.log("Übernehme fieldValue-Patch:", pathOrId, data);
-    // Direkt setProperty verwenden, applySynchronizedChanges ist nicht mehr nötig
+    console.log("Übernehme Patch:", path, data)
     taskGraphStore.setProperty({
-      path: pathOrId as JSONPathExpression,
-      value: data,
-    });
+      path: path as JSONPathExpression,
+      value: data
+    })
   });
 }

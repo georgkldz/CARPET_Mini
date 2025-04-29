@@ -85,7 +85,6 @@ function setupSSEListener(userId: number): void {
 
           // Daten im collaborationStore speichern
           collaborationStore.setCollaborationData(
-            data.groupId, // sessionId = groupId in diesem Fall
             data.groupId,
             member.roleId
           );

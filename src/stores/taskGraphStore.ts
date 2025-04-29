@@ -29,6 +29,7 @@ export interface CARPETStoreAPI extends StoreAPI {
 }
 
 export interface TaskGraphState extends SerialisedTask {
+  userId: number | undefined;
   currentTask: string | null;
   isLoading: boolean;
   currentNode: number | null;
@@ -44,6 +45,7 @@ export type TaskGraphStateKey = keyof TaskGraphState;
  */
 export const useTaskGraphStore = defineStore("taskGraphStore", {
   state: (): TaskGraphState => ({
+    userId: undefined,
     currentTask: null,
     isLoading: false,
     currentNode: null,
@@ -235,16 +237,20 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
             process.env.NODE_ENV === "development" && console.log(path, value);
           }
         } else {
+          if (subState[splitPath[depth]] === undefined) {
+            subState[splitPath[depth]] = {};
+          }
           subState = subState[splitPath[depth]];
         }
       }
       // optional Logging
       process.env.NODE_ENV === "development" && console.log(path, value);
-      if (path.endsWith(".fieldValue")) {
+      if (path.endsWith(".fieldValue") ||
+        path.includes(".fieldValueByUser."))  {
         const mode = this.getCurrentCollaborationMode;
         if (mode === "collaboration") {
           console.log("setProperty → syncSingleComponentChange", path, value);
-          syncSingleComponentChange(path, value);
+          syncSingleComponentChange(path, value, this.userId);
         }
       }
     },

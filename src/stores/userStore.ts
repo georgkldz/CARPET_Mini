@@ -2,6 +2,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import { useTasksStore } from "stores/tasksStore";
+import { useTaskGraphStore} from "stores/taskGraphStore";
 import type { User } from "src/models/User";
 
 // Interface für das Leistungsvermögen
@@ -56,6 +57,9 @@ export const useUserStore = defineStore("userStore", {
 
         this.currentUser = user;
         this.isAuthenticated = true;
+
+        const taskGraph = useTaskGraphStore()
+        taskGraph.setProperty({ path: "$.userId", value: this.currentUser.userId })
 
         const tasksStore = useTasksStore();
         await tasksStore.determineCurrentTaskForUser(userId);

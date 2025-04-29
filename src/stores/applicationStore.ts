@@ -138,7 +138,7 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     }
     // z.B. aus collaborationStore
     const collab = useCollaborationStore();
-    const sessionId = collab.sessionId;
+    const sessionId = collab.groupId;
     if (!sessionId) {
       console.warn("Keine SessionID vorhanden, kann nicht joinSession aufrufen.");
       return;
