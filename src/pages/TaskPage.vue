@@ -1,17 +1,11 @@
 <template>
-
   <div class="task">
-
     <transition name="fade">
-
       <LoadingSpinner v-if="isLoading" />
-
     </transition>
 
     <LOOM v-show="!isLoading" :key="currentNode" :storeObject="taskStore" />
-
   </div>
-
 </template>
 
 <script lang="ts" setup>
@@ -38,7 +32,6 @@ const currentNode = getProperty("$.currentNode");
 
 const isLoading = computed(() => taskStore.isLoading);
 //const CollaborationLoom = LOOM;
-
 
 // // Compute the collaboration mode of the current node
 // const collaborationMode = computed(() => {

@@ -5,7 +5,7 @@ import { BroadcastChannelNetworkAdapter } from "@automerge/automerge-repo-networ
 import { BrowserWebSocketClientAdapter } from "@automerge/automerge-repo-network-websocket";
 import wasmUrl from "@automerge/automerge/automerge.wasm?url";
 import { next as Automerge } from "@automerge/automerge/slim";
-import {isEqual} from "lodash";
+import { isEqual } from "lodash";
 
 (async () => {
   await Automerge.initializeWasm(wasmUrl);
@@ -15,8 +15,8 @@ import { useTaskGraphStore } from "stores/taskGraphStore.js";
 import { JSONPathExpression } from "carpet-component-library";
 
 // Server-Endpunkt
-const API_BASE = "http://localhost:3000/api/v1";   // REST + SSE
-const WS_URL   = "ws://localhost:3000/sync";       // Automerge‑Socket
+const API_BASE = "http://localhost:3000/api/v1"; // REST + SSE
+const WS_URL = "ws://localhost:3000/sync"; // Automerge‑Socket
 
 interface ComponentDoc {
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -45,7 +45,9 @@ const repo = new Repo({
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 function extractCleanValue(value: any): any {
   // Wenn es ein Ref-Objekt ist, extrahiere .value
+  console.log("extractCleanValue bearbeitet ", value);
   if (value && typeof value === "object" && value.__v_isRef === true) {
+    console.log("extractCleanValue gibt zurück ", value.value)
     return extractCleanValue(value.value);
   }
 
@@ -179,13 +181,18 @@ export async function joinSession(
  * syncSingleComponentChange - writes path+value from store to Automerge-Document
  */
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export async function syncSingleComponentChange(path: string, value: any, uid?: number) {
+export async function syncSingleComponentChange(
+  path: string,
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  value: any,
+  uid?: number,
+) {
   if (!documentReady.value) {
     console.warn("Dokument noch nicht bereit, kann nicht syncen");
     return;
   }
-  const isSingle = path.endsWith(".fieldValue")
-  const isMap    = path.includes(".fieldValueByUser.")
+  const isSingle = path.endsWith(".fieldValue");
+  const isMap = path.includes("fieldValueByUser");
 
   if (!isSingle && !isMap) {
     console.log("Ignoriere Sync, da kein relevantes Feld:", path);
@@ -199,15 +206,18 @@ export async function syncSingleComponentChange(path: string, value: any, uid?: 
       doc.componentsData = {}; // nur ein Mal anlegen
     }
     if (isSingle) {
-      doc.componentsData[path] = cleanVal          // Alt-Fall
+      doc.componentsData[path] = cleanVal; // Alt-Fall
+      console.log("syncSingleComponentChange -> Path: ${path}, Value:", cleanVal);
     } else if (isMap) {
       // Pfad zum Map-Objekt ermitteln
-      const basePath = path.replace(/\.[0-9]+$/, "")     // kappt ".<uid>"
-      doc.componentsData[basePath] ??= {}                // Map anlegen
-      doc.componentsData[basePath][uid!] = cleanVal      // Slot setzen
+      const basePath = path.replace(/\.[0-9]+$/, ""); // kappt ".<uid>"
+      console.log("basePath ", basePath);
+      doc.componentsData[basePath] ??= {}; // Map anlegen
+      doc.componentsData[basePath][uid!] = cleanVal; // Slot setzen
+      console.log("syncSingleComponentChange -> Path: ${basePath}, Value:",basePath, cleanVal);
     }
   });
-  console.log("syncSingleComponentChange -> Path: ${path}, Value:", cleanVal);
+
 }
 
 /**
@@ -219,7 +229,7 @@ export function syncFromDocComponents(
   doc: { componentsData?: Record<string, any> },
   taskGraphStore: ReturnType<typeof useTaskGraphStore>,
 ) {
-  console.log("syncFromDocComponents aufgerufen", doc);
+  console.log("syncFromDocComponents aufgerufen", doc.componentsData);
   if (!doc.componentsData) return;
 
   const newComponentsRaw = doc.componentsData;
@@ -232,71 +242,70 @@ export function syncFromDocComponents(
     if (
       key === "dep" ||
       key.startsWith("__v_") ||
-      (key.startsWith("_") && ["_rawValue", "_value"].includes(key)) ||
-      (!key.endsWith(".fieldValue") && !key.includes(".fieldValueByUser."))
+      (key.startsWith("_") && ["_rawValue", "_value"].includes(key))
     ) {
+      console.log("rausgefiltert wird ", key, val);
       continue;
     }
     // Bereinigen der Werte
     newComponents[key] = extractCleanValue(val);
+    console.log("zu newComponents hinzugefügt",newComponents[key]);
   }
 
+
   const oldComponents = lastComponentsDataCache;
+  console.log("oldComponents sind", oldComponents);
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const changedEntries: Array<{ path: string; data: any }> = [];
-
+  console.log("Iteriere über keys, vals und finde Änderungen")
   // 2) Find changed or new Keys
   for (const [key, val] of Object.entries(newComponents)) {
+
     if (!oldComponents.value || !isEqual(oldComponents.value[key], val)) {
-      changedEntries.push({ path: key, data: val })
+      changedEntries.push({ path: key, data: val });
+      console.log("Eintrag hinzugefügt in find changed or new ", key, val);
     }
   }
   // 3) Find deleted Keys
   if (oldComponents.value) {
     for (const key of Object.keys(oldComponents.value)) {
-      if (
-        !key.endsWith(".fieldValue") &&
-        !key.includes(".fieldValueByUser.")
-      ) {
-        continue
+      if (!key.endsWith(".fieldValue") && !key.includes("fieldValueByUser")) {
+        console.log("Übersprungen wird ", key, oldComponents.value[key]);
+        continue;
       }
       if (!(key in newComponents)) {
-        changedEntries.push({ path: key, data: undefined })
+        changedEntries.push({ path: key, data: undefined });
+        console.log("Eintrag undefined gesetzt in find deleted ", key);
       }
     }
   }
-
-
 
   if (changedEntries.length === 0) {
     console.log("Keine echten Änderungen in componentsData");
     return;
   }
-  console.log("Echte Änderungen:", changedEntries);
+  console.log("Echte Änderungen:", changedEntries.values());
 
   // Update local cache
   lastComponentsDataCache.value = JSON.parse(JSON.stringify(newComponents));
 
   changedEntries.forEach(({ path, data }) => {
     if (data === undefined) {
-      console.log("Ignoriere Patch (delete):", path)
-      return
+      console.log("Ignoriere Patch (delete):", path);
+      return;
     }
 
     // Sicherheits­check für beide Typen
-    if (
-      !path.endsWith(".fieldValue") &&
-      !path.includes(".fieldValueByUser.")
-    ) {
-      console.log("Ignoriere Patch, keiner der erlaubten Pfade:", path)
-      return
+    if (!path.endsWith(".fieldValue") && !path.includes("fieldValueByUser")) {
+      console.log("Ignoriere Patch, keiner der erlaubten Pfade:", path);
+      return;
     }
 
-    console.log("Übernehme Patch:", path, data)
+    console.log("Übernehme Patch:", path, data);
     taskGraphStore.setProperty({
       path: path as JSONPathExpression,
-      value: data
-    })
+      value: data,
+    });
   });
 }

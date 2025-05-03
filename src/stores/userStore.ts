@@ -2,7 +2,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import { useTasksStore } from "stores/tasksStore";
-import { useTaskGraphStore} from "stores/taskGraphStore";
+import { useTaskGraphStore } from "stores/taskGraphStore";
 import type { User } from "src/models/User";
 
 // Interface für das Leistungsvermögen
@@ -30,7 +30,9 @@ export const useUserStore = defineStore("userStore", {
     },
     // Neuer Getter für die Abfrage der Leistungsbewertung
     getProficiencyByTaskId: (state) => (taskId: number) => {
-      return state.proficiencies.find((p) => p.taskId === taskId)?.score ?? null;
+      return (
+        state.proficiencies.find((p) => p.taskId === taskId)?.score ?? null
+      );
     },
   },
 
@@ -40,10 +42,13 @@ export const useUserStore = defineStore("userStore", {
       this.errorMessage = null;
 
       try {
-        const response = await axios.post("http://localhost:3000/api/v1/login", {
-          email,
-          password,
-        });
+        const response = await axios.post(
+          "http://localhost:3000/api/v1/login",
+          {
+            email,
+            password,
+          },
+        );
         // Beispielserver gibt { userId, role } zurück
         const { userId, role } = response.data;
 
@@ -58,8 +63,11 @@ export const useUserStore = defineStore("userStore", {
         this.currentUser = user;
         this.isAuthenticated = true;
 
-        const taskGraph = useTaskGraphStore()
-        taskGraph.setProperty({ path: "$.userId", value: this.currentUser.userId })
+        const taskGraph = useTaskGraphStore();
+        taskGraph.setProperty({
+          path: "$.userId",
+          value: this.currentUser.userId,
+        });
 
         const tasksStore = useTasksStore();
         await tasksStore.determineCurrentTaskForUser(userId);
@@ -83,7 +91,9 @@ export const useUserStore = defineStore("userStore", {
     // Neue Methode zum Speichern der Leistungsbewertung
     setProficiency(proficiency: Proficiency) {
       // Bestehenden Eintrag suchen und aktualisieren, oder neuen hinzufügen
-      const index = this.proficiencies.findIndex(p => p.taskId === proficiency.taskId);
+      const index = this.proficiencies.findIndex(
+        (p) => p.taskId === proficiency.taskId,
+      );
       if (index >= 0) {
         this.proficiencies[index] = proficiency;
       } else {
@@ -93,7 +103,9 @@ export const useUserStore = defineStore("userStore", {
       // Optional: Zum Server senden, falls später gewünscht
       // axios.post("http://localhost:3000/proficiencies", proficiency);
 
-      console.log(`Leistungsvermögen gespeichert: Task ${proficiency.taskId}, Score ${proficiency.score}/8`);
+      console.log(
+        `Leistungsvermögen gespeichert: Task ${proficiency.taskId}, Score ${proficiency.score}/8`,
+      );
     },
   },
 });

@@ -154,17 +154,13 @@ const errors = reactive<Errors>({ description: "" });
 
 /* ---------- UI‑Konstanten ---------- */
 const symmetryOptions = [
-  { label: "gerade",   value: "even" },
-  { label: "ungerade", value: "odd"  },
-  { label: "keine",    value: "none" },
+  { label: "gerade", value: "even" },
+  { label: "ungerade", value: "odd" },
+  { label: "keine", value: "none" },
 ];
 
 const degreeMax = computed(() => {
-  return formData.symmetry === "none"
-    ? 4
-    : formData.symmetry === "odd"
-      ? 5
-      : 6;
+  return formData.symmetry === "none" ? 4 : formData.symmetry === "odd" ? 5 : 6;
 });
 
 /* ---------- Validierung ---------- */
@@ -180,10 +176,10 @@ async function handleCreateTask() {
   // ❶  newTask OHNE taskId typisieren
   const newTask: Omit<Task, "taskId"> = {
     description: formData.description,
-    hint:        formData.hint,
-    degree:      formData.degree,
-    symmetry:    formData.symmetry,
-    solutions:   { ...formData.solutions }
+    hint: formData.hint,
+    degree: formData.degree,
+    symmetry: formData.symmetry,
+    solutions: { ...formData.solutions },
   };
 
   try {
@@ -199,9 +195,7 @@ async function handleCreateTask() {
     });
   }
 }
-
 </script>
-
 
 <style scoped>
 /* ggf. eigenes CSS */

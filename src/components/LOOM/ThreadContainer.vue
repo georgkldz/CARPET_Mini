@@ -199,58 +199,61 @@ const actionHandler = async (actionType: string, payload: any) => {
     case "evaluate":
       // 1) User‑Eingaben sind schon im Store; jetzt nur noch zum Server:
       try {
-        await taskGraphStore.submitForEvaluation();          // → ruft evaluationService
+        await taskGraphStore.submitForEvaluation(); // → ruft evaluationService
         // oder direkt:  await submitForEvaluation();
         console.log("Evaluation abgeschickt");
       } catch (error) {
         console.log("Evaluation fehlgeschlagen", error);
         return;
       }
-        const currentNodeId = taskGraphStore.currentNode;
-        if (currentNodeId === null) {
-          console.error("Aktueller Node ist null, kann nicht zum nächsten Node wechseln!");
-          return;
-        }
-        taskGraphStore.setProperty({
-           path: "$.previousNode",
-           value: currentNodeId
-        });
-       const edges = taskGraphStore.getProperty("$.edges");
-        if (!edges || !edges[currentNodeId]) {
-          console.error(`Keine Edges für Node ${currentNodeId} gefunden!`);
-          taskGraphStore.toggleLoading();
+      const currentNodeId = taskGraphStore.currentNode;
+      if (currentNodeId === null) {
+        console.error(
+          "Aktueller Node ist null, kann nicht zum nächsten Node wechseln!",
+        );
         return;
-        }
-        const nextNodes = edges[currentNodeId];
-        if (nextNodes && nextNodes.length > 0) {
-          taskGraphStore.setProperty({
-            path: "$.currentNode",
-            value: nextNodes[0]
-          });
-          console.log(`Node-Wechsel durchgeführt: ${currentNodeId} -> ${nextNodes[0]}`);
-        }
-        try {
-         const { joinCollaboration } = await import("../../services/collaborationService");
-         await joinCollaboration();
-         console.log("Gruppenbildungsanfrage versendet");
-         } catch (e) {
-            console.error("Evaluation fehlgeschlagen:", e);
-         }
-         break;
+      }
+      taskGraphStore.setProperty({
+        path: "$.previousNode",
+        value: currentNodeId,
+      });
+      const edges = taskGraphStore.getProperty("$.edges");
+      if (!edges || !edges[currentNodeId]) {
+        console.error(`Keine Edges für Node ${currentNodeId} gefunden!`);
+        taskGraphStore.toggleLoading();
+        return;
+      }
+      const nextNodes = edges[currentNodeId];
+      if (nextNodes && nextNodes.length > 0) {
+        taskGraphStore.setProperty({
+          path: "$.currentNode",
+          value: nextNodes[0],
+        });
+        console.log(
+          `Node-Wechsel durchgeführt: ${currentNodeId} -> ${nextNodes[0]}`,
+        );
+      }
+      try {
+        const { joinCollaboration } = await import(
+          "../../services/collaborationService"
+        );
+        await joinCollaboration();
+        console.log("Gruppenbildungsanfrage versendet");
+      } catch (e) {
+        console.error("Evaluation fehlgeschlagen:", e);
+      }
+      break;
 
-      case "fetch":
-        // Beispiel – falls du weiterhin "fetch" verwendest
-        console.log("fetch‑payload", payload);
-        break;
+    case "fetch":
+      // Beispiel – falls du weiterhin "fetch" verwendest
+      console.log("fetch‑payload", payload);
+      break;
 
-      default:
-        console.warn(`Unhandled action type '${actionType}'`, payload);
-    }
-    return;
+    default:
+      console.warn(`Unhandled action type '${actionType}'`, payload);
   }
-
-
-
+  return;
+};
 
 // TODO: Implement configurable Handles/Ports (for connecting Containers via edges)
 // import type { CSSProperties } from "vue";

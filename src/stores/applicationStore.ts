@@ -8,11 +8,14 @@ import type { SerializedCARPETComponents } from "carpet-component-library";
 import ExampleTask from "../SerialisedTasks/Kleditz.carpet.json";
 const staticTasks = {
   Example: serialisedTaskSchema.parse(ExampleTask),
-  Example2: serialisedTaskSchema.parse(ExampleTask)
+  Example2: serialisedTaskSchema.parse(ExampleTask),
 };
 import { useTaskGraphStore } from "./taskGraphStore";
-import {  joinSession,   syncSingleComponentChange, } from "stores/sync/automergeSync";
-import {useCollaborationStore} from "stores/collaborationStore";
+import {
+  joinSession,
+  syncSingleComponentChange,
+} from "stores/sync/automergeSync";
+import { useCollaborationStore } from "stores/collaborationStore";
 
 /**
  * The available tasks in the current application.
@@ -102,12 +105,10 @@ export interface SerialisedTask {
   taskData?: TaskData;
 }
 
-
 //Composition API
 export const useApplicationStore = defineStore("applicationStore", () => {
   const documentReady = ref(false);
   const isRemoteUpdate = ref(false);
-
 
   /**
    * (Mocked) Getter for reading all serialised tasks from the file system.
@@ -130,7 +131,8 @@ export const useApplicationStore = defineStore("applicationStore", () => {
   function joinSessionWrapper() {
     console.log("joinSessionWrapper gestartet");
     const taskGraphStore = useTaskGraphStore();
-    const currentMode = taskGraphStore.getCurrentNode?.collaboration?.mode ?? "single";
+    const currentMode =
+      taskGraphStore.getCurrentNode?.collaboration?.mode ?? "single";
 
     if (currentMode !== "collaboration") {
       console.log("Not in collaboration mode – skip joinSession");
@@ -140,7 +142,9 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     const collab = useCollaborationStore();
     const sessionId = collab.groupId;
     if (!sessionId) {
-      console.warn("Keine SessionID vorhanden, kann nicht joinSession aufrufen.");
+      console.warn(
+        "Keine SessionID vorhanden, kann nicht joinSession aufrufen.",
+      );
       return;
     }
 
@@ -150,7 +154,8 @@ export const useApplicationStore = defineStore("applicationStore", () => {
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   function syncSingleComponentWrapper(path: string, value: any) {
     const taskGraphStore = useTaskGraphStore();
-    const currentMode = taskGraphStore.getCurrentNode?.collaboration?.mode ?? "single";
+    const currentMode =
+      taskGraphStore.getCurrentNode?.collaboration?.mode ?? "single";
     if (currentMode !== "collaboration") {
       return;
     }

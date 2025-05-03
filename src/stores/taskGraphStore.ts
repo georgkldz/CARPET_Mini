@@ -77,7 +77,9 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       return state.nodes[state.currentNode as number];
     },
 
-    getCurrentCollaborationMode: (state: TaskGraphState): "single" | "groupBuilding" | "collaboration" => {
+    getCurrentCollaborationMode: (
+      state: TaskGraphState,
+    ): "single" | "groupBuilding" | "collaboration" => {
       if (state.currentNode === null) return "single";
       return state.nodes[state.currentNode]?.collaboration?.mode ?? "single";
     },
@@ -116,6 +118,10 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       //  (Passe diese Pfade an deine JSON-Struktur an!)
       this.setProperty({
         path: "$.nodes.0.components.0.nestedComponents.formComponents.textView1.state.textSegments[0].text",
+        value: foundTask.description,
+      });
+      this.setProperty({
+        path: "$.nodes.2.components.0.nestedComponents.formComponents.textView1.state.textSegments[0].text",
         value: foundTask.description,
       });
       this.setProperty({
@@ -245,8 +251,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       }
       // optional Logging
       process.env.NODE_ENV === "development" && console.log(path, value);
-      if (path.endsWith(".fieldValue") ||
-        path.includes(".fieldValueByUser."))  {
+      if (path.endsWith(".fieldValue") || path.includes(".fieldValueByUser.")) {
         const mode = this.getCurrentCollaborationMode;
         if (mode === "collaboration") {
           console.log("setProperty → syncSingleComponentChange", path, value);
@@ -286,7 +291,9 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
 
     async submitForEvaluation() {
       try {
-        const { postEvaluation } = await import("../services/evaluationService");
+        const { postEvaluation } = await import(
+          "../services/evaluationService"
+        );
         await postEvaluation();
         return true;
       } catch (error) {
@@ -294,7 +301,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
         return false;
       }
     },
-
 
     trackMouse(mouseEvent: { x: number; y: number; timestamp: number }) {
       this.replayLog.mouseEvents.push(mouseEvent);

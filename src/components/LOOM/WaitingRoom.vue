@@ -6,8 +6,9 @@
       </div>
       <h2 class="title">Warte auf Gruppenzuweisung</h2>
       <p class="description">
-        Deine Antworten wurden ausgewertet und wir suchen passende Teammitglieder für dich.
-        Bitte warte einen Moment, bis die Gruppenzuweisung abgeschlossen ist.
+        Deine Antworten wurden ausgewertet und wir suchen passende
+        Teammitglieder für dich. Bitte warte einen Moment, bis die
+        Gruppenzuweisung abgeschlossen ist.
       </p>
       <div class="status-info">
         <p v-if="proficiencyLevel !== null">
@@ -25,10 +26,8 @@ import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useUserStore } from "stores/userStore";
 import { useTaskGraphStore } from "stores/taskGraphStore";
 
-
 const userStore = useUserStore();
 const taskGraphStore = useTaskGraphStore();
-
 
 const waitingStatus = ref("Warte auf Zuweisung...");
 const waitingStartTime = ref(Date.now());
@@ -54,7 +53,9 @@ const proficiencyLevelText = computed(() => {
 
 // Formatierte Wartezeit
 const formattedWaitingTime = computed(() => {
-  const elapsedSeconds = Math.floor((currentTime.value - waitingStartTime.value) / 1000);
+  const elapsedSeconds = Math.floor(
+    (currentTime.value - waitingStartTime.value) / 1000,
+  );
   const minutes = Math.floor(elapsedSeconds / 60);
   const seconds = elapsedSeconds % 60;
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;

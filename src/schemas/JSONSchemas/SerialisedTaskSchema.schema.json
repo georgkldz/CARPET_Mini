@@ -121,6 +121,10 @@
       "additionalProperties": false,
       "description": "The ButtonConfiguration defines the look and behavior of the button.",
       "properties": {
+        "column": {
+          "enum": ["left", "right"],
+          "type": "string"
+        },
         "dimensions": {
           "additionalProperties": false,
           "description": "The dimensions of the button in pixels. Defaults to 100x50.",
@@ -174,6 +178,10 @@
       "additionalProperties": false,
       "description": "The CodeEditor-component may have configuration options. These options are defined here.",
       "properties": {
+        "column": {
+          "enum": ["left", "right"],
+          "type": "string"
+        },
         "darkMode": {
           "description": "The darkMode-property is a boolean that may be used to determine the dark mode of the CodeEditor.",
           "type": "boolean"
@@ -216,6 +224,127 @@
       ],
       "description": "The CodeEditor allows for optional validation strategies.\nThe first strategy is a basic string compare.\nThe second strategy is a request-based strategy, which may depend on a user-defined strategy (e.g. test-suite, output comparisons, more complex string comparisons, etc.).\n   As the second strategy may depend on more than just the code, the entire state is accessible."
     },
+    "CollabActions": {
+      "additionalProperties": false,
+      "description": "The FormComponent allows to emit a fetch-action on submitting the form.",
+      "properties": {
+        "submit": {
+          "$ref": "#/definitions/SubmitAction_2"
+        }
+      },
+      "required": ["submit"],
+      "type": "object"
+    },
+    "CollabFormComponentState": {
+      "additionalProperties": false,
+      "description": "The Form-component has additional state properties for validation.",
+      "properties": {
+        "dependenciesAreValidAndFormFieldsAreCorrect": {
+          "type": "boolean"
+        },
+        "fieldLocksSatisfied": {
+          "type": "boolean"
+        },
+        "formFieldsAreValidAndDependenciesAreCorrect": {
+          "type": "boolean"
+        },
+        "isCorrect": {
+          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
+          "type": "boolean"
+        },
+        "isValid": {
+          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "dependenciesAreValidAndFormFieldsAreCorrect",
+        "fieldLocksSatisfied",
+        "formFieldsAreValidAndDependenciesAreCorrect",
+        "isCorrect",
+        "isValid"
+      ],
+      "type": "object"
+    },
+    "CollabNestedComponents": {
+      "additionalProperties": false,
+      "description": "The Form-component consists of arbitrarily many input fields and a set of buttons.",
+      "properties": {
+        "actionComponents": {
+          "additionalProperties": false,
+          "properties": {
+            "reset": {
+              "$ref": "#/definitions/SerializedButtonComponent"
+            },
+            "submit": {
+              "$ref": "#/definitions/SerializedButtonComponent"
+            }
+          },
+          "required": ["submit"],
+          "type": "object"
+        },
+        "extraRightComponents": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/SerializedInputFieldComponent"
+              },
+              {
+                "$ref": "#/definitions/SerializedLatexInputFieldComponent"
+              },
+              {
+                "$ref": "#/definitions/SerializedTextViewComponent"
+              }
+            ]
+          },
+          "type": "object"
+        },
+        "formComponents": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/SerializedInputFieldComponent"
+              },
+              {
+                "$ref": "#/definitions/SerializedLatexInputFieldComponent"
+              },
+              {
+                "$ref": "#/definitions/SerializedTextViewComponent"
+              }
+            ]
+          },
+          "description": "Components used as formComponents MUST expose their user input value as fieldValue in their componentState. See InputField for an example.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "actionComponents",
+        "formComponents"
+      ],
+      "type": "object"
+    },
+    "CollabValidationConfiguration": {
+      "additionalProperties": false,
+      "description": "The form-component is submitable if the validation checks that are governed by the FormValidationConfiguration are passed.",
+      "properties": {
+        "submitableWhen": {
+          "enum": [
+            "dependenciesAreValidAndFormFieldsAreCorrect",
+            "fieldLocksSatisfied",
+            "formFieldsAreValidAndDependenciesAreCorrect",
+            "isCorrect",
+            "isValid"
+          ],
+          "type": "string"
+        }
+      },
+      "required": ["submitableWhen"],
+      "type": "object"
+    },
+    "CollaborationMode": {
+      "enum": ["collaboration", "groupBuilding", "single"],
+      "type": "string"
+    },
     "ComparisonConfiguration": {
       "additionalProperties": false,
       "description": "Configuration for basic comparison operations with static values.",
@@ -243,6 +372,10 @@
       "additionalProperties": false,
       "description": "Component configuration. This holds possible configuration options for the component.",
       "properties": {
+        "column": {
+          "enum": ["left", "right"],
+          "type": "string"
+        },
         "innerComponentLayout": {
           "description": "Some components may offer a customizable inner component layout. The layout is required to be built with CSS Grid.",
           "properties": {},
@@ -306,6 +439,10 @@
         "color": {
           "$ref": "#/definitions/NamedColor",
           "description": "Color name for component from the Quasar Color Palette"
+        },
+        "column": {
+          "enum": ["left", "right"],
+          "type": "string"
         },
         "counter": {
           "description": "Show an automatic counter on bottom right",
@@ -674,6 +811,9 @@
             }
           ]
         },
+        "fieldValueByUser": {
+          "$ref": "#/definitions/Record<string,string|number|FileList>"
+        },
         "isCorrect": {
           "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
           "type": "boolean"
@@ -681,14 +821,6 @@
         "isValid": {
           "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
           "type": "boolean"
-        },
-        "fieldValueByUser": {
-          "description": "Map with user IDs (digits only) as keys and their inputs as strings or numbers. It is extended at runtime as needed.",
-          "type": "object",
-          "patternProperties": {
-            "^[0-9]+$": { "type": ["string", "number"] }
-          },
-          "additionalProperties": false
         }
       },
       "required": ["fieldValue", "isCorrect", "isValid"],
@@ -711,11 +843,18 @@
       "additionalProperties": false,
       "description": "The InputField-component may hold a static input field value in its componentData.",
       "properties": {
+        "column": {
+          "enum": ["left", "right"],
+          "type": "string"
+        },
         "fieldConfiguration": {
           "$ref": "#/definitions/LatexInputFieldConfiguration"
         },
         "fieldValue": {
           "type": "string"
+        },
+        "fieldValueByUser": {
+          "$ref": "#/definitions/Record<string,string|number|FileList>"
         },
         "isCorrect": {
           "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
@@ -724,14 +863,6 @@
         "isValid": {
           "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
           "type": "boolean"
-        },
-        "fieldValueByUser": {
-          "description": "Map with user IDs (digits only) as keys and their inputs as strings or numbers. It is extended at runtime as needed.",
-          "type": "object",
-          "patternProperties": {
-            "^[0-9]+$": { "type": ["string", "number"] }
-          },
-          "additionalProperties": false
         }
       },
       "required": ["fieldConfiguration", "fieldValue", "isCorrect", "isValid"],
@@ -771,6 +902,10 @@
         "color": {
           "$ref": "#/definitions/NamedColor",
           "description": "Color name for component from the Quasar Color Palette"
+        },
+        "column": {
+          "enum": ["left", "right"],
+          "type": "string"
         },
         "counter": {
           "description": "Show an automatic counter on bottom right",
@@ -1502,6 +1637,10 @@
       "required": ["operator", "path"],
       "type": "object"
     },
+    "Record<string,string|number|FileList>": {
+      "additionalProperties": false,
+      "type": "object"
+    },
     "SerialisedDependencies": {
       "additionalProperties": false,
       "description": "Serialised dependencies of a component.",
@@ -1514,8 +1653,7 @@
           "additionalProperties": false,
           "properties": {
             "mode": {
-              "enum": ["single", "groupBuilding", "collaboration"],
-              "type": "string"
+              "$ref": "#/definitions/CollaborationMode"
             }
           },
           "required": ["mode"],
@@ -1726,6 +1864,12 @@
         },
         {
           "$ref": "#/definitions/SerializedTextViewComponent"
+        },
+        {
+          "$ref": "#/definitions/SerializedCollabFormComponent"
+        },
+        {
+          "$ref": "#/definitions/SerializedSimpleFormComponent"
         }
       ]
     },
@@ -1810,6 +1954,91 @@
           "description": "The referenceCode-property is a JSONPathExpression that points to the reference code that the user's code will be compared against."
         }
       },
+      "type": "object"
+    },
+    "SerializedCollabDependencies": {
+      "additionalProperties": false,
+      "description": "The Form-component may point to external dependencies for validation checks.\nThe external dependencies must be references to other components.",
+      "properties": {
+        "collabRoleId": {
+          "$ref": "#/definitions/JSONPathExpression"
+        },
+        "userId": {
+          "$ref": "#/definitions/JSONPathExpression"
+        }
+      },
+      "type": "object"
+    },
+    "SerializedCollabFormComponent": {
+      "additionalProperties": false,
+      "description": "The SerializedFormComponent interface is used to define the serialised properties of the Form component.",
+      "properties": {
+        "actions": {
+          "$ref": "#/definitions/CollabActions",
+          "description": "Optional: Actions that can be emitted by the component."
+        },
+        "componentConfiguration": {
+          "$ref": "#/definitions/ComponentConfiguration",
+          "description": "Configuration options that are specific to the individual component."
+        },
+        "contextMenu": {
+          "additionalProperties": false,
+          "description": "Optional: The context menu of the component.",
+          "properties": {
+            "isOpen": {
+              "description": "Specifies whether the context menu is open.",
+              "type": "boolean"
+            },
+            "usedMethods": {
+              "description": "The methods that will be made available in the context menu.",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "required": ["isOpen", "usedMethods"],
+          "type": "object"
+        },
+        "dependencies": {
+          "$ref": "#/definitions/SerializedCollabDependencies",
+          "description": "The dependencies of the component."
+        },
+        "methods": {
+          "$ref": "#/definitions/MethodReferences",
+          "description": "Optional: The methods of the component."
+        },
+        "name": {
+          "description": "The name of the component instance. Will be displayed in the component header in CARPET.",
+          "type": "string"
+        },
+        "nestedComponents": {
+          "$ref": "#/definitions/CollabNestedComponents",
+          "description": "Optional: Nested components of the component."
+        },
+        "state": {
+          "$ref": "#/definitions/CollabFormComponentState",
+          "description": "The state of the component."
+        },
+        "type": {
+          "const": "CollaborativeForm",
+          "description": "The type of the component.",
+          "type": "string"
+        },
+        "validationConfiguration": {
+          "$ref": "#/definitions/CollabValidationConfiguration",
+          "description": "The validation configuration of the component."
+        }
+      },
+      "required": [
+        "actions",
+        "dependencies",
+        "name",
+        "nestedComponents",
+        "state",
+        "type",
+        "validationConfiguration"
+      ],
       "type": "object"
     },
     "SerializedDOTGraphComponent": {
@@ -2130,6 +2359,84 @@
       },
       "type": "object"
     },
+    "SerializedSimpleFormComponent": {
+      "additionalProperties": false,
+      "description": "The SerializedSimpleFormComponent interface is used to define the serialised properties of the SimpleForm component.",
+      "properties": {
+        "actions": {
+          "$ref": "#/definitions/ComponentActions",
+          "description": "Optional: Actions that can be emitted by the component."
+        },
+        "componentConfiguration": {
+          "$ref": "#/definitions/ComponentConfiguration",
+          "description": "Configuration options that are specific to the individual component."
+        },
+        "contextMenu": {
+          "additionalProperties": false,
+          "description": "Optional: The context menu of the component.",
+          "properties": {
+            "isOpen": {
+              "description": "Specifies whether the context menu is open.",
+              "type": "boolean"
+            },
+            "usedMethods": {
+              "description": "The methods that will be made available in the context menu.",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "required": ["isOpen", "usedMethods"],
+          "type": "object"
+        },
+        "dependencies": {
+          "$ref": "#/definitions/SerializedSimpleFormDependencies",
+          "description": "The dependencies of the component."
+        },
+        "methods": {
+          "$ref": "#/definitions/MethodReferences",
+          "description": "Optional: The methods of the component."
+        },
+        "name": {
+          "description": "The name of the component instance. Will be displayed in the component header in CARPET.",
+          "type": "string"
+        },
+        "nestedComponents": {
+          "$ref": "#/definitions/SimpleFormNestedComponents",
+          "description": "Optional: Nested components of the component."
+        },
+        "state": {
+          "$ref": "#/definitions/SimpleFormComponentState",
+          "description": "The state of the component."
+        },
+        "type": {
+          "const": "SimpleForm",
+          "description": "The type of the component.",
+          "type": "string"
+        },
+        "validationConfiguration": {
+          "$ref": "#/definitions/SimpleFormValidationConfiguration",
+          "description": "The validation configuration of the component."
+        }
+      },
+      "required": [
+        "dependencies",
+        "name",
+        "nestedComponents",
+        "state",
+        "type",
+        "validationConfiguration"
+      ],
+      "type": "object"
+    },
+    "SerializedSimpleFormDependencies": {
+      "additionalProperties": {
+        "$ref": "#/definitions/JSONPathExpression"
+      },
+      "description": "The SimpleForm-component may point to external dependencies for validation checks.\nThe external dependencies must be references to other components.",
+      "type": "object"
+    },
     "SerializedTextViewComponent": {
       "additionalProperties": false,
       "description": "The SerializedTextViewComponent interface is used to define the serialised properties of the TextView component.",
@@ -2205,6 +2512,75 @@
       },
       "type": "object"
     },
+    "SimpleFormComponentState": {
+      "additionalProperties": false,
+      "description": "The SimpleForm-component has additional state properties for validation.",
+      "properties": {
+        "dependenciesAreValidAndFormFieldsAreCorrect": {
+          "type": "boolean"
+        },
+        "formFieldsAreValidAndDependenciesAreCorrect": {
+          "type": "boolean"
+        },
+        "isCorrect": {
+          "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
+          "type": "boolean"
+        },
+        "isValid": {
+          "description": "Specifices whether the user-inputs put the component in a valid state. Gives no indication of correctness of the inputs.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "dependenciesAreValidAndFormFieldsAreCorrect",
+        "formFieldsAreValidAndDependenciesAreCorrect",
+        "isCorrect",
+        "isValid"
+      ],
+      "type": "object"
+    },
+    "SimpleFormNestedComponents": {
+      "additionalProperties": false,
+      "description": "The SimpleForm-component consists of arbitrarily many input fields and a set of buttons.",
+      "properties": {
+        "simpleFormComponents": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/SerializedInputFieldComponent"
+              },
+              {
+                "$ref": "#/definitions/SerializedLatexInputFieldComponent"
+              },
+              {
+                "$ref": "#/definitions/SerializedTextViewComponent"
+              }
+            ]
+          },
+          "description": "Components used as SimpleFormComponents MUST expose their user input value as fieldValue in their componentState. See InputField for an example.",
+          "type": "object"
+        }
+      },
+      "required": ["simpleFormComponents"],
+      "type": "object"
+    },
+    "SimpleFormValidationConfiguration": {
+      "additionalProperties": false,
+      "description": "The SimpleForm-component is submitable if the validation checks that are governed by the SimpleFormValidationConfiguration are passed.",
+      "properties": {
+        "submitableWhen": {
+          "enum": [
+            "dependenciesAreValidAndFormFieldsAreCorrect",
+            "formFieldsAreValidAndDependenciesAreCorrect",
+            "isCorrect",
+            "isValid"
+          ],
+          "type": "string"
+        }
+      },
+      "required": ["submitableWhen"],
+      "type": "object"
+    },
     "StaticComparisonConfiguration": {
       "additionalProperties": false,
       "description": "Configuration for basic comparison operations with static values.",
@@ -2229,7 +2605,24 @@
           "type": "object"
         },
         "type": {
-          "enum": ["fetch", "evaluate"],
+          "enum": ["fetch","evaluate"] ,
+          "type": "string"
+        }
+      },
+      "required": ["type"],
+      "type": "object"
+    },
+    "SubmitAction_2": {
+      "additionalProperties": false,
+      "properties": {
+        "externalValues": {
+          "additionalProperties": {
+            "$ref": "#/definitions/JSONPathExpression"
+          },
+          "type": "object"
+        },
+        "type": {
+          "enum": ["fetch","evaluate"] ,
           "type": "string"
         }
       },
@@ -2238,44 +2631,6 @@
     },
     "TaskData": {
       "additionalProperties": {},
-      "properties": {
-        "taskDescription": {
-          "type": "string"
-        },
-        "degree": {
-          "type": "number"
-        },
-        "symmetry": {
-          "type": "string"
-        },
-        "hint": {
-          "type": "string"
-        },
-        "solutions": {
-          "additionalProperties": {},
-          "properties": {
-            "textFieldEquation1": {
-              "type": "string"
-            },
-            "textFieldEquation2": {
-              "type": "string"
-            },
-            "textFieldEquation3": {
-              "type": "string"
-            },
-            "textFieldEquation4": {
-              "type": "string"
-            },
-            "textFieldEquation5": {
-              "type": "string"
-            },
-            "sampleSolutionCollaborativeWork": {
-              "type": "string"
-            }
-          },
-          "type": "object"
-        }
-      },
       "type": "object"
     },
     "TextSegment": {
@@ -2359,6 +2714,10 @@
         "color": {
           "$ref": "#/definitions/NamedColor",
           "description": "Color name for component from the Quasar Color Palette"
+        },
+        "column": {
+          "enum": ["left", "right"],
+          "type": "string"
         },
         "counter": {
           "description": "Show an automatic counter on bottom right",
