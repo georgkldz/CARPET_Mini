@@ -169,56 +169,33 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       // Ggf. weitere Felder
       console.log("loadDBTaskIntoGraph: Task übernommen:", foundTask);
     },
-    // Dies ersetzt die alte extractComponentData()-Methode
+
     extractFieldValues() {
-      // JSONPath durchsucht alles nach "fieldValue"
-      const results = JSONPath<
+      // Alle fieldValueByUser-Slots aus Knoten 0 holen
+      const hits = JSONPath<
         // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         Array<{ path: string | (string | number)[]; value: any }>
       >({
-        path: "$..fieldValue",
+        //  ░░ Pfade – explizit Punkt-Form mit Wildcards ░░
+        //  $.nodes[0]..fieldValueByUser.*   ⇒ jeder einzelne Slot (userId)
+        path: "$.nodes[0]..fieldValueByUser.*",
         json: this.$state,
-        resultType: "all",
+        resultType: "all"        // ⇒ { path, value }
+      })
+
+      // Pfade normieren: Array-Form ➜ Punkt-Notation, Bracket-Notation »foo«/»[0]« ➜ Punkt-Form
+      return hits.map(({ path, value }) => {
+        const dotPath =
+          typeof path === "string"
+            ? path
+              .replace(/\['([^']+)'\]/g, ".$1") // ['foo'] → .foo
+              .replace(/\[(\d+)\]/g, ".$1")     // [0]     → .0
+            : "$" + path.slice(1).map(seg => "." + seg).join("");
+
+        return { path: dotPath, value };
       });
-
-      // Verarbeite die Ergebnisse und normalisiere die Pfade
-
-      return results.map(
-        ({
-          path,
-          value,
-        }: {
-          path: string | (string | number)[];
-          // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-          value: any;
-        }) => {
-          // Pfad normalisieren - kann je nach JSONPath-Implementierung ein String oder Array sein
-          let normalizedPath: string;
-
-          if (typeof path === "string") {
-            // Wenn path bereits ein String ist, verwenden wir ihn direkt
-            normalizedPath = path;
-          } else if (Array.isArray(path)) {
-            // Wenn path ein Array ist, konvertieren wir es wie zuvor
-            normalizedPath =
-              "$" +
-              path
-                .slice(1)
-                .map((segment) => "." + segment)
-                .join("");
-          } else {
-            // Fallback für unerwartete Typen
-            console.error("Unerwarteter Pfadtyp in extractFieldValues:", path);
-            normalizedPath = String(path); // Versuch einer Konvertierung
-          }
-
-          return {
-            path: normalizedPath,
-            value,
-          };
-        },
-      );
-    },
+    }
+,
 
     setCurrentTask(taskName: string) {
       this.currentTask = taskName;

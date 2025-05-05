@@ -127,53 +127,56 @@ export async function joinSession(
     documentReady.value = true;
     console.log("DocHandle ist bereit " + handle.documentId);
     // Check, if Document has NO componentsData
-    const doc = handle.docSync();
-    if (!doc?.componentsData) {
+
+
       console.log("Dokument leer, führe initialen Voll-Sync aus...");
       handle.change((doc) => {
-        doc.componentsData = {};
-
-        // Get TaskGraphStore and read complete Subtree
+        if (!doc?.componentsData) {
+          doc.componentsData = {};
+        }
+        // TaskGraphStore abrufen und nur fieldValueByUser-Einträge lesen
         const fieldValues = taskGraphStore.extractFieldValues();
-        // Wenn nötig, Transformation zum erwarteten Format:
-        const componentData = fieldValues.map((item) => {
-          // Hier Transformation je nach Bedarf
-          return {
-            id: extractIdFromPath(item.path), // Hilfsfunktion, die ID aus Pfad extrahiert
-            data: item.value,
-          };
-        });
-
-        function extractIdFromPath(path: string): string {
-          // Extrahiere die ID aus einem Pfad wie "$.nodes.0.components.123.state.fieldValue"
-          const match = path.match(/\.components\.([^.]+)/);
-          return match ? match[1] : "";
-        }
-
-        console.log("Sub-State beim initialen Voll-Sync: ", componentData);
-
-        // Write everything to Automerge-Dokument, nur relevante fieldValue-Pfade
-        for (const { id, data } of componentData) {
-          // Bereinigen und nur relevante Werte synchronisieren
-          const cleanData = extractCleanValue(data);
-
-          // Prüfe ob ID gültig und sinnvoll ist
-          if (id && id.trim() !== "") {
-            // Speichere bereinigten Wert
-            doc.componentsData![id.toString()] = cleanData;
+        console.log("fieldValues aus der Einzelarbeit ", fieldValues);
+        // Für jeden fieldValueByUser-Pfad
+        for (const item of fieldValues) {
+          // Prüfen, ob es sich um einen fieldValueByUser-Pfad handelt
+          if (!item.path.includes("fieldValueByUser")) {
+            console.log("Überspringe nicht-fieldValueByUser-Pfad:", item.path);
+            continue;
           }
+
+          // Extrahiere den Basispfad und die Benutzer-ID sicherer
+          const pathMatch = item.path.match(/(.*\.fieldValueByUser)\.(\d+)$/);
+          if (!pathMatch) {
+            console.warn("Ungültiges fieldValueByUser-Format:", item.path);
+            continue;
+          }
+
+          const basePath = pathMatch[1];  // Der Pfad bis zu .fieldValueByUser
+          const userId = pathMatch[2];    // Die Benutzer-ID als String
+
+          // Erstelle den Eintrag im von syncFromDocComponents erwarteten Format
+          if (!doc.componentsData[basePath]) {
+            doc.componentsData[basePath] = {};
+          }
+
+          // Füge den Wert dieses Benutzers zur Map hinzu, mit der userId als Schlüssel
+          const cleanData = extractCleanValue(item.value);
+          console.log("Schreibe in Automerge cleanData basePath userId ", cleanData, basePath, userId )
+          doc.componentsData[basePath][userId] = cleanData;
+
+          console.log(`Initialer Sync: ${basePath}.${userId} = `, cleanData);
         }
-        console.log(
-          "Automerge-Dokument initial angelegt: ",
-          doc.componentsData,
-        );
+
+        console.log("Automerge-Dokument initial erstellt: ", doc.componentsData);
       });
-    }
+
+    handle.on("change", (d) => {
+      console.log("Change-Event von anderem Peer empfangen", d);
+      syncFromDocComponents(d.doc, taskGraphStore);
+    });
   });
-  handle.on("change", (d) => {
-    console.log("Change-Event von anderem Peer empfangen", d);
-    syncFromDocComponents(d.doc, taskGraphStore);
-  });
+
   isJoinSessionProcessing = false;
 }
 

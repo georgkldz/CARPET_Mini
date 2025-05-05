@@ -31,14 +31,7 @@ const route = useRoute();
 const currentNode = getProperty("$.currentNode");
 
 const isLoading = computed(() => taskStore.isLoading);
-//const CollaborationLoom = LOOM;
 
-// // Compute the collaboration mode of the current node
-// const collaborationMode = computed(() => {
-//   const currentNodeObj = taskStore.getCurrentNode;
-//   console.log("collaborationMode ist ", currentNodeObj?.collaboration?.mode || "single");
-//   return currentNodeObj?.collaboration?.mode || "single";
-// });
 
 /**
  * Both onMounted and watch are required to either initialize or update the current taskName and load the task when the route changes.

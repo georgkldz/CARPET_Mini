@@ -100,6 +100,8 @@ function applyGroupAssignment(group: any, myUserId: number) {      // ⇐ NEU
     if (next)   taskGraphStore.setProperty({ path: "$.currentNode", value: next });
   }
   applicationStore.joinSession();
+
+
 }
 
 /**

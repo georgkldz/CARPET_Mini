@@ -498,6 +498,9 @@
                   "isValid": true,
                   "isCorrect": false,
                   "fieldValue": "",
+                  "fieldValueByUser": {
+
+                  },
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {

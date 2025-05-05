@@ -233,6 +233,7 @@ const actionHandler = async (actionType: string, payload: any) => {
           `Node-Wechsel durchgeführt: ${currentNodeId} -> ${nextNodes[0]}`,
         );
       }
+
       try {
         const { joinCollaboration } = await import(
           "../../services/collaborationService"
