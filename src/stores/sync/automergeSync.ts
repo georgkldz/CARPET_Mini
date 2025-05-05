@@ -113,9 +113,6 @@ export async function joinSession(
       },
       body: JSON.stringify({ sessionId }),
     });
-    if (!response.ok) {
-      throw new Error("Failed to join session");
-    }
     const data = await response.json();
     documentId = data.documentUrl;
   } catch (error) {}
@@ -124,16 +121,10 @@ export async function joinSession(
 
   /* ---------------- Automerge-Handle anlegen ---------------- */
   handle = repo.find(documentId);
-
-  handle.on("change", d => {
-    console.log("Change-Event von anderem Peer empfangen", d);
-    syncFromDocComponents(d.doc, taskGraphStore);
-  });
   await handle.whenReady()
     documentReady.value = true;
     console.log("DocHandle ist bereit", handle.documentId);
-    const snapshot = await handle.doc();
-    console.log ("Snapshot ist bereit", snapshot);
+
     /* ---------- Initial-Sync NUR EINMAL beim ersten Peer ---------- */
     handle.change(doc => {
       doc.componentsData ??= {};                                   // NEU  – Wurzel-Map nur einmal anlegen
@@ -158,14 +149,20 @@ export async function joinSession(
       }
     });
 
-    if (snapshot) {
-      lastComponentsDataCache.value = JSON.parse(JSON.stringify(snapshot.componentsData ?? {}));
-
-      console.log("Initiales syncFromDocComponents");
-      syncFromDocComponents(snapshot, taskGraphStore);             // NEU
-    };
 
 
+    /* ---------------- Listener erst NACH dem Voll-Sync aktivieren ---------------- */
+    handle.on("change", d => {
+      console.log("Change-Event von anderem Peer empfangen", d);
+      syncFromDocComponents(d.doc, taskGraphStore);
+    });
+
+  /* -------- Initiale lokale Übernahme der bereits existierenden Daten -------- */
+  const snapshot = await handle.doc();                             // NEU
+  if (snapshot) {
+    console.log("Initiales syncFromDocComponents");
+    syncFromDocComponents(snapshot, taskGraphStore);             // NEU
+  }
   isJoinSessionProcessing = false;
 }
 
