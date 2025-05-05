@@ -102,9 +102,9 @@ export async function joinSession(
     return;
   }
   isJoinSessionProcessing = true;
-  if (documentReady.value) {
-    return;
-  }
+  if (documentReady.value) {    return;  }
+
+  /* ---------------- Server-Token holen ---------------- */
   try {
     const response = await fetch(`${API_BASE}/joinSession`, {
       method: "POST",
@@ -119,59 +119,48 @@ export async function joinSession(
     const data = await response.json();
     documentId = data.documentUrl;
   } catch (error) {}
-  if (!documentId) {
-    return;
-  }
+  if (!documentId) {    return;  }
+
+
+  /* ---------------- Automerge-Handle anlegen ---------------- */
   handle = repo.find(documentId);
   handle.whenReady().then(() => {
     documentReady.value = true;
-    console.log("DocHandle ist bereit " + handle.documentId);
-    // Check, if Document has NO componentsData
+    console.log("DocHandle ist bereit", handle.documentId);
 
+    /* ---------- Initial-Sync NUR EINMAL beim ersten Peer ---------- */
+    handle.change(doc => {
+      doc.componentsData ??= {};                                   // NEU  – Wurzel-Map nur einmal anlegen
 
-      console.log("Dokument leer, führe initialen Voll-Sync aus...");
-      handle.change((doc) => {
-        if (!doc?.componentsData) {
-          doc.componentsData = {};
-        }
-        // TaskGraphStore abrufen und nur fieldValueByUser-Einträge lesen
-        const fieldValues = taskGraphStore.extractFieldValues();
-        console.log("fieldValues aus der Einzelarbeit ", fieldValues);
-        // Für jeden fieldValueByUser-Pfad
-        for (const item of fieldValues) {
-          // Prüfen, ob es sich um einen fieldValueByUser-Pfad handelt
-          if (!item.path.includes("fieldValueByUser")) {
-            console.log("Überspringe nicht-fieldValueByUser-Pfad:", item.path);
-            continue;
-          }
+      /* ---- alle fieldValueByUser-Slots aus der Einzelarbeit ---- */
+      const fieldValues = taskGraphStore.extractFieldValues();
+      console.log("fieldValues aus der Einzelarbeit ", fieldValues);
 
-          // Extrahiere den Basispfad und die Benutzer-ID sicherer
-          const pathMatch = item.path.match(/(.*\.fieldValueByUser)\.(\d+)$/);
-          if (!pathMatch) {
-            console.warn("Ungültiges fieldValueByUser-Format:", item.path);
-            continue;
-          }
+      for (const { path, value } of fieldValues) {
+        if (!path.includes("fieldValueByUser")) continue;
 
-          const basePath = pathMatch[1];  // Der Pfad bis zu .fieldValueByUser
-          const userId = pathMatch[2];    // Die Benutzer-ID als String
+        const match = path.match(/(.*\.fieldValueByUser)\.(\d+)$/);
+        if (!match) { console.warn("Bad path", path); continue; }
 
-          // Erstelle den Eintrag im von syncFromDocComponents erwarteten Format
-          if (!doc.componentsData[basePath]) {
-            doc.componentsData[basePath] = {};
-          }
+        const base   = match[1];
+        const userId = match[2];
+        const flatKey = `${base}.${userId}`;
 
-          // Füge den Wert dieses Benutzers zur Map hinzu, mit der userId als Schlüssel
-          const cleanData = extractCleanValue(item.value);
-          console.log("Schreibe in Automerge cleanData basePath userId ", cleanData, basePath, userId )
-          doc.componentsData[basePath][userId] = cleanData;
+        const clean = extractCleanValue(value);
+        doc.componentsData![flatKey] = clean;
+        console.log("Flat-Key in Automerge geschrieben:", flatKey, clean);
+      }
+    });
 
-          console.log(`Initialer Sync: ${basePath}.${userId} = `, cleanData);
-        }
+    /* -------- Initiale lokale Übernahme der bereits existierenden Daten -------- */
+    const snapshot = handle.docSync();                             // NEU
+    if (snapshot) {
+      console.log("Initiales syncFromDocComponents");
+      syncFromDocComponents(snapshot, taskGraphStore);             // NEU
+    }
 
-        console.log("Automerge-Dokument initial erstellt: ", doc.componentsData);
-      });
-
-    handle.on("change", (d) => {
+    /* ---------------- Listener erst NACH dem Voll-Sync aktivieren ---------------- */
+    handle.on("change", d => {
       console.log("Change-Event von anderem Peer empfangen", d);
       syncFromDocComponents(d.doc, taskGraphStore);
     });
