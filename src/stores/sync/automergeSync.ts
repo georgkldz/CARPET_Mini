@@ -183,10 +183,8 @@ export async function syncSingleComponentChange(
     console.warn("Dokument noch nicht bereit, kann nicht syncen");
     return;
   }
-  const isSingle = path.endsWith(".fieldValue");
-  const isMap = path.includes("fieldValueByUser");
 
-  if (!isSingle && !isMap) {
+  if (!(path.endsWith(".fieldValue") || path.includes("fieldValueByUser"))) {
     console.log("Ignoriere Sync, da kein relevantes Feld:", path);
     return;
   }
@@ -197,19 +195,10 @@ export async function syncSingleComponentChange(
     if (!doc.componentsData) {
       doc.componentsData = {}; // nur ein Mal anlegen
     }
-    if (isSingle) {
-      doc.componentsData[path] = cleanVal; // Alt-Fall
-      console.log("syncSingleComponentChange -> Path: ${path}, Value:", cleanVal);
-    } else if (isMap) {
-      // Pfad zum Map-Objekt ermitteln
-      const basePath = path.replace(/\.[0-9]+$/, ""); // kappt ".<uid>"
-      console.log("basePath ", basePath);
-      doc.componentsData[basePath] ??= {}; // Map anlegen
-      doc.componentsData[basePath][uid!] = cleanVal; // Slot setzen
-      console.log("syncSingleComponentChange -> Path: ${basePath}, Value:",basePath, cleanVal);
-    }
+    doc.componentsData[path] = cleanVal;             // NEU
+    console.log("syncSingleComponentChange (flat) ->", path, cleanVal);
+    console.log ("User ist ", uid)
   });
-
 }
 
 /**
