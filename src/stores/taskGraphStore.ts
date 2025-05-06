@@ -29,6 +29,8 @@ export interface CARPETStoreAPI extends StoreAPI {
 }
 
 export interface TaskGraphState extends SerialisedTask {
+  applyingRemote: boolean;
+  isPromotingToCollab: boolean;
   userId: number | undefined;
   currentTask: string | null;
   isLoading: boolean;
@@ -50,6 +52,8 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     isLoading: false,
     currentNode: null,
     previousNode: null,
+    applyingRemote: false,
+    isPromotingToCollab: false,
     taskData: {},
     replayLog: {
       interactionEvents: [],
@@ -171,34 +175,40 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     },
 
     extractFieldValues() {
-      // Alle fieldValueByUser-Slots aus Knoten 0 holen
       const hits = JSONPath<
         // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         Array<{ path: string | (string | number)[]; value: any }>
       >({
-        //  ░░ Pfade – explizit Punkt-Form mit Wildcards ░░
-        //  $.nodes[0]..fieldValueByUser.*   ⇒ jeder einzelne Slot (userId)
         path: "$.nodes[0]..fieldValueByUser.*",
         json: this.$state,
-        resultType: "all"        // ⇒ { path, value }
-      })
-
-      // Pfade normieren: Array-Form ➜ Punkt-Notation, Bracket-Notation »foo«/»[0]« ➜ Punkt-Form
-      return hits.map(({ path, value }) => {
-        const dotPath =
-          typeof path === "string"
-            ? path
-              .replace(/\['([^']+)'\]/g, ".$1") // ['foo'] → .foo
-              .replace(/\[(\d+)\]/g, ".$1")     // [0]     → .0
-            : "$" + path.slice(1).map(seg => "." + seg).join("");
-
-        return { path: dotPath, value };
+        resultType: "all"
       });
+      this.isPromotingToCollab = true;
+      for (const { path, value } of hits) {
+        // Pfad normalisieren: Array-Form → Punkt-Notation
+        let dotPath = typeof path === "string"
+          ? path.replace(/\['([^']+)'\]/g, ".$1")
+            .replace(/\[(\d+)\]/g, ".$1")
+          : "$" + path.slice(1).map(seg => "." + seg).join("");
+
+        // $.nodes.0 → $.nodes.2 ersetzen
+        dotPath = dotPath.replace(/^(\$\.nodes)\.0/, "$1.2");
+
+        // Ins Store schreiben
+        this.setProperty({ path: dotPath as JSONPathExpression, value });
+      }
+      this.isPromotingToCollab = false;
     }
+
 ,
 
     setCurrentTask(taskName: string) {
       this.currentTask = taskName;
+    },
+    setRemoteProperty(payload: StoreSetterPayload) {
+      this.applyingRemote = true;
+      this.setProperty(payload);
+      this.applyingRemote = false;
     },
     setProperty(payload: StoreSetterPayload) {
       // const applicationStore = useApplicationStore();
@@ -230,7 +240,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       process.env.NODE_ENV === "development" && console.log(path, value);
       if (path.endsWith(".fieldValue") || path.includes(".fieldValueByUser.")) {
         const mode = this.getCurrentCollaborationMode;
-        if (mode === "collaboration") {
+        if ((mode === "collaboration"&& !this.applyingRemote) || this.isPromotingToCollab)  {
           console.log("setProperty → syncSingleComponentChange", path, value);
           syncSingleComponentChange(path, value, this.userId);
         }

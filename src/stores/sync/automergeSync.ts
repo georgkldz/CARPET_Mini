@@ -30,6 +30,7 @@ let handle: DocHandle<ComponentDoc>;
 const documentReady = ref(false);
 let isJoinSessionProcessing = false;
 
+
 const repo = new Repo({
   network: [
     new BrowserWebSocketClientAdapter(WS_URL),
@@ -125,29 +126,6 @@ export async function joinSession(
     documentReady.value = true;
     console.log("DocHandle ist bereit", handle.documentId);
 
-    /* ---------- Initial-Sync NUR EINMAL beim ersten Peer ---------- */
-    handle.change(doc => {
-      doc.componentsData ??= {};                                   // NEU  – Wurzel-Map nur einmal anlegen
-
-      /* ---- alle fieldValueByUser-Slots aus der Einzelarbeit ---- */
-      const fieldValues = taskGraphStore.extractFieldValues();
-      console.log("fieldValues aus der Einzelarbeit ", fieldValues);
-
-      for (const { path, value } of fieldValues) {
-        if (!path.includes("fieldValueByUser")) continue;
-
-        const match = path.match(/(.*\.fieldValueByUser)\.(\d+)$/);
-        if (!match) { console.warn("Bad path", path); continue; }
-
-        const base   = match[1];
-        const userId = match[2];
-        const flatKey = `${base}.${userId}`;
-
-        const clean = extractCleanValue(value);
-        doc.componentsData![flatKey] = clean;
-        console.log("Flat-Key in Automerge geschrieben:", flatKey, clean);
-      }
-    });
 
 
 
@@ -156,13 +134,14 @@ export async function joinSession(
       console.log("Change-Event von anderem Peer empfangen", d);
       syncFromDocComponents(d.doc, taskGraphStore);
     });
-
+  taskGraphStore.setProperty({ path: "$.nodes.2.components.0.nestedComponents.extraRightComponents.canvas.state.fieldValue", value: "Hallo Welt" });
+  taskGraphStore.extractFieldValues();
   /* -------- Initiale lokale Übernahme der bereits existierenden Daten -------- */
-  const snapshot = await handle.doc();                             // NEU
-  if (snapshot) {
-    console.log("Initiales syncFromDocComponents");
-    syncFromDocComponents(snapshot, taskGraphStore);             // NEU
-  }
+  // const snapshot = await handle.doc();                             // NEU
+  // if (snapshot) {
+  //   console.log("Initiales syncFromDocComponents");
+  //   syncFromDocComponents(snapshot, taskGraphStore);             // NEU
+  // }
   isJoinSessionProcessing = false;
 }
 
@@ -281,7 +260,7 @@ export function syncFromDocComponents(
     }
 
     console.log("Übernehme Patch:", path, data);
-    taskGraphStore.setProperty({
+    taskGraphStore.setRemoteProperty({
       path: path as JSONPathExpression,
       value: data,
     });
