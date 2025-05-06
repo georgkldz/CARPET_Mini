@@ -472,9 +472,9 @@
                 },
                 "validationConfiguration": {}
               },
-              "latexInputField1": {
+              "r0_latexInputField1": {
                 "type": "LatexInputField",
-                "name": "LatexInputField1",
+                "name": "r0_LatexInputField1",
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -491,9 +491,66 @@
                   "comparisons": []
                 }
               },
-              "latexInputField2": {
+              "r1_latexInputField1": {
                 "type": "LatexInputField",
-                "name": "LatexInputField2",
+                "name": "r1_LatexInputField1",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f(x)=",
+                  "placeholder": "z.B. x³ + ..."
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r2_latexInputField1": {
+                "type": "LatexInputField",
+                "name": "r2_LatexInputField1",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f(x)=",
+                  "placeholder": "z.B. x³ + ..."
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r3_latexInputField1": {
+                "type": "LatexInputField",
+                "name": "r3_LatexInputField1",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f(x)=",
+                  "placeholder": "z.B. x³ + ..."
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r0_latexInputField2": {
+                "type": "LatexInputField",
+                "name": "r0_LatexInputField2",
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -512,9 +569,126 @@
                   "comparisons": []
                 }
               },
-              "latexInputField3": {
+              "r1_latexInputField2": {
                 "type": "LatexInputField",
-                "name": "LatexInputField3",
+                "name": "r1_LatexInputField2",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {
+
+                  },
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f'(x)="
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r2_latexInputField2": {
+                "type": "LatexInputField",
+                "name": "r2_LatexInputField2",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {
+
+                  },
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f'(x)="
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r3_latexInputField2": {
+                "type": "LatexInputField",
+                "name": "r3_LatexInputField2",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {
+
+                  },
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f'(x)="
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r0_latexInputField3": {
+                "type": "LatexInputField",
+                "name": "r0_LatexInputField3",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f''(x)="
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r1_latexInputField3": {
+                "type": "LatexInputField",
+                "name": "r1_LatexInputField3",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f''(x)="
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r2_latexInputField3": {
+                "type": "LatexInputField",
+                "name": "r2_LatexInputField3",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f''(x)="
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r3_latexInputField3": {
+                "type": "LatexInputField",
+                "name": "r3_LatexInputField3",
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -553,9 +727,9 @@
                 },
                 "validationConfiguration": {}
               },
-              "inputField1": {
+              "r0_inputField1": {
                 "type": "InputField",
-                "name": "InputField1",
+                "name": "r0_InputField1",
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -580,9 +754,90 @@
                   "validOnEmptyField": false
                 }
               },
-              "inputField2": {
+              "r1_inputField1": {
                 "type": "InputField",
-                "name": "InputField2",
+                "name": "r1_InputField1",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "z. B. f(7) = 11"
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": false
+                }
+              },
+              "r2_inputField1": {
+                "type": "InputField",
+                "name": "r2_InputField1",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "z. B. f(7) = 11"
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": false
+                }
+              },
+              "r3_inputField1": {
+                "type": "InputField",
+                "name": "r3_InputField1",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "z. B. f(7) = 11"
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": false
+                }
+              },
+              "r0_inputField2": {
+                "type": "InputField",
+                "name": "r0_InputField2",
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -607,9 +862,9 @@
                   "validOnEmptyField": true
                 }
               },
-              "inputField3": {
+              "r1_inputField2": {
                 "type": "InputField",
-                "name": "InputField3",
+                "name": "r1_InputField2",
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -634,9 +889,9 @@
                   "validOnEmptyField": true
                 }
               },
-              "inputField4": {
+              "r2_inputField2": {
                 "type": "InputField",
-                "name": "InputField4",
+                "name": "r2_InputField2",
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -661,9 +916,225 @@
                   "validOnEmptyField": true
                 }
               },
-              "inputField5": {
+              "r3_inputField2": {
                 "type": "InputField",
-                "name": "InputField5",
+                "name": "r3_InputField2",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r0_inputField3": {
+                "type": "InputField",
+                "name": "r0_InputField3",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r1_inputField3": {
+                "type": "InputField",
+                "name": "r1_InputField3",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r2_inputField3": {
+                "type": "InputField",
+                "name": "r2_InputField3",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r3_inputField3": {
+                "type": "InputField",
+                "name": "r3_InputField3",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r0_inputField4": {
+                "type": "InputField",
+                "name": "r0_InputField4",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r1_inputField4": {
+                "type": "InputField",
+                "name": "r1_InputField4",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r2_inputField4": {
+                "type": "InputField",
+                "name": "r2_InputField4",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r3_inputField4": {
+                "type": "InputField",
+                "name": "r3_InputField4",
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -871,3 +1342,5 @@
     }
   }
 }
+
+

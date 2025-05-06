@@ -91,7 +91,10 @@ function applyGroupAssignment(group: any, myUserId: number) {      // ⇐ NEU
   if (!member) return;
 
   collaborationStore.setCollaborationData(group.groupId, member.roleId);
-
+  taskGraphStore.setProperty({
+    path : "$.roleId",      // neues Root-Feld
+    value: member.roleId,   // kommt vom Backend
+  });
   const currentNodeId = taskGraphStore.currentNode;
   if (currentNodeId !== null) {
     taskGraphStore.setProperty({ path: "$.previousNode", value: currentNodeId });

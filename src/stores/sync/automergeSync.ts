@@ -14,6 +14,7 @@ import { isEqual } from "lodash";
 import { useTaskGraphStore } from "stores/taskGraphStore.js";
 import { JSONPathExpression } from "carpet-component-library";
 
+
 // Server-Endpunkt
 const API_BASE = "http://localhost:3000/api/v1"; // REST + SSE
 const WS_URL = "ws://localhost:3000/sync"; // Automerge‑Socket
@@ -134,8 +135,12 @@ export async function joinSession(
       console.log("Change-Event von anderem Peer empfangen", d);
       syncFromDocComponents(d.doc, taskGraphStore);
     });
-  taskGraphStore.setProperty({ path: "$.nodes.2.components.0.nestedComponents.extraRightComponents.canvas.state.fieldValue", value: "Hallo Welt" });
-  taskGraphStore.extractFieldValues();
+  taskGraphStore.setProperty({
+    path : "$.documentReady",
+    value: true
+  });
+  // taskGraphStore.setProperty({ path: "$.nodes.2.components.0.nestedComponents.extraRightComponents.canvas.state.fieldValue", value: "Hallo Welt" });
+  // taskGraphStore.extractFieldValues();
   /* -------- Initiale lokale Übernahme der bereits existierenden Daten -------- */
   // const snapshot = await handle.doc();                             // NEU
   // if (snapshot) {

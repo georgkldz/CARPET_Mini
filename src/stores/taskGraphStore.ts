@@ -14,6 +14,7 @@ import type {
 } from "carpet-component-library";
 //import { useAuthStore } from "stores/authStore";
 import { useTasksStore } from "stores/tasksStore";
+import { nextTick } from "vue";
 
 export interface EventLog {
   interactionEvents: Array<object>;
@@ -174,30 +175,41 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       console.log("loadDBTaskIntoGraph: Task übernommen:", foundTask);
     },
 
-    extractFieldValues() {
-      const hits = JSONPath<
-        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-        Array<{ path: string | (string | number)[]; value: any }>
-      >({
-        path: "$.nodes[0]..fieldValueByUser.*",
-        json: this.$state,
-        resultType: "all"
-      });
-      this.isPromotingToCollab = true;
-      for (const { path, value } of hits) {
-        // Pfad normalisieren: Array-Form → Punkt-Notation
-        let dotPath = typeof path === "string"
-          ? path.replace(/\['([^']+)'\]/g, ".$1")
-            .replace(/\[(\d+)\]/g, ".$1")
-          : "$" + path.slice(1).map(seg => "." + seg).join("");
 
-        // $.nodes.0 → $.nodes.2 ersetzen
-        dotPath = dotPath.replace(/^(\$\.nodes)\.0/, "$1.2");
-
-        // Ins Store schreiben
-        this.setProperty({ path: dotPath as JSONPathExpression, value });
+    async extractFieldValues() {
+      while (!this.getProperty("$.documentReady")) {
+        await nextTick()
       }
-      this.isPromotingToCollab = false;
+
+      const myRoleId = this.getProperty("$.roleId") as number;
+
+      const srcBase = "$.nodes.0.components.0.nestedComponents.formComponents";
+      const dstBase = "$.nodes.2.components.0.nestedComponents.formComponents";
+
+      // alle Feld-IDs der Steckbrief-Aufgabe
+      const fields = [
+        "latexInputField1",
+        "latexInputField2",
+        "latexInputField3",
+        "inputField1",
+        "inputField2",
+        "inputField3",
+        "inputField4",
+      ];
+
+      fields.forEach((fid) => {
+        const srcPath = `${srcBase}.${fid}.state.fieldValue` as JSONPathExpression;
+        const val = this.getProperty(srcPath);
+
+        if (val === undefined) return;
+
+        const compId = `r${myRoleId}_${fid}`;
+        this.setProperty({
+          path: `${dstBase}.${compId}.state.fieldValue`,
+          value: val,
+        });
+
+      });
     }
 
 ,
