@@ -197,11 +197,10 @@ const actionHandler = async (actionType: string, payload: any) => {
 
   switch (actionType) {
     case "evaluate":
-      // 1) User‑Eingaben sind schon im Store; jetzt nur noch zum Server:
+
       try {
         await taskGraphStore.submitForEvaluation(); // → ruft evaluationService
-        // oder direkt:  await submitForEvaluation();
-        console.log("Evaluation abgeschickt");
+        console.debug("Threadcontainer, Evaluation abgeschickt");
       } catch (error) {
         console.log("Evaluation fehlgeschlagen", error);
         return;
@@ -229,8 +228,8 @@ const actionHandler = async (actionType: string, payload: any) => {
           path: "$.currentNode",
           value: nextNodes[0],
         });
-        console.log(
-          `Node-Wechsel durchgeführt: ${currentNodeId} -> ${nextNodes[0]}`,
+        console.debug(
+          "Threadcontainer, Node-Wechsel durchgeführt: ${currentNodeId} -> ${nextNodes[0]}",
         );
       }
 
@@ -238,8 +237,8 @@ const actionHandler = async (actionType: string, payload: any) => {
         const { joinCollaboration } = await import(
           "../../services/collaborationService"
         );
+        console.debug("Threadcontainer, versende Gruppenbildungsanfrage");
         await joinCollaboration();
-        console.log("Gruppenbildungsanfrage versendet");
       } catch (e) {
         console.error("Evaluation fehlgeschlagen:", e);
       }

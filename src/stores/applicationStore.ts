@@ -129,13 +129,13 @@ export const useApplicationStore = defineStore("applicationStore", () => {
   };
 
   function joinSessionWrapper() {
-    console.log("joinSessionWrapper gestartet");
+    console.debug("joinSessionWrapper gestartet");
     const taskGraphStore = useTaskGraphStore();
     const currentMode =
       taskGraphStore.getCurrentNode?.collaboration?.mode ?? "single";
 
     if (currentMode !== "collaboration") {
-      console.log("Not in collaboration mode – skip joinSession");
+      console.debug("Not in collaboration mode – skip joinSession");
       return;
     }
     // z.B. aus collaborationStore

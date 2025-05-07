@@ -15,6 +15,7 @@ import type {
 //import { useAuthStore } from "stores/authStore";
 import { useTasksStore } from "stores/tasksStore";
 import { nextTick } from "vue";
+import { useCollaborationStore } from "stores/collaborationStore";
 
 export interface EventLog {
   interactionEvents: Array<object>;
@@ -181,8 +182,8 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
         await nextTick()
       }
 
-      const myRoleId = this.getProperty("$.roleId") as number;
-
+      const myRoleId  = useCollaborationStore().roleId ?? 0;
+      console.debug("extractFieldvalues lädt aus collabStore roleId ", myRoleId);
       const srcBase = "$.nodes.0.components.0.nestedComponents.formComponents";
       const dstBase = "$.nodes.2.components.0.nestedComponents.formComponents";
 
@@ -204,6 +205,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
         if (val === undefined) return;
 
         const compId = `r${myRoleId}_${fid}`;
+        console.debug("taskGraphStore, extractFieldValues schreibt " + `${dstBase}.${compId}.state.fieldValue`, val);
         this.setProperty({
           path: `${dstBase}.${compId}.state.fieldValue`,
           value: val,
@@ -253,7 +255,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       if (path.endsWith(".fieldValue") || path.includes(".fieldValueByUser.")) {
         const mode = this.getCurrentCollaborationMode;
         if ((mode === "collaboration"&& !this.applyingRemote) || this.isPromotingToCollab)  {
-          console.log("setProperty → syncSingleComponentChange", path, value);
+          console.debug("taskGraphStore, setProperty → syncSingleComponentChange", path, value);
           syncSingleComponentChange(path, value, this.userId);
         }
       }
@@ -293,6 +295,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
         const { postEvaluation } = await import(
           "../services/evaluationService"
         );
+        console.debug("taskGraphStore ruft evaluationservice auf")
         await postEvaluation();
         return true;
       } catch (error) {

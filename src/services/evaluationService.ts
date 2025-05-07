@@ -111,7 +111,7 @@ export async function postEvaluation(): Promise<void> {
       EVALUATION_SERVER_URL,
       payload,
     );
-    console.log("Evaluation erfolgreich, Score:", data.score);
+    console.debug("evaluationService, Evaluation erfolgreich, Score:", data.score);
 
     // 4) Leistungsvermögen speichern
     userStore.setProficiency({

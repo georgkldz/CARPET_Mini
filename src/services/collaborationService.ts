@@ -65,6 +65,7 @@ export async function joinCollaboration(): Promise<void> {
 }
 
 async function pollStatusOnce(myUserId: number) {                  // ⇐ NEU
+  console.debug("collabservice, pollStatusOnce aufgerufen");
   const collab = useCollaborationStore();
   if (collab.groupId !== null) return;          // SSE war schon erfolgreich
 
@@ -82,25 +83,30 @@ async function pollStatusOnce(myUserId: number) {                  // ⇐ NEU
 }
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-function applyGroupAssignment(group: any, myUserId: number) {      // ⇐ NEU
+async function applyGroupAssignment(group: any, myUserId: number) {      // ⇐ NEU
+  console.debug("collabservice, applyGroupAssignment aufgerufen");
   const collaborationStore = useCollaborationStore();
-  const applicationStore   = useApplicationStore();
-  const taskGraphStore     = useTaskGraphStore();
+  const applicationStore = useApplicationStore();
+  const taskGraphStore = useTaskGraphStore();
 
   const member = group.members.find((m: GroupMember) => m.userId === myUserId);
   if (!member) return;
 
   collaborationStore.setCollaborationData(group.groupId, member.roleId);
+  console.debug("collabservice, applyGroupAssignment speichert roleId ", member.roleId);
   taskGraphStore.setProperty({
-    path : "$.roleId",      // neues Root-Feld
+    path: "$.roleId",      // neues Root-Feld
     value: member.roleId,   // kommt vom Backend
   });
   const currentNodeId = taskGraphStore.currentNode;
   if (currentNodeId !== null) {
     taskGraphStore.setProperty({ path: "$.previousNode", value: currentNodeId });
     const edges = taskGraphStore.getProperty("$.edges") ?? {};
-    const next  = edges[currentNodeId]?.[0];
-    if (next)   taskGraphStore.setProperty({ path: "$.currentNode", value: next });
+    const next = edges[currentNodeId]?.[0];
+    if (next) {
+      console.debug("collabservice, collaborationService setzt neuen Node", next);
+      await taskGraphStore.setProperty({ path: "$.currentNode", value: next });
+    }
   }
   applicationStore.joinSession();
 
@@ -111,9 +117,11 @@ function applyGroupAssignment(group: any, myUserId: number) {      // ⇐ NEU
  * Richtet einen SSE-Listener ein, der auf Gruppenzuweisungen wartet
  */
 function setupSSEListener(userId: number): void {
+  console.debug("collabservice, setupSSEListener eingerichtet");
   const eventSource = new EventSource(`${API_URL}/events`);
 
   eventSource.onmessage = (event) => {
+    console.debug("collabservice, SSE-Event empfangen");
     try {
       const data = JSON.parse(event.data);
       if (data.groupId && Array.isArray(data.members)) {
