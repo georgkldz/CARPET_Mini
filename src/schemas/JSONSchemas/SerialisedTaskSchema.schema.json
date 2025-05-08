@@ -472,6 +472,8 @@
           "description": "Validation error message (gets displayed only if 'error' is set to 'true')",
           "type": "string"
         },
+        "editAllowedForRole": {
+          "type": "number" },
         "fillMask": {
           "description": "Fills string with specified characters (or underscore if value is not string) to fill mask's length",
           "type": ["string", "boolean"]
@@ -927,6 +929,8 @@
           "description": "Put component in disabled mode",
           "type": "boolean"
         },
+        "editAllowedForRole": {
+          "type": "number" },
         "error": {
           "description": "Does field have validation errors?\nDefault value: null",
           "type": "boolean"
@@ -1609,6 +1613,18 @@
         }
       ]
     },
+    "UIProperties": {
+      "description": "Optionale Layout-Metadaten für den generischen Renderer",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "order":          { "type": "number"  },
+        "accordion":      { "type": "boolean" },
+        "accordionName":  { "type": "string"  },
+        "accordionLabel": { "type": "string"  }
+      }
+    },
+
     "NestedComponents": {
       "additionalProperties": {
         "anyOf": [
@@ -2201,6 +2217,7 @@
       "additionalProperties": false,
       "description": "The SerializedInputFieldComponent interface is used to define the serialised properties of the InputField component.",
       "properties": {
+        "ui": { "$ref": "#/definitions/UIProperties" },
         "actions": {
           "$ref": "#/definitions/ComponentActions",
           "description": "Optional: Actions that can be emitted by the component."
@@ -2282,6 +2299,7 @@
       "additionalProperties": false,
       "description": "The SerializedLatexInputFieldComponent interface is used to define the serialised properties of the LatexInputField component.",
       "properties": {
+        "ui": { "$ref": "#/definitions/UIProperties" },
         "actions": {
           "$ref": "#/definitions/ComponentActions",
           "description": "Optional: Actions that can be emitted by the component."
@@ -2441,6 +2459,7 @@
       "additionalProperties": false,
       "description": "The SerializedTextViewComponent interface is used to define the serialised properties of the TextView component.",
       "properties": {
+        "ui": { "$ref": "#/definitions/UIProperties" },
         "actions": {
           "$ref": "#/definitions/ComponentActions",
           "description": "Optional: Actions that can be emitted by the component."

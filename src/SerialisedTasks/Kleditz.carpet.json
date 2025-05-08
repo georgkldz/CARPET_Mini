@@ -432,6 +432,10 @@
               "textView1": {
                 "type": "TextView",
                 "name": "TextView1",
+                "ui": {
+                  "order": 1,
+                  "accordion": false
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -452,6 +456,10 @@
               "textView2": {
                 "type": "TextView",
                 "name": "TextView2",
+                "ui": {
+                  "order": 2,
+                  "accordion": false
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -475,6 +483,12 @@
               "r0_latexInputField1": {
                 "type": "LatexInputField",
                 "name": "r0_LatexInputField1",
+                "ui": {
+                  "order": 3,
+                  "accordion": true,
+                  "accordionName": "ansatzFx",
+                  "accordionLabel": "Ansatz für f(x)"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -494,6 +508,12 @@
               "r1_latexInputField1": {
                 "type": "LatexInputField",
                 "name": "r1_LatexInputField1",
+                "ui": {
+                  "order": 4,
+                  "accordion": true,
+                  "accordionName": "ansatzFx",
+                  "accordionLabel": "Ansatz für f(x)"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -513,6 +533,12 @@
               "r2_latexInputField1": {
                 "type": "LatexInputField",
                 "name": "r2_LatexInputField1",
+                "ui": {
+                  "order": 5,
+                  "accordion": true,
+                  "accordionName": "ansatzFx",
+                  "accordionLabel": "Ansatz für f(x)"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -532,6 +558,12 @@
               "r3_latexInputField1": {
                 "type": "LatexInputField",
                 "name": "r3_LatexInputField1",
+                "ui": {
+                  "order": 6,
+                  "accordion": true,
+                  "accordionName": "ansatzFx",
+                  "accordionLabel": "Ansatz für f(x)"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -551,6 +583,12 @@
               "r0_latexInputField2": {
                 "type": "LatexInputField",
                 "name": "r0_LatexInputField2",
+                "ui": {
+                  "order": 7,
+                  "accordion": true,
+                  "accordionName": "ansatzF'x",
+                  "accordionLabel": "Ansatz für f'(x)"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -572,6 +610,12 @@
               "r1_latexInputField2": {
                 "type": "LatexInputField",
                 "name": "r1_LatexInputField2",
+                "ui": {
+                  "order": 8,
+                  "accordion": true,
+                  "accordionName": "ansatzF'x",
+                  "accordionLabel": "Ansatz für f'(x)"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -593,6 +637,12 @@
               "r2_latexInputField2": {
                 "type": "LatexInputField",
                 "name": "r2_LatexInputField2",
+                "ui": {
+                  "order": 9,
+                  "accordion": true,
+                  "accordionName": "ansatzF'x",
+                  "accordionLabel": "Ansatz für f'(x)"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -614,6 +664,12 @@
               "r3_latexInputField2": {
                 "type": "LatexInputField",
                 "name": "r3_LatexInputField2",
+                "ui": {
+                  "order": 10,
+                  "accordion": true,
+                  "accordionName": "ansatzF'x",
+                  "accordionLabel": "Ansatz für f'(x)"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -635,6 +691,12 @@
               "r0_latexInputField3": {
                 "type": "LatexInputField",
                 "name": "r0_LatexInputField3",
+                "ui": {
+                  "order": 11,
+                  "accordion": true,
+                  "accordionName": "ansatzF''x",
+                  "accordionLabel": "Ansatz für f''(x)"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -653,6 +715,12 @@
               "r1_latexInputField3": {
                 "type": "LatexInputField",
                 "name": "r1_LatexInputField3",
+                "ui": {
+                  "order": 12,
+                  "accordion": true,
+                  "accordionName": "ansatzF''x",
+                  "accordionLabel": "Ansatz für f''(x)"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -671,6 +739,12 @@
               "r2_latexInputField3": {
                 "type": "LatexInputField",
                 "name": "r2_LatexInputField3",
+                "ui": {
+                  "order": 13,
+                  "accordion": true,
+                  "accordionName": "ansatzF''x",
+                  "accordionLabel": "Ansatz für f''(x)"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -689,6 +763,12 @@
               "r3_latexInputField3": {
                 "type": "LatexInputField",
                 "name": "r3_LatexInputField3",
+                "ui": {
+                  "order": 14,
+                  "accordion": true,
+                  "accordionName": "ansatzF''x",
+                  "accordionLabel": "Ansatz für f''(x)"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -707,6 +787,10 @@
               "textView3": {
                 "type": "TextView",
                 "name": "TextView3",
+                "ui": {
+                  "order": 15,
+                  "accordion": false
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -730,6 +814,12 @@
               "r0_inputField1": {
                 "type": "InputField",
                 "name": "r0_InputField1",
+                "ui": {
+                  "order": 16,
+                  "accordion": true,
+                  "accordionName": "gleichung1",
+                  "accordionLabel": "Gleichung 1"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -757,6 +847,12 @@
               "r1_inputField1": {
                 "type": "InputField",
                 "name": "r1_InputField1",
+                "ui": {
+                  "order": 17,
+                  "accordion": true,
+                  "accordionName": "gleichung1",
+                  "accordionLabel": "Gleichung 1"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -784,6 +880,12 @@
               "r2_inputField1": {
                 "type": "InputField",
                 "name": "r2_InputField1",
+                "ui": {
+                  "order": 18,
+                  "accordion": true,
+                  "accordionName": "gleichung1",
+                  "accordionLabel": "Gleichung 1"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -811,6 +913,12 @@
               "r3_inputField1": {
                 "type": "InputField",
                 "name": "r3_InputField1",
+                "ui": {
+                  "order": 19,
+                  "accordion": true,
+                  "accordionName": "gleichung1",
+                  "accordionLabel": "Gleichung 1"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -838,6 +946,12 @@
               "r0_inputField2": {
                 "type": "InputField",
                 "name": "r0_InputField2",
+                "ui": {
+                  "order": 20,
+                  "accordion": true,
+                  "accordionName": "gleichung2",
+                  "accordionLabel": "Gleichung 2"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -865,6 +979,12 @@
               "r1_inputField2": {
                 "type": "InputField",
                 "name": "r1_InputField2",
+                "ui": {
+                  "order": 21,
+                  "accordion": true,
+                  "accordionName": "gleichung2",
+                  "accordionLabel": "Gleichung 2"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -892,6 +1012,12 @@
               "r2_inputField2": {
                 "type": "InputField",
                 "name": "r2_InputField2",
+                "ui": {
+                  "order": 22,
+                  "accordion": true,
+                  "accordionName": "gleichung2",
+                  "accordionLabel": "Gleichung 2"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -919,6 +1045,12 @@
               "r3_inputField2": {
                 "type": "InputField",
                 "name": "r3_InputField2",
+                "ui": {
+                  "order": 23,
+                  "accordion": true,
+                  "accordionName": "gleichung2",
+                  "accordionLabel": "Gleichung 2"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -946,6 +1078,12 @@
               "r0_inputField3": {
                 "type": "InputField",
                 "name": "r0_InputField3",
+                "ui": {
+                  "order": 24,
+                  "accordion": true,
+                  "accordionName": "gleichung3",
+                  "accordionLabel": "Gleichung 3"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -973,6 +1111,12 @@
               "r1_inputField3": {
                 "type": "InputField",
                 "name": "r1_InputField3",
+                "ui": {
+                  "order": 25,
+                  "accordion": true,
+                  "accordionName": "gleichung3",
+                  "accordionLabel": "Gleichung 3"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -1000,6 +1144,12 @@
               "r2_inputField3": {
                 "type": "InputField",
                 "name": "r2_InputField3",
+                "ui": {
+                  "order": 26,
+                  "accordion": true,
+                  "accordionName": "gleichung3",
+                  "accordionLabel": "Gleichung 3"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -1027,6 +1177,12 @@
               "r3_inputField3": {
                 "type": "InputField",
                 "name": "r3_InputField3",
+                "ui": {
+                  "order": 27,
+                  "accordion": true,
+                  "accordionName": "gleichung3",
+                  "accordionLabel": "Gleichung 3"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -1054,6 +1210,12 @@
               "r0_inputField4": {
                 "type": "InputField",
                 "name": "r0_InputField4",
+                "ui": {
+                  "order": 28,
+                  "accordion": true,
+                  "accordionName": "gleichung4",
+                  "accordionLabel": "Gleichung 4"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -1081,6 +1243,12 @@
               "r1_inputField4": {
                 "type": "InputField",
                 "name": "r1_InputField4",
+                "ui": {
+                  "order": 29,
+                  "accordion": true,
+                  "accordionName": "gleichung4",
+                  "accordionLabel": "Gleichung 4"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -1108,6 +1276,12 @@
               "r2_inputField4": {
                 "type": "InputField",
                 "name": "r2_InputField4",
+                "ui": {
+                  "order": 30,
+                  "accordion": true,
+                  "accordionName": "gleichung4",
+                  "accordionLabel": "Gleichung 4"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -1135,6 +1309,144 @@
               "r3_inputField4": {
                 "type": "InputField",
                 "name": "r3_InputField4",
+                "ui": {
+                  "order": 31,
+                  "accordion": true,
+                  "accordionName": "gleichung4",
+                  "accordionLabel": "Gleichung 4"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r0_inputField5": {
+                "type": "InputField",
+                "name": "r0_InputField5",
+                "ui": {
+                  "order": 32,
+                  "accordion": true,
+                  "accordionName": "gleichung5",
+                  "accordionLabel": "Gleichung 5"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r1_inputField5": {
+                "type": "InputField",
+                "name": "r1_InputField5",
+                "ui": {
+                  "order": 33,
+                  "accordion": true,
+                  "accordionName": "gleichung5",
+                  "accordionLabel": "Gleichung 5"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r2_inputField5": {
+                "type": "InputField",
+                "name": "r2_InputField5",
+                "ui": {
+                  "order": 34,
+                  "accordion": true,
+                  "accordionName": "gleichung5",
+                  "accordionLabel": "Gleichung 5"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r3_inputField5": {
+                "type": "InputField",
+                "name": "r3_InputField5",
+                "ui": {
+                  "order": 35,
+                  "accordion": true,
+                  "accordionName": "gleichung5",
+                  "accordionLabel": "Gleichung 5"
+                },
                 "state": {
                   "isValid": true,
                   "isCorrect": false,
@@ -1159,7 +1471,7 @@
                   "validOnEmptyField": true
                 }
               }
-            },
+          },
             "extraRightComponents": {
               "textView4": {
                 "type": "TextView",
@@ -1188,7 +1500,7 @@
                   "column": "right",
                   "type": "textarea",
                   "autogrow": true,
-                  "rows": 6
+                  "editAllowedForRole": 0
                 },
                 "state": {
                   "fieldValue": "",
@@ -1228,7 +1540,8 @@
                 "name": "explanation",
                 "componentConfiguration": {
                   "type": "textarea",
-                  "column": "right"
+                  "column": "right",
+                  "editAllowedForRole": 1
                 },
                 "state": {
                   "fieldValue": "",
@@ -1278,7 +1591,8 @@
                   "label": "",
                   "hint": "",
                   "placeholder": "",
-                  "column": "right"
+                  "column": "right",
+                  "editAllowedForRole": 0
                 },
                 "dependencies": {},
                 "validationConfiguration": {

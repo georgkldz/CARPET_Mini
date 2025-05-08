@@ -34,6 +34,7 @@ export interface TaskGraphState extends SerialisedTask {
   applyingRemote: boolean;
   isPromotingToCollab: boolean;
   userId: number | undefined;
+  collabRoleId: number | undefined;
   currentTask: string | null;
   isLoading: boolean;
   currentNode: number | null;
@@ -50,6 +51,7 @@ export type TaskGraphStateKey = keyof TaskGraphState;
 export const useTaskGraphStore = defineStore("taskGraphStore", {
   state: (): TaskGraphState => ({
     userId: undefined,
+    collabRoleId: undefined,
     currentTask: null,
     isLoading: false,
     currentNode: null,

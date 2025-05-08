@@ -95,7 +95,7 @@ async function applyGroupAssignment(group: any, myUserId: number) {      // ⇐ 
   collaborationStore.setCollaborationData(group.groupId, member.roleId);
   console.debug("collabservice, applyGroupAssignment speichert roleId ", member.roleId);
   taskGraphStore.setProperty({
-    path: "$.roleId",      // neues Root-Feld
+    path: "$.collabRoleId",      // neues Root-Feld
     value: member.roleId,   // kommt vom Backend
   });
   const currentNodeId = taskGraphStore.currentNode;
