@@ -34,7 +34,7 @@ export interface TaskGraphState extends SerialisedTask {
   applyingRemote: boolean;
   isPromotingToCollab: boolean;
   userId: number | undefined;
-  collabRoleId: number | undefined;
+  myCollabRoleId: number | undefined;
   currentTask: string | null;
   isLoading: boolean;
   currentNode: number | null;
@@ -51,7 +51,7 @@ export type TaskGraphStateKey = keyof TaskGraphState;
 export const useTaskGraphStore = defineStore("taskGraphStore", {
   state: (): TaskGraphState => ({
     userId: undefined,
-    collabRoleId: undefined,
+    myCollabRoleId: undefined,
     currentTask: null,
     isLoading: false,
     currentNode: null,
@@ -184,7 +184,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
         await nextTick()
       }
 
-      const myRoleId  = useCollaborationStore().roleId ?? 0;
+      const myRoleId  = useCollaborationStore().myCollabRoleId ?? 0;
       console.debug("extractFieldvalues lädt aus collabStore roleId ", myRoleId);
       const srcBase = "$.nodes.0.components.0.nestedComponents.formComponents";
       const dstBase = "$.nodes.2.components.0.nestedComponents.formComponents";
