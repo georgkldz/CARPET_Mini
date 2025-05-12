@@ -1,6 +1,8 @@
 // src/stores/collaborationStore.ts
 import { defineStore } from "pinia";
-
+import { syncSingleComponentChange, SUBMIT_PROPOSAL_PATH } from "stores/sync/automergeSync";
+import {useTaskGraphStore } from "stores/taskGraphStore";
+import {askForSubmitPermission} from "src/services/submitDialog";
 
 export interface GroupMember {
   userId: number;
@@ -15,37 +17,33 @@ export interface GroupInfo {
   memberIds: number[];             // Redundanz, aber praktisch
 }
 
+export type Vote = "pending" | "accepted" | "rejected"
+
+export interface SubmitProposalDoc {
+  round : number;
+  votes : Record<number, Vote>;
+}
+
+
 export const useCollaborationStore = defineStore("collaborationStore", {
   state: () => ({
     group: null as GroupInfo | null,
     groupId: null as number | null,
     myUserId: null as number | null,
+    _watcherRegistered: false,
+    _unsubscribeHandler: null as (() => void) | null, // Speichert die Unsubscribe-Funktion
   }),
 
   getters: {
     inGroup(): boolean { return !!this.group;},
 
     myCollabRoleId(): number | null {
-      console.debug("collabstore, myCollabRoleId aufgerufen");
-      if (!this.group || this.myUserId === null) {
-        console.debug("Abbruch: Gruppe oder myUserId ist null");
-        return null;
-      }
-      console.debug("Members in der Gruppe:", this.group.members);
-      console.debug("Suche nach userId:", this.myUserId);
+      if (!this.group || this.myUserId === null) {return null; }
       const myMember = this.group.members.find((m: GroupMember) => {
-        console.debug("Prüfe member:", m, "m.userId === this.myUserId:", m.userId === this.myUserId);
         return m.userId === this.myUserId;
       });
-      console.debug("Gefundenes Mitglied:", myMember);
-
-      if (myMember) {
-        console.debug("Rolle gefunden:", myMember.collabRoleId);
-        return myMember.collabRoleId;
-      } else {
-        console.debug("Keine Rolle gefunden, gebe null zurück");
-        return null;
-      }
+      if (myMember) {return myMember.collabRoleId;
+      } else { return null;    }
     },
 
     roleOf() {
@@ -63,13 +61,97 @@ export const useCollaborationStore = defineStore("collaborationStore", {
       this.group = g;
       this.groupId = g.groupId;
       this.myUserId = myUserId;
+      const tg = useTaskGraphStore()
+      if (!this._watcherRegistered) {
+        this.watchSubmitProposal(tg)
+        this._watcherRegistered = true          // ← einfaches Flag
+      }
     },
 
     /** räumt auf, z. B. beim Logout */
     clearGroup() {
+      this.unsubscribe(); // Watcher abmelden, wenn die Gruppe gelöscht wird
       this.group = null;
       this.groupId = null;
       this.myUserId = null;
     },
-  },
+
+    /**
+     * Meldet den Watcher ab
+     */
+    unsubscribe() {
+      if (this._unsubscribeHandler) {
+        this._unsubscribeHandler();
+        this._unsubscribeHandler = null;
+        this._watcherRegistered = false;
+      }
+    },
+
+    async startSubmitProposal() {
+      if (!this.group || this.myUserId == null) return
+      if (this.myCollabRoleId !== 0) return;                  // nur Sprecher
+
+      const tg     = useTaskGraphStore();
+      const curDoc = tg.getProperty(SUBMIT_PROPOSAL_PATH) as SubmitProposalDoc | undefined;
+      const nextRound = (curDoc?.round ?? 0) + 1;         // ‹ CHG ›
+
+      const votes: Record<number, Vote> = {};
+      for (const m of this.group.members) {
+        votes[m.userId] =
+          m.userId === this.myUserId ? "accepted" : "pending";
+      }
+
+      const proposal: SubmitProposalDoc = { round: nextRound, votes }; // ‹ CHG ›
+      syncSingleComponentChange(SUBMIT_PROPOSAL_PATH, proposal);
+    },
+
+    /* ➌  Beobachter-Watcher – feuert, sobald ALLE ≠"pending"    */
+    watchSubmitProposal(taskGraphStore: ReturnType<typeof useTaskGraphStore>) {
+      console.debug("collabStore, watchsubmitproposal betreten");
+
+      // Wenn ein bestehender Watcher existiert, diesen zuerst abmelden
+      this.unsubscribe();
+
+      // Neuen Watcher registrieren und Unsubscribe-Handler speichern
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      this._unsubscribeHandler = taskGraphStore.$subscribe((_mutation, _state) => {
+        console.debug("collabStore, this.subscribe betreten");
+        const sp = taskGraphStore.getProperty(SUBMIT_PROPOSAL_PATH) as
+          SubmitProposalDoc | undefined
+        if (!sp) return;
+
+        // 2a)  Mein eigener Vote ist noch offen? → Dialog aufpoppen
+        const myVote = sp.votes[this.myUserId!]; // Korrigiert: Zugriff auf votes-Property
+        if (myVote === "pending") {
+          console.debug("collabStore, myVote ist pending, rufe askforSubmitPermission auf")
+          askForSubmitPermission().then(result => {
+            console.debug("collabStore, aus dem Dialog zurückerhalten: ", result)
+            syncSingleComponentChange(`${SUBMIT_PROPOSAL_PATH}.votes.${this.myUserId}`, // Pfad korrigiert
+              result)
+          })
+          return  // erst warten, bis Dialog erledigt
+        }
+
+        const votes = Object.values(sp.votes); // Zugriff auf votes-Property
+        if (votes.includes("pending")){
+          console.debug("collabStore, votes enthalten pending, weiter beobachten...")
+          return
+        }
+
+        if (votes.every(v => v === "accepted")) {
+          this.showSampleSolution();
+          this.unsubscribe(); // Anstelle von resetVoting()
+        } else {
+          console.debug("collabStore, votes enthalten Ablehnung, abbrechen/ zurücksetzen...");
+          this.unsubscribe(); // Anstelle von resetVoting()
+        }
+      });
+    },
+
+    /** ➍ Stub für spätere Musterlösungs-Anzeige */
+    showSampleSolution() {
+      // TODO: TaskPage umschalten / Ergebnisse fetchen etc.
+      console.debug("[Collab] Alle zugestimmt – Musterlösung anzeigen");
+    }
+  }
 });

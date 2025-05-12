@@ -187,12 +187,7 @@
                 "dependencies": {},
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
-                  "comparisons": [
-                    {
-                      "value": "test",
-                      "operator": "=="
-                    }
-                  ],
+                  "comparisons": [],
                   "validOnEmptyField": false
                 }
               },
@@ -214,12 +209,7 @@
                 "dependencies": {},
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
-                  "comparisons": [
-                    {
-                      "value": "test",
-                      "operator": "=="
-                    }
-                  ],
+                  "comparisons": [],
                   "validOnEmptyField": true
                 }
               },
@@ -841,7 +831,7 @@
                       "operator": "=="
                     }
                   ],
-                  "validOnEmptyField": false
+                  "validOnEmptyField": true
                 }
               },
               "r1_inputField1": {
@@ -874,7 +864,7 @@
                       "operator": "=="
                     }
                   ],
-                  "validOnEmptyField": false
+                  "validOnEmptyField": true
                 }
               },
               "r2_inputField1": {
@@ -907,7 +897,7 @@
                       "operator": "=="
                     }
                   ],
-                  "validOnEmptyField": false
+                  "validOnEmptyField": true
                 }
               },
               "r3_inputField1": {
@@ -940,7 +930,7 @@
                       "operator": "=="
                     }
                   ],
-                  "validOnEmptyField": false
+                  "validOnEmptyField": true
                 }
               },
               "r0_inputField2": {
@@ -1553,7 +1543,7 @@
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
                   "comparisons": [],
-                  "validOnEmptyField": false
+                  "validOnEmptyField": true
                 }
               },
               "textView6": {
@@ -1597,12 +1587,7 @@
                 "dependencies": {},
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
-                  "comparisons": [
-                    {
-                      "value": "test",
-                      "operator": "=="
-                    }
-                  ],
+                  "comparisons": [],
                   "validOnEmptyField": false
                 }
               }
@@ -1616,11 +1601,12 @@
                 "state": {
                   "isValid": true,
                   "isCorrect": true,
-                  "label": "an Gruppe senden",
+                  "label": "Aufgabe abschließen",
                   "loadingState": false
                 },
                 "componentConfiguration": {
-                  "disableOnInvalid": true
+                  "disableOnInvalid": true,
+                  "submitAllowedForRole": 0
                 }
               }
             }
@@ -1628,7 +1614,7 @@
 
           "actions": {
             "submit": {
-              "type": "fetch"
+              "type": "submitProposal"
             }
           }
         }

@@ -150,7 +150,9 @@
           "description": "Some components may offer a customizable inner component layout. The layout is required to be built with CSS Grid.",
           "properties": {},
           "type": "object"
-        }
+        },
+        "submitAllowedForRole": {
+          "type": "number" }
       },
       "type": "object"
     },
@@ -2624,7 +2626,7 @@
           "type": "object"
         },
         "type": {
-          "enum": ["fetch","evaluate"] ,
+          "enum": ["fetch","evaluate", "submitProposal"] ,
           "type": "string"
         }
       },
@@ -2641,7 +2643,7 @@
           "type": "object"
         },
         "type": {
-          "enum": ["fetch","evaluate"] ,
+          "enum": ["fetch","evaluate", "submitProposal"] ,
           "type": "string"
         }
       },

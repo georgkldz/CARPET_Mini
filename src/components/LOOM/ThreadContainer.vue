@@ -60,6 +60,7 @@ import type { Layout } from "src/stores/applicationStore";
 import { useApplicationStore } from "src/stores/applicationStore";
 import { useVueFlow } from "@vue-flow/core";
 import { unref, ref } from "vue";
+import { useCollaborationStore } from "stores/collaborationStore";
 
 type ThreadContainerProps = NodeProps;
 
@@ -242,6 +243,9 @@ const actionHandler = async (actionType: string, payload: any) => {
       } catch (e) {
         console.error("Evaluation fehlgeschlagen:", e);
       }
+      break;
+    case "submitProposal":
+      useCollaborationStore().startSubmitProposal();
       break;
 
     case "fetch":

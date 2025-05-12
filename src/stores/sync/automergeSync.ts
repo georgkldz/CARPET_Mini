@@ -18,11 +18,18 @@ import { JSONPathExpression } from "carpet-component-library";
 // Server-Endpunkt
 const API_BASE = "http://localhost:3000/api/v1"; // REST + SSE
 const WS_URL = "ws://localhost:3000/sync"; // Automerge‑Socket
+export const SUBMIT_PROPOSAL_PATH = "$.submitProposal";
 
 interface ComponentDoc {
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   componentsData?: { [idOrPath: string]: any };
 }
+
+export interface SubmitProposalDoc {
+  /**  roleId ⇒ "pending" | "accepted" | "rejected"               */
+  submitProposal?: Record<number, "pending" | "accepted" | "rejected">;
+}
+
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 const lastComponentsDataCache = ref<Record<string, any> | null>(null);
 
@@ -170,7 +177,7 @@ export async function syncSingleComponentChange(
     return;
   }
 
-  if (!(path.endsWith(".fieldValue") || path.includes("fieldValueByUser"))) {
+  if (!(path.endsWith(".fieldValue") || path.includes("fieldValueByUser") || path.startsWith(SUBMIT_PROPOSAL_PATH))) {
     console.log("Ignoriere Sync, da kein relevantes Feld:", path);
     return;
   }
@@ -239,7 +246,7 @@ export function syncFromDocComponents(
   // 3) Find deleted Keys
   if (oldComponents.value) {
     for (const key of Object.keys(oldComponents.value)) {
-      if (!key.endsWith(".fieldValue") && !key.includes("fieldValueByUser")) {
+      if (!key.endsWith(".fieldValue") && !key.includes("fieldValueByUser")&& !key.includes(SUBMIT_PROPOSAL_PATH)) {
         console.debug("Übersprungen wird ", key, oldComponents.value[key]);
         continue;
       }
@@ -266,7 +273,7 @@ export function syncFromDocComponents(
     }
 
     // Sicherheits­check für beide Typen
-    if (!path.endsWith(".fieldValue") && !path.includes("fieldValueByUser")) {
+    if (!path.endsWith(".fieldValue") && !path.includes("fieldValueByUser")&& !path.startsWith(SUBMIT_PROPOSAL_PATH) ) {
       console.debug("Ignoriere Patch, keiner der erlaubten Pfade:", path);
       return;
     }

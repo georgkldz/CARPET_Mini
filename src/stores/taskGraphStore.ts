@@ -4,7 +4,7 @@ import { useApplicationStore } from "./applicationStore";
 import type { AvailableTasks } from "./applicationStore";
 import type { SerialisedTask } from "./applicationStore";
 import { JSONPath } from "jsonpath-plus";
-import { syncSingleComponentChange } from "stores/sync/automergeSync";
+import { syncSingleComponentChange, SUBMIT_PROPOSAL_PATH } from "stores/sync/automergeSync";
 import type { Task } from "src/models/Task";
 
 import type {
@@ -35,6 +35,7 @@ export interface TaskGraphState extends SerialisedTask {
   isPromotingToCollab: boolean;
   userId: number | undefined;
   myCollabRoleId: number | undefined;
+  submitProposal?: Record<number, "pending" | "accepted" | "rejected">;
   currentTask: string | null;
   isLoading: boolean;
   currentNode: number | null;
@@ -52,6 +53,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
   state: (): TaskGraphState => ({
     userId: undefined,
     myCollabRoleId: undefined,
+    submitProposal: undefined,
     currentTask: null,
     isLoading: false,
     currentNode: null,
@@ -254,7 +256,8 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       }
       // optional Logging
       process.env.NODE_ENV === "development" && console.log(path, value);
-      if (path.endsWith(".fieldValue") || path.includes(".fieldValueByUser.")) {
+      if (path.endsWith(".fieldValue") || path.includes(".fieldValueByUser.")||
+        path.startsWith(SUBMIT_PROPOSAL_PATH) ) {
         const mode = this.getCurrentCollaborationMode;
         if ((mode === "collaboration"&& !this.applyingRemote) || this.isPromotingToCollab)  {
           console.debug("taskGraphStore, setProperty → syncSingleComponentChange", path, value);
