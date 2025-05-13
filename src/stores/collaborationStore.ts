@@ -1,6 +1,6 @@
 // src/stores/collaborationStore.ts
 import { defineStore } from "pinia";
-import { syncSingleComponentChange, SUBMIT_PROPOSAL_PATH } from "stores/sync/automergeSync";
+import { SUBMIT_PROPOSAL_PATH } from "stores/sync/automergeSync";
 import {useTaskGraphStore } from "stores/taskGraphStore";
 import {askForSubmitPermission} from "src/services/submitDialog";
 
@@ -107,12 +107,13 @@ export const useCollaborationStore = defineStore("collaborationStore", {
 
 
       this.pendingVoteRequest = false;    // Dialog darf nur einmal geöffnet werden
+      const taskGraphStore = useTaskGraphStore();
 
       askForSubmitPermission().then((result) => {
-        syncSingleComponentChange(
-          `${SUBMIT_PROPOSAL_PATH}.votes.${this.myUserId}`,
-          result,
-        );
+        taskGraphStore.setProperty({
+            path: `${SUBMIT_PROPOSAL_PATH}.votes.${this.myUserId}`,
+          value: result,
+      });
       });
     },
 
@@ -138,7 +139,8 @@ export const useCollaborationStore = defineStore("collaborationStore", {
       }
 
       const proposal: SubmitProposalDoc = { round: this.currentRound, votes }; // ‹ CHG ›
-      syncSingleComponentChange(SUBMIT_PROPOSAL_PATH, proposal);
+      const taskGraphStore = useTaskGraphStore();
+      taskGraphStore.setProperty({path: SUBMIT_PROPOSAL_PATH, value: proposal});
     },
 
     /* ➌  Beobachter-Watcher – feuert, sobald ALLE ≠"pending"    */
