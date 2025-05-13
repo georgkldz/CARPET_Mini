@@ -2,11 +2,16 @@ import { Dialog } from "quasar"
 import SubmitPermissionDialog from "components/SubmitPermissionDialog.vue"
 import type { Vote } from "stores/collaborationStore"
 
-/**
- * Zeigt den Abstimmungs‑Dialog und gibt das Votum des Anwenders zurück.
- */
+let dialogActive = false
+
 export function askForSubmitPermission (): Promise<Vote> {
   return new Promise<Vote>((resolve) => {
+    if (dialogActive) {
+      console.debug("[Collab] Abstimmungs-Dialog war bereits offen")
+      return
+    }
+    console.debug("subMitDialog betreten")
+    dialogActive = true
     Dialog.create({ component: SubmitPermissionDialog })
       .onOk    ((v: Vote) => resolve(v))     // 'accepted' | 'rejected'
       .onCancel(()       => resolve("rejected"))

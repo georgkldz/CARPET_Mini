@@ -1,7 +1,7 @@
 <!-- src/components/SubmitPermissionDialog.vue -->
 <template>
   <!-- Wichtig: ref="dialogRef" statt v-model -->
-  <q-dialog ref="dialogRef" persistent transition-show="jump-down" transition-hide="jump-up">
+  <q-dialog ref="dialogRef" persistent seamless transition-show="jump-down" transition-hide="jump-up">
     <q-card style="min-width:280px">
       <q-card-section class="text-h6">
         Gruppen‑Abschluss bestätigen

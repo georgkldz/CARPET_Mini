@@ -30,8 +30,11 @@ export const useCollaborationStore = defineStore("collaborationStore", {
     group: null as GroupInfo | null,
     groupId: null as number | null,
     myUserId: null as number | null,
+    currentRound: 0,
     _watcherRegistered: false,
     _unsubscribeHandler: null as (() => void) | null, // Speichert die Unsubscribe-Funktion
+    pendingVoteRequest: false,
+    submittingProposal: false,
   }),
 
   getters: {
@@ -61,8 +64,9 @@ export const useCollaborationStore = defineStore("collaborationStore", {
       this.group = g;
       this.groupId = g.groupId;
       this.myUserId = myUserId;
-      const tg = useTaskGraphStore()
       if (!this._watcherRegistered) {
+        console.debug("collaborationStore, in setGroup wird watcher registriert");
+        const tg = useTaskGraphStore()
         this.watchSubmitProposal(tg)
         this._watcherRegistered = true          // ← einfaches Flag
       }
@@ -74,26 +78,58 @@ export const useCollaborationStore = defineStore("collaborationStore", {
       this.group = null;
       this.groupId = null;
       this.myUserId = null;
+      this.currentRound = 0;
+      this.submittingProposal = false;
     },
 
     /**
      * Meldet den Watcher ab
      */
     unsubscribe() {
+      console.debug("collaborationStore, unsubscribe betreten");
       if (this._unsubscribeHandler) {
+        console.debug("collaborationStore, unsubscribehandler aufgerufen");
         this._unsubscribeHandler();
         this._unsubscribeHandler = null;
         this._watcherRegistered = false;
       }
+      this.pendingVoteRequest = false;
+      this.submittingProposal = false;
+    },
+
+    /**
+     * Diese Methode kann von einer UI-Komponente aufgerufen werden,
+     * wenn der Benutzer eine Benachrichtigung anklickt oder wenn
+     * eine "Abstimmen"-Schaltfläche betätigt wird.
+     */
+    handleVoteRequest() {
+      if (!this.pendingVoteRequest) return;
+
+
+      this.pendingVoteRequest = false;    // Dialog darf nur einmal geöffnet werden
+
+      askForSubmitPermission().then((result) => {
+        syncSingleComponentChange(
+          `${SUBMIT_PROPOSAL_PATH}.votes.${this.myUserId}`,
+          result,
+        );
+      });
+    },
+
+    /**
+     * Gibt zurück, ob eine Abstimmungsanfrage aussteht
+     */
+    hasPendingVoteRequest(): boolean {
+      return this.pendingVoteRequest;
     },
 
     async startSubmitProposal() {
       if (!this.group || this.myUserId == null) return
       if (this.myCollabRoleId !== 0) return;                  // nur Sprecher
+      if (this.submittingProposal) return; // Proposal läuft bereits
 
-      const tg     = useTaskGraphStore();
-      const curDoc = tg.getProperty(SUBMIT_PROPOSAL_PATH) as SubmitProposalDoc | undefined;
-      const nextRound = (curDoc?.round ?? 0) + 1;         // ‹ CHG ›
+      this.submittingProposal = true;
+      this.currentRound +=1;
 
       const votes: Record<number, Vote> = {};
       for (const m of this.group.members) {
@@ -101,7 +137,7 @@ export const useCollaborationStore = defineStore("collaborationStore", {
           m.userId === this.myUserId ? "accepted" : "pending";
       }
 
-      const proposal: SubmitProposalDoc = { round: nextRound, votes }; // ‹ CHG ›
+      const proposal: SubmitProposalDoc = { round: this.currentRound, votes }; // ‹ CHG ›
       syncSingleComponentChange(SUBMIT_PROPOSAL_PATH, proposal);
     },
 
@@ -118,18 +154,15 @@ export const useCollaborationStore = defineStore("collaborationStore", {
         console.debug("collabStore, this.subscribe betreten");
         const sp = taskGraphStore.getProperty(SUBMIT_PROPOSAL_PATH) as
           SubmitProposalDoc | undefined
-        if (!sp) return;
+        if (!sp|| !sp.votes) return;
 
-        // 2a)  Mein eigener Vote ist noch offen? → Dialog aufpoppen
-        const myVote = sp.votes[this.myUserId!]; // Korrigiert: Zugriff auf votes-Property
+        // 2a) Mein eigener Vote ist noch offen? → Statt direktem Dialog ein Flag setzen
+        const myVote = sp.votes[this.myUserId ?? -1]; // Korrigiert: Zugriff auf votes-Property
         if (myVote === "pending") {
-          console.debug("collabStore, myVote ist pending, rufe askforSubmitPermission auf")
-          askForSubmitPermission().then(result => {
-            console.debug("collabStore, aus dem Dialog zurückerhalten: ", result)
-            syncSingleComponentChange(`${SUBMIT_PROPOSAL_PATH}.votes.${this.myUserId}`, // Pfad korrigiert
-              result)
-          })
-          return  // erst warten, bis Dialog erledigt
+          console.debug("collabStore, myVote ist pending, setze pendingVoteRequest flag");
+          this.pendingVoteRequest = true;
+          this.handleVoteRequest();
+          return;
         }
 
         const votes = Object.values(sp.votes); // Zugriff auf votes-Property
@@ -142,8 +175,8 @@ export const useCollaborationStore = defineStore("collaborationStore", {
           this.showSampleSolution();
           this.unsubscribe(); // Anstelle von resetVoting()
         } else {
-          console.debug("collabStore, votes enthalten Ablehnung, abbrechen/ zurücksetzen...");
-          this.unsubscribe(); // Anstelle von resetVoting()
+          console.debug("collabStore, votes enthalten Ablehnung, abbrechen...");
+
         }
       });
     },
