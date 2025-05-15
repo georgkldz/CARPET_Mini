@@ -1,8 +1,8 @@
 // src/stores/collaborationStore.ts
 import { defineStore } from "pinia";
-import { SUBMIT_PROPOSAL_PATH } from "stores/sync/automergeSync";
 import {useTaskGraphStore } from "stores/taskGraphStore";
-import {askForSubmitPermission} from "src/services/submitDialog";
+import { connectUISocket, disconnectUISocket, notifyShowSolution } from "../services/uiSocketService";
+
 
 export interface GroupMember {
   userId: number;
@@ -17,24 +17,11 @@ export interface GroupInfo {
   memberIds: number[];             // Redundanz, aber praktisch
 }
 
-export type Vote = "pending" | "accepted" | "rejected"
-
-export interface SubmitProposalDoc {
-  round : number;
-  votes : Record<number, Vote>;
-}
-
-
 export const useCollaborationStore = defineStore("collaborationStore", {
   state: () => ({
     group: null as GroupInfo | null,
     groupId: null as number | null,
     myUserId: null as number | null,
-    currentRound: 0,
-    _watcherRegistered: false,
-    _unsubscribeHandler: null as (() => void) | null, // Speichert die Unsubscribe-Funktion
-    pendingVoteRequest: false,
-    submittingProposal: false,
   }),
 
   getters: {
@@ -64,129 +51,37 @@ export const useCollaborationStore = defineStore("collaborationStore", {
       this.group = g;
       this.groupId = g.groupId;
       this.myUserId = myUserId;
-      if (!this._watcherRegistered) {
-        console.debug("collaborationStore, in setGroup wird watcher registriert");
-        const tg = useTaskGraphStore()
-        this.watchSubmitProposal(tg)
-        this._watcherRegistered = true          // ← einfaches Flag
-      }
+
+      connectUISocket(g.groupId, myUserId).catch((error) => {
+        console.error("Fehler beim Verbinden mit dem UI-Socket:", error);
+      });
     },
 
     /** räumt auf, z. B. beim Logout */
     clearGroup() {
-      this.unsubscribe(); // Watcher abmelden, wenn die Gruppe gelöscht wird
+      disconnectUISocket();
       this.group = null;
       this.groupId = null;
       this.myUserId = null;
-      this.currentRound = 0;
-      this.submittingProposal = false;
     },
 
-    /**
-     * Meldet den Watcher ab
-     */
-    unsubscribe() {
-      console.debug("collaborationStore, unsubscribe betreten");
-      if (this._unsubscribeHandler) {
-        console.debug("collaborationStore, unsubscribehandler aufgerufen");
-        this._unsubscribeHandler();
-        this._unsubscribeHandler = null;
-        this._watcherRegistered = false;
-      }
-      this.pendingVoteRequest = false;
-      this.submittingProposal = false;
-    },
-
-    /**
-     * Diese Methode kann von einer UI-Komponente aufgerufen werden,
-     * wenn der Benutzer eine Benachrichtigung anklickt oder wenn
-     * eine "Abstimmen"-Schaltfläche betätigt wird.
-     */
-    handleVoteRequest() {
-      if (!this.pendingVoteRequest) return;
-
-
-      this.pendingVoteRequest = false;    // Dialog darf nur einmal geöffnet werden
-      const taskGraphStore = useTaskGraphStore();
-
-      askForSubmitPermission().then((result) => {
-        taskGraphStore.setProperty({
-            path: `${SUBMIT_PROPOSAL_PATH}.votes.${this.myUserId}`,
-          value: result,
-      });
-      });
-    },
-
-    /**
-     * Gibt zurück, ob eine Abstimmungsanfrage aussteht
-     */
-    hasPendingVoteRequest(): boolean {
-      return this.pendingVoteRequest;
-    },
-
-    async startSubmitProposal() {
-      if (!this.group || this.myUserId == null) return
-      if (this.myCollabRoleId !== 0) return;                  // nur Sprecher
-      if (this.submittingProposal) return; // Proposal läuft bereits
-
-      this.submittingProposal = true;
-      this.currentRound +=1;
-
-      const votes: Record<number, Vote> = {};
-      for (const m of this.group.members) {
-        votes[m.userId] =
-          m.userId === this.myUserId ? "accepted" : "pending";
-      }
-
-      const proposal: SubmitProposalDoc = { round: this.currentRound, votes }; // ‹ CHG ›
-      const taskGraphStore = useTaskGraphStore();
-      taskGraphStore.setProperty({path: SUBMIT_PROPOSAL_PATH, value: proposal});
-    },
-
-    /* ➌  Beobachter-Watcher – feuert, sobald ALLE ≠"pending"    */
-    watchSubmitProposal(taskGraphStore: ReturnType<typeof useTaskGraphStore>) {
-      console.debug("collabStore, watchsubmitproposal betreten");
-
-      // Wenn ein bestehender Watcher existiert, diesen zuerst abmelden
-      this.unsubscribe();
-
-      // Neuen Watcher registrieren und Unsubscribe-Handler speichern
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      this._unsubscribeHandler = taskGraphStore.$subscribe((_mutation, _state) => {
-        console.debug("collabStore, this.subscribe betreten");
-        const sp = taskGraphStore.getProperty(SUBMIT_PROPOSAL_PATH) as
-          SubmitProposalDoc | undefined
-        if (!sp|| !sp.votes) return;
-
-        // 2a) Mein eigener Vote ist noch offen? → Statt direktem Dialog ein Flag setzen
-        const myVote = sp.votes[this.myUserId ?? -1]; // Korrigiert: Zugriff auf votes-Property
-        if (myVote === "pending") {
-          console.debug("collabStore, myVote ist pending, setze pendingVoteRequest flag");
-          this.pendingVoteRequest = true;
-          this.handleVoteRequest();
-          return;
-        }
-
-        const votes = Object.values(sp.votes); // Zugriff auf votes-Property
-        if (votes.includes("pending")){
-          console.debug("collabStore, votes enthalten pending, weiter beobachten...")
-          return
-        }
-
-        if (votes.every(v => v === "accepted")) {
-          this.showSampleSolution();
-          this.unsubscribe(); // Anstelle von resetVoting()
-        } else {
-          console.debug("collabStore, votes enthalten Ablehnung, abbrechen...");
-
-        }
-      });
-    },
-
-    /** ➍ Stub für spätere Musterlösungs-Anzeige */
     showSampleSolution() {
-      // TODO: TaskPage umschalten / Ergebnisse fetchen etc.
       console.debug("[Collab] Alle zugestimmt – Musterlösung anzeigen");
+      const taskGraph = useTaskGraphStore();
+      const targetNode = 3;
+      taskGraph.setProperty({ path: "$.previousNode", value: taskGraph.currentNode });
+      taskGraph.setProperty({ path: "$.currentNode", value: targetNode });
+
+      if (this.myCollabRoleId === 0 && this.groupId && this.myUserId) {
+        // Benachrichtigung an alle anderen Gruppenmitglieder senden
+        notifyShowSolution(
+          this.groupId,
+          this.myUserId,
+          this.myCollabRoleId,
+          taskGraph.previousNode
+        );
+        console.debug("[Collab] Musterlösungsanzeige an andere Gruppenmitglieder gesendet");
+      }
     }
   }
 });

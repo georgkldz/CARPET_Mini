@@ -245,7 +245,8 @@ const actionHandler = async (actionType: string, payload: any) => {
       }
       break;
     case "submitProposal":
-      useCollaborationStore().startSubmitProposal();
+      //useCollaborationStore().startSubmitProposal();
+      useCollaborationStore().showSampleSolution();
       break;
 
     case "fetch":
