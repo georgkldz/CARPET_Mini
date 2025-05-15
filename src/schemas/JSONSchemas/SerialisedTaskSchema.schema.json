@@ -89,6 +89,167 @@
       "enum": ["!=", "<", "<=", "=", "==", ">", ">="],
       "type": "string"
     },
+    "LatexViewComponentState": {
+      "additionalProperties": false,
+      "properties": {
+        "fieldValue": { "type": "string" },
+        "isCorrect": { "type": "boolean", "description": "..." },
+        "isValid":   { "type": "boolean", "description": "..." }
+      },
+      "required": ["fieldValue", "isCorrect", "isValid"],
+      "type": "object"
+    },
+    "SerializedLatexViewDependencies": {
+      "additionalProperties": false,
+      "properties": {
+        "referenceValue": {
+          "$ref": "#/definitions/JSONPathExpression"
+        }
+      },
+      "type": "object"
+    },
+    "SerializedLatexViewComponent": {
+      "additionalProperties": false,
+      "properties": {
+        "actions":   { "$ref": "#/definitions/ComponentActions" },
+        "componentConfiguration": { "$ref": "#/definitions/ComponentConfiguration" },
+        "contextMenu": {
+          "additionalProperties": false,
+          "description": "Optional: The context menu of the component.",
+          "properties": {
+            "isOpen": {
+              "description": "Specifies whether the context menu is open.",
+              "type": "boolean"
+            },
+            "usedMethods": {
+              "description": "The methods that will be made available in the context menu.",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "required": ["isOpen", "usedMethods"],
+          "type": "object"
+        },
+        "dependencies": { "$ref": "#/definitions/SerializedLatexViewDependencies" },
+        "methods":    { "$ref": "#/definitions/MethodReferences" },
+        "name":       { "type": "string", "description": "..." },
+        "nestedComponents": { "$ref": "#/definitions/NestedComponents" },
+        "state":      { "$ref": "#/definitions/LatexViewComponentState" },
+        "type": {
+          "const": "LatexView",
+          "type": "string",
+          "description": "Der Typ des Components."
+        },
+        "ui": { "$ref": "#/definitions/UIProperties" },
+        "validationConfiguration": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      "required": ["dependencies", "name", "state", "type"],
+      "type": "object"
+    },
+    "SampleSolutionNestedComponents": {
+      "additionalProperties": false,
+      "properties": {
+        "actionComponents": {
+          "additionalProperties": false,
+          "properties": {
+            "reset":  { "$ref": "#/definitions/SerializedButtonComponent" },
+            "submit": { "$ref": "#/definitions/SerializedButtonComponent" }
+          },
+          "required": ["submit"],
+          "type": "object"
+        },
+        "extraRightComponents": {
+          "additionalProperties": {
+            "anyOf": [
+              { "$ref": "#/definitions/SerializedInputFieldComponent" },
+              { "$ref": "#/definitions/SerializedLatexInputFieldComponent" },
+              { "$ref": "#/definitions/SerializedTextViewComponent" },
+              { "$ref": "#/definitions/SerializedLatexViewComponent" }
+            ]
+          },
+          "type": "object"
+        },
+        "formComponents": {
+          "additionalProperties": {
+            "anyOf": [
+              { "$ref": "#/definitions/SerializedInputFieldComponent" },
+              { "$ref": "#/definitions/SerializedLatexInputFieldComponent" },
+              { "$ref": "#/definitions/SerializedTextViewComponent" },
+              { "$ref": "#/definitions/SerializedLatexViewComponent" }
+            ]
+          },
+          "type": "object"
+        },
+        "solutionComponents": {
+          "additionalProperties": { "$ref": "#/definitions/SerializedLatexViewComponent" },
+          "type": "object"
+        }
+      },
+      "required": [
+        "actionComponents",
+        "extraRightComponents",
+        "formComponents",
+        "solutionComponents"
+      ],
+      "type": "object"
+    },
+    "SampleSolutionState": {
+      "additionalProperties": false,
+      "properties": {
+        "isCorrect": { "type": "boolean", "description": "..." },
+        "isValid":   { "type": "boolean", "description": "..." }
+      },
+      "required": ["isCorrect", "isValid"],
+      "type": "object"
+    },
+    "SerializedSampleSolutionComponent": {
+      "additionalProperties": false,
+      "properties": {
+        "actions":   { "$ref": "#/definitions/ComponentActions" },
+        "componentConfiguration": { "$ref": "#/definitions/ComponentConfiguration" },
+        "contextMenu": {
+          "additionalProperties": false,
+          "description": "Optional: The context menu of the component.",
+          "properties": {
+            "isOpen": {
+              "description": "Specifies whether the context menu is open.",
+              "type": "boolean"
+            },
+            "usedMethods": {
+              "description": "The methods that will be made available in the context menu.",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "required": ["isOpen", "usedMethods"],
+          "type": "object"
+        },
+        "dependencies": { "$ref": "#/definitions/SerialisedDependencies" },
+        "methods":    { "$ref": "#/definitions/MethodReferences" },
+        "name":       { "type": "string", "description": "..." },
+        "nestedComponents": { "$ref": "#/definitions/SampleSolutionNestedComponents" },
+        "state":      { "$ref": "#/definitions/SampleSolutionState" },
+        "type": {
+          "const": "SampleSolutionView",
+          "type": "string",
+          "description": "Der Typ des Components."
+        },
+        "ui": { "$ref": "#/definitions/UIProperties" },
+        "validationConfiguration": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      "required": ["dependencies", "name", "nestedComponents", "state", "type"],
+      "type": "object"
+    },
     "ButtonComponentState": {
       "additionalProperties": false,
       "description": "The Button-component has to display a label. It may display a progress bar or a loading spinner.\nIt can be disabled on invalid input.",
@@ -1775,6 +1936,9 @@
           "description": "The type of the component.",
           "type": "string"
         },
+        "ui": {
+          "$ref": "#/definitions/UIProperties"
+        },
         "validationConfiguration": {
           "description": "The validation configuration of the component.",
           "properties": {},
@@ -1888,6 +2052,12 @@
         },
         {
           "$ref": "#/definitions/SerializedSimpleFormComponent"
+        },
+        {
+          "$ref": "#/definitions/SerializedLatexViewComponent"
+        },
+        {
+          "$ref": "#/definitions/SerializedSampleSolutionComponent"
         }
       ]
     },
@@ -1978,7 +2148,7 @@
       "additionalProperties": false,
       "description": "The Form-component may point to external dependencies for validation checks.\nThe external dependencies must be references to other components.",
       "properties": {
-        "collabRoleId": {
+        "myCollabRoleId": {
           "$ref": "#/definitions/JSONPathExpression"
         },
         "userId": {
@@ -2626,7 +2796,7 @@
           "type": "object"
         },
         "type": {
-          "enum": ["fetch","evaluate", "submitProposal"] ,
+          "enum": ["fetch","evaluate", "showSampleSolution", "submitProposal"] ,
           "type": "string"
         }
       },
@@ -2643,7 +2813,7 @@
           "type": "object"
         },
         "type": {
-          "enum": ["fetch","evaluate", "submitProposal"] ,
+          "enum": ["fetch","evaluate", "showSampleSolution", "submitProposal"] ,
           "type": "string"
         }
       },
