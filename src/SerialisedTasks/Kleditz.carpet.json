@@ -1621,77 +1621,43 @@
       },
       "layouts": {
         "desktop": {
-          "7": {
-            "x": 20,
-            "y": 20,
-            "width": 15,
-            "height": 15
-          }
-        },
-        "phone": {
-          "0": {
-            "x": 20,
-            "y": 20,
-            "width": 2,
-            "height": 2
+
+          "5": {
+            "x": 5,
+            "y": 5,
+            "width": 40,
+            "height": 25
           }
         },
         "tablet": {
           "0": {
             "x": 20,
             "y": 20,
-            "width": 2,
-            "height": 2
-          }
-        }
-      },
-      "components": {
-        "7": {
-          "state": {
-            "fieldValue": "test",
-            "isCorrect": false,
-            "isValid": false
-          },
-          "componentConfiguration": {
-            "icon": "10k",
-            "label": "tests",
-            "hint": "asd"
-          },
-          "dependencies": {},
-          "validationConfiguration": {
-            "type": "compareValueFromStatic",
-            "comparisons": [{ "value": "test", "operator": "==" }],
-            "validOnEmptyField": true
-          },
-          "name": "test",
-          "type": "InputField"
-        }
-      }
-    },
-    "4": {
-      "collaboration": {
-        "mode": "collaboration"
-      },
-      "layouts": {
-        "desktop": {
-          "0": {
-            "x": 1,
-            "y": 1,
-            "width": 35,
-            "height": 25
+            "width": 5,
+            "height": 5
           }
         },
-        "phone": {},
-        "tablet": {}
+        "phone": {
+          "0": {
+            "x": 20,
+            "y": 20,
+            "width": 5,
+            "height": 5
+          }
+        }
       },
       "components": {
-        "0": {
+        "5": {
           "type": "SampleSolutionView",
           "name": "Musterlösung",
           "dependencies": {},
+          "validationConfiguration": {
+            "submitableWhen": "isValid"
+          },
           "state": {
             "isValid": true,
             "isCorrect": true
+
           },
           "nestedComponents": {
             "formComponents": {
@@ -1766,7 +1732,7 @@
                   "placeholder": "z.B. x³ + ..."
                 },
                 "dependencies": {
-                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r0_latexInputField1.state.fieldValue"
+
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -1792,7 +1758,7 @@
                   "placeholder": "z.B. x³ + ..."
                 },
                 "dependencies": {
-                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r1_latexInputField1.state.fieldValue"
+
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -1818,7 +1784,7 @@
                   "placeholder": "z.B. x³ + ..."
                 },
                 "dependencies": {
-                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r2_latexInputField1.state.fieldValue"
+
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -1844,7 +1810,7 @@
                   "placeholder": "z.B. x³ + ..."
                 },
                 "dependencies": {
-                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r3_latexInputField1.state.fieldValue"
+
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -1871,7 +1837,6 @@
                   "prepend": "f'(x)="
                 },
                 "dependencies": {
-                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r0_latexInputField2.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -1898,7 +1863,6 @@
                   "prepend": "f'(x)="
                 },
                 "dependencies": {
-                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r1_latexInputField2.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -1925,7 +1889,6 @@
                   "prepend": "f'(x)="
                 },
                 "dependencies": {
-                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r2_latexInputField2.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -1952,7 +1915,6 @@
                   "prepend": "f'(x)="
                 },
                 "dependencies": {
-                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r3_latexInputField2.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -2102,6 +2064,7 @@
                   "placeholder": "z. B. f(7) = 11"
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r0_inputField1.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2135,6 +2098,7 @@
                   "placeholder": "z. B. f(7) = 11"
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r1_inputField1.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2168,6 +2132,7 @@
                   "placeholder": "z. B. f(7) = 11"
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r2_inputField1.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2201,6 +2166,7 @@
                   "placeholder": "z. B. f(7) = 11"
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r3_inputField1.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2234,6 +2200,7 @@
                   "placeholder": ""
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r0_inputField2.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2267,6 +2234,7 @@
                   "placeholder": ""
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r1_inputField2.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2300,6 +2268,7 @@
                   "placeholder": ""
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r2_inputField2.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2333,6 +2302,7 @@
                   "placeholder": ""
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r3_inputField2.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2366,6 +2336,7 @@
                   "placeholder": ""
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r0_inputField3.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2399,6 +2370,7 @@
                   "placeholder": ""
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r1_inputField3.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2432,6 +2404,7 @@
                   "placeholder": ""
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r2_inputField3.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2465,6 +2438,7 @@
                   "placeholder": ""
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r3_inputField3.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2498,6 +2472,7 @@
                   "placeholder": ""
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r0_inputField4.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2531,6 +2506,7 @@
                   "placeholder": ""
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r1_inputField4.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2564,6 +2540,7 @@
                   "placeholder": ""
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r2_inputField4.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2597,6 +2574,7 @@
                   "placeholder": ""
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r3_inputField4.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2630,6 +2608,7 @@
                   "placeholder": ""
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r0_inputField5.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2663,6 +2642,7 @@
                   "placeholder": ""
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r1_inputField5.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2696,6 +2676,7 @@
                   "placeholder": ""
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r2_inputField5.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2729,6 +2710,7 @@
                   "placeholder": ""
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r3_inputField5.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
@@ -2778,7 +2760,9 @@
                   "isValid": true,
                   "isCorrect": false
                 },
-                "dependencies": {},
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.extraRightComponents.canvas.state.fieldValue"
+                },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
                   "comparisons": [],
@@ -2819,7 +2803,9 @@
                   "isValid": true,
                   "isCorrect": false
                 },
-                "dependencies": {},
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.extraRightComponents.explanation.state.fieldValue"
+                },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
                   "comparisons": [],
@@ -2864,7 +2850,9 @@
                   "column": "right",
                   "editAllowedForRole": 0
                 },
-                "dependencies": {},
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.extraRightComponents.result.state.fieldValue"
+                },
                 "validationConfiguration": {
                   "type": "compareValueFromStatic",
                   "comparisons": [],
@@ -2873,33 +2861,37 @@
               }
             },
             "solutionComponents": {
-              "latexView1": {
-                "type": "LatexView",
-                "name": "LatexView1",
-                "state": {
-                  "isValid": true,
-                  "isCorrect": true,
-                  "fieldValue": ""
-                },
+              "LatexView": {
                 "dependencies": {
                   "referenceValue": "$.taskData.solutions.sampleSolutionCollaborativeWork"
-                }
+                },
+                "name": "",
+                "state": {
+                  "fieldValue": "",
+                  "isCorrect": false,
+                  "isValid": true
+                },
+                "type": "LatexView"
               }
             },
             "actionComponents": {
               "submit": {
-                "componentConfiguration": {},
+                "type": "GenericButton",
+                "name": "Submit",
                 "dependencies": {},
-                "name": "",
+                "validationConfiguration": {},
                 "state": {
-                  "isCorrect": false,
-                  "isValid": false,
-                  "label": "",
+                  "isValid": true,
+                  "isCorrect": true,
+                  "label": "Beenden",
                   "loadingState": false
                 },
-                "type": "GenericButton"
+                "componentConfiguration": {
+                  "disableOnInvalid": false
+                }
               }
             }
+
           },
           "actions": {
             "submit": {

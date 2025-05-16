@@ -135,6 +135,10 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
         value: foundTask.description,
       });
       this.setProperty({
+        path: "$.nodes.3.components.5.nestedComponents.formComponents.textView1.state.textSegments[0].text",
+        value: foundTask.description,
+      });
+      this.setProperty({
         path: "$.taskData.taskDescription",
         value: foundTask.description,
       });

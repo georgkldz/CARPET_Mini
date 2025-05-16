@@ -191,7 +191,6 @@
         }
       },
       "required": [
-        "actionComponents",
         "extraRightComponents",
         "formComponents",
         "solutionComponents"

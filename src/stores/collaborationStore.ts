@@ -66,11 +66,18 @@ export const useCollaborationStore = defineStore("collaborationStore", {
     },
 
     showSampleSolution() {
-      console.debug("[Collab] Alle zugestimmt – Musterlösung anzeigen");
-      const taskGraph = useTaskGraphStore();
-      const targetNode = 3;
-      taskGraph.setProperty({ path: "$.previousNode", value: taskGraph.currentNode });
-      taskGraph.setProperty({ path: "$.currentNode", value: targetNode });
+      console.debug("[Collab] Musterlösung anzeigen");
+      const taskGraphStore = useTaskGraphStore();
+      const currentNodeId = taskGraphStore.currentNode;
+      if (currentNodeId !== null) {
+        taskGraphStore.setProperty({ path: "$.previousNode", value: currentNodeId });
+        const edges = taskGraphStore.getProperty("$.edges") ?? {};
+        const next = edges[currentNodeId]?.[0];
+        if (next) {
+          console.debug("collaborationStore, setzt neuen Node", next);
+          taskGraphStore.setProperty({ path: "$.currentNode", value: next });
+        }
+      }
 
       if (this.myCollabRoleId === 0 && this.groupId && this.myUserId) {
         // Benachrichtigung an alle anderen Gruppenmitglieder senden
@@ -78,7 +85,7 @@ export const useCollaborationStore = defineStore("collaborationStore", {
           this.groupId,
           this.myUserId,
           this.myCollabRoleId,
-          taskGraph.previousNode
+          taskGraphStore.previousNode
         );
         console.debug("[Collab] Musterlösungsanzeige an andere Gruppenmitglieder gesendet");
       }
