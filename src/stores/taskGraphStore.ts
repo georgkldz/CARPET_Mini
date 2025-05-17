@@ -218,11 +218,8 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
           path: `${dstBase}.${compId}.state.fieldValue`,
           value: val,
         });
-
       });
-    }
-
-,
+    },
 
     setCurrentTask(taskName: string) {
       this.currentTask = taskName;

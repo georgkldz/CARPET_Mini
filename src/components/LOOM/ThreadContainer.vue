@@ -248,7 +248,9 @@ const actionHandler = async (actionType: string, payload: any) => {
       //useCollaborationStore().startSubmitProposal();
       useCollaborationStore().showSampleSolution();
       break;
-
+    case "exit":
+      console.debug("Kollaboration schließen");
+      break;
     case "fetch":
       // Beispiel – falls du weiterhin "fetch" verwendest
       console.log("fetch‑payload", payload);

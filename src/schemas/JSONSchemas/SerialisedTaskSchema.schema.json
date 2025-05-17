@@ -2795,7 +2795,7 @@
           "type": "object"
         },
         "type": {
-          "enum": ["fetch","evaluate", "showSampleSolution", "submitProposal"] ,
+          "enum": ["fetch","evaluate", "showSampleSolution", "submitProposal", "exit"] ,
           "type": "string"
         }
       },
@@ -2812,7 +2812,7 @@
           "type": "object"
         },
         "type": {
-          "enum": ["fetch","evaluate", "showSampleSolution", "submitProposal"] ,
+          "enum": ["fetch","evaluate", "showSampleSolution", "submitProposal", "exit"] ,
           "type": "string"
         }
       },

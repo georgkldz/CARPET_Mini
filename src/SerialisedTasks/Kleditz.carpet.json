@@ -1732,7 +1732,7 @@
                   "placeholder": "z.B. x³ + ..."
                 },
                 "dependencies": {
-
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r0_latexInputField1.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -1758,7 +1758,7 @@
                   "placeholder": "z.B. x³ + ..."
                 },
                 "dependencies": {
-
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r1_latexInputField1.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -1784,7 +1784,7 @@
                   "placeholder": "z.B. x³ + ..."
                 },
                 "dependencies": {
-
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r2_latexInputField1.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -1810,7 +1810,7 @@
                   "placeholder": "z.B. x³ + ..."
                 },
                 "dependencies": {
-
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r3_latexInputField1.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -1837,6 +1837,7 @@
                   "prepend": "f'(x)="
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r0_latexInputField2.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -1863,6 +1864,7 @@
                   "prepend": "f'(x)="
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r1_latexInputField2.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -1889,6 +1891,7 @@
                   "prepend": "f'(x)="
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r2_latexInputField2.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -1915,6 +1918,7 @@
                   "prepend": "f'(x)="
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r3_latexInputField2.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -1939,6 +1943,7 @@
                   "prepend": "f''(x)="
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r0_latexInputField3.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -1963,6 +1968,7 @@
                   "prepend": "f''(x)="
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r1_latexInputField3.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -1987,6 +1993,7 @@
                   "prepend": "f''(x)="
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r2_latexInputField3.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -2011,6 +2018,7 @@
                   "prepend": "f''(x)="
                 },
                 "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r3_latexInputField3.state.fieldValue"
                 },
                 "validationConfiguration": {
                   "comparisons": []
@@ -2895,7 +2903,7 @@
           },
           "actions": {
             "submit": {
-              "type": "fetch"
+              "type": "exit"
             }
           }
         }

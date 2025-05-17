@@ -68,6 +68,7 @@ export const useCollaborationStore = defineStore("collaborationStore", {
     showSampleSolution() {
       console.debug("[Collab] Musterlösung anzeigen");
       const taskGraphStore = useTaskGraphStore();
+      //taskGraphStore.transferFieldValues();
       const currentNodeId = taskGraphStore.currentNode;
       if (currentNodeId !== null) {
         taskGraphStore.setProperty({ path: "$.previousNode", value: currentNodeId });
