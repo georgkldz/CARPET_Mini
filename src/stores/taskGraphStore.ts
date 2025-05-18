@@ -189,7 +189,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       while (!this.getProperty("$.documentReady")) {
         await nextTick()
       }
-
       const myRoleId  = useCollaborationStore().myCollabRoleId ?? 0;
       console.debug("extractFieldvalues lädt aus collabStore roleId ", myRoleId);
       const srcBase = "$.nodes.0.components.0.nestedComponents.formComponents";
@@ -205,7 +204,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
         "inputField3",
         "inputField4",
       ];
-
       fields.forEach((fid) => {
         const srcPath = `${srcBase}.${fid}.state.fieldValue` as JSONPathExpression;
         const val = this.getProperty(srcPath);
@@ -219,6 +217,20 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
           value: val,
         });
       });
+    },
+
+    extractValuesByPaths(paths: string[]): Record<string, unknown> {
+      const result: Record<string, unknown> = {};
+
+      paths.forEach((path: string) => {
+        const value = this.getProperty(path as JSONPathExpression);
+
+        if (value !== undefined) {
+          result[path] = value;
+        }
+      });
+      console.debug(" taskGraphStore, extractValuesByPaths schreibt " + result);
+      return result;
     },
 
     setCurrentTask(taskName: string) {

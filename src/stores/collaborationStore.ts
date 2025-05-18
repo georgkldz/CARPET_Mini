@@ -1,5 +1,6 @@
 // src/stores/collaborationStore.ts
 import { defineStore } from "pinia";
+import axios from "axios";
 import {useTaskGraphStore } from "stores/taskGraphStore";
 import { connectUISocket, disconnectUISocket, notifyShowSolution } from "../services/uiSocketService";
 
@@ -65,10 +66,75 @@ export const useCollaborationStore = defineStore("collaborationStore", {
       this.myUserId = null;
     },
 
-    showSampleSolution() {
+    // Generierung aller relevanten Pfade basierend auf einem Muster
+    generateFieldPaths() {
+      const roles = ["r0", "r1", "r2", "r3"];
+      const fieldTypes = [
+        { prefix: "latexInputField", count: 3 },
+        { prefix: "inputField", count: 5 }
+      ];
+
+      const paths = [];
+
+      roles.forEach(role => {
+        fieldTypes.forEach(type => {
+          for (let i = 1; i <= type.count; i++) {
+            paths.push(`$.nodes.2.components.0.nestedComponents.formComponents.${role}_${type.prefix}${i}.state.fieldValue`);
+          }
+        });
+      });
+
+      // Spezielle Pfade hinzufügen
+      paths.push("$.nodes.2.components.0.nestedComponents.extraRightComponents.canvas.state.fieldValue");
+      paths.push("$.nodes.2.components.0.nestedComponents.extraRightComponents.explanation.state.fieldValue");
+      paths.push("$.nodes.2.components.0.nestedComponents.extraRightComponents.result.state.fieldValue");
+
+      return paths;
+    },
+
+    async saveSessionData() {
+      if (!this.group || !this.groupId || !this.myUserId) {
+        console.error("Kann Session-Daten nicht speichern: Keine Gruppeninformationen");
+        return null;
+      }
+
+      const taskGraphStore = useTaskGraphStore();
+      const taskId = this.group.taskId;
+
+      // Teilnehmerdaten vorbereiten - Array von [roleId, userId] für jeden Teilnehmer
+      const memberIds = this.group.members.map(member => [
+        member.collabRoleId,
+        member.userId
+      ]);
+
+      const fieldPaths = this.generateFieldPaths();
+      const fieldValues = taskGraphStore.extractValuesByPaths(fieldPaths);
+
+      try {
+        // API-Call zum Backend
+        const response = await axios.post("http://localhost:3000/api/v1/sessionData", {
+          taskId,
+          memberIds,
+          fieldValues
+        });
+
+        // SessionId aus der Antwort extrahieren
+        const sessionId = response.data.sessionId;
+        console.debug("Session-Daten erfolgreich gespeichert, SessionId: ${sessionId}");
+
+        return sessionId;
+      } catch (error) {
+        console.error("Fehler beim Speichern der Session-Daten:", error);
+        return null;
+      }
+    },
+
+    async showSampleSolution() {
       console.debug("[Collab] Musterlösung anzeigen");
       const taskGraphStore = useTaskGraphStore();
-      //taskGraphStore.transferFieldValues();
+      const sessionId = await this.saveSessionData();
+      console.debug("[Collab] Session-Daten gespeichert, SessionId:", sessionId);
+
       const currentNodeId = taskGraphStore.currentNode;
       if (currentNodeId !== null) {
         taskGraphStore.setProperty({ path: "$.previousNode", value: currentNodeId });
