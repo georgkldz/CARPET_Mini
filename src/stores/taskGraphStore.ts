@@ -233,6 +233,24 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       return result;
     },
 
+    // In den actions des useTaskGraphStore
+    resetValuesByPath(paths: string[]): void {
+      if (!Array.isArray(paths)) {
+        console.error("resetValuesByPath: paths muss ein Array sein");
+        return;
+      }
+
+      paths.forEach((path: string) => {
+        // Verwende die vorhandene setProperty-Methode, um jeden Wert zurückzusetzen
+        this.setProperty({
+          path: path as JSONPathExpression,
+          value: ""
+        });
+      });
+
+      console.debug(`${paths.length} Felder wurden zurückgesetzt`);
+    },
+
     setCurrentTask(taskName: string) {
       this.currentTask = taskName;
     },
@@ -303,9 +321,15 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
           value: currentTask.rootNode,
         });
       }
+
+      const taskDescription = this.getProperty("$.taskData.taskDescription");
+      this.setProperty({
+        path: "$.nodes.0.components.0.nestedComponents.formComponents.textView1.state.textSegments[0].text",
+        value: taskDescription,
+      })
       // Ruft nun unsere neue Action auf,
       // um einen DB-Task (basierend auf authStore.currentTaskId) einzubinden:
-      this.loadDBTaskIntoGraph();
+      //this.loadDBTaskIntoGraph();
     },
 
     async submitForEvaluation() {

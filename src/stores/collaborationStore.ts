@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import {useTaskGraphStore } from "stores/taskGraphStore";
 import { connectUISocket, disconnectUISocket, notifyShowSolution } from "../services/uiSocketService";
+import { leaveSession } from "stores/sync/automergeSync";
 
 
 export interface GroupMember {
@@ -58,15 +59,15 @@ export const useCollaborationStore = defineStore("collaborationStore", {
       });
     },
 
-    /** räumt auf, z. B. beim Logout */
-    clearGroup() {
+    async clearGroup() {
       disconnectUISocket();
       this.group = null;
       this.groupId = null;
       this.myUserId = null;
+      await leaveSession();
+      this.resetFields();
     },
 
-    // Generierung aller relevanten Pfade basierend auf einem Muster
     generateFieldPaths() {
       const roles = ["r0", "r1", "r2", "r3"];
       const fieldTypes = [
@@ -90,6 +91,16 @@ export const useCollaborationStore = defineStore("collaborationStore", {
       paths.push("$.nodes.2.components.0.nestedComponents.extraRightComponents.result.state.fieldValue");
 
       return paths;
+    },
+
+    // In den actions des useCollaborationStore
+    resetFields() {
+      const taskGraphStore = useTaskGraphStore();
+      const fieldPaths = this.generateFieldPaths();
+
+      // Rufe die neue resetValuesByPath-Methode im taskGraphStore auf
+      taskGraphStore.resetValuesByPath(fieldPaths);
+      console.debug("[Collab] Alle Kollaborationsfelder wurden zurückgesetzt");
     },
 
     async saveSessionData() {

@@ -5,10 +5,11 @@ import serialisedTaskSchema from "../schemas/zodSchemas/SerialisedTaskSchema";
 
 import type { SerializedCARPETComponents } from "carpet-component-library";
 
-import ExampleTask from "../SerialisedTasks/Kleditz.carpet.json";
+import SteckbriefTask1 from "../SerialisedTasks/Kleditz.carpet.json";
+import SteckbriefTask2 from "../SerialisedTasks/Steckbrief2.carpet.json";
 const staticTasks = {
-  Example: serialisedTaskSchema.parse(ExampleTask),
-  Example2: serialisedTaskSchema.parse(ExampleTask),
+  Steckbriefaufgabe: serialisedTaskSchema.parse(SteckbriefTask1),
+  Steckbriefaufgabe2: serialisedTaskSchema.parse(SteckbriefTask2),
 };
 import { useTaskGraphStore } from "./taskGraphStore";
 import {

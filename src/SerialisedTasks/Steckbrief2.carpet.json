@@ -2923,18 +2923,17 @@
   },
   "layoutSize": "desktop",
   "taskData": {
-    "taskDescription": "Gesucht ist eine ganzrationale Funktion dritten Grades, deren Graph in A(0 | 4) einen Extrempunkt hat, die x-Achse bei x = 2 schneidet und durch den Punkt B(1 | 3) geht.",
+    "taskDescription": "Gesucht ist eine Funktion 3. Grades, deren Graph den Wendepunkt W (0|1) besitzt und den Hochpunkt H( 1|2) hat.",
     "degree": 3,
     "symmetry": "none",
     "hint": "",
     "solutions": {
-      "textFieldEquation1": "f(0)=4",
-      "textFieldEquation2": "f(0)=0",
-      "textFieldEquation3": "f(2)=0",
-      "textFieldEquation4": "f(1)=3",
+      "textFieldEquation1": "f(0)=1",
+      "textFieldEquation2": "f''(0)=0",
+      "textFieldEquation3": "f(1)=2",
+      "textFieldEquation4": "f'(1)=0",
       "textFieldEquation5": "",
-      "sampleSolutionCollaborativeWork": "\\begin{array}{l}\n\\textbf{Musterlösung} \\\\\n\\\\\n\\textbf{Aufgabe:} \\text{Gesucht ist eine ganzrationale Funktion dritten Grades, }\\\\\n\\text{deren Graph in A(0 | 4) einen Extrempunkt hat,} \\\\\n\\text{die x-Achse bei x = 2 schneidet und durch den Punkt B(1 | 3) geht.} \\\\\n\\\\\n\\\\\n\\textbf{Ansatz:} \\\\\n\\\\\nf(x) = ax^3 + bx^2 + cx + d \\\\[10pt]\nf'(x) = 3ax^2 + 2bx + c \\\\[10pt]\nf''(x) = 6ax + 2b \\\\\n\\\\\n\\\\\n\\textbf{Informationen aus dem Aufgabentext:} \\\\\n\\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{ll}\n\\text{I:} & f(0) = 4 \\\\[8pt]\n\\text{II:} & f'(0) = 0 \\\\[8pt]\n\\text{III:} & f(2) = 0 \\\\[8pt]\n\\text{IV:} & f(1) = 3 \\\\\n\\end{array}\n\n\\\\\n\n\\begin{array}{l}\n\\\\\n\\textbf{Einsetzen in die Funktion:} \\\\\n\\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{ll}\n\\text{I:} & a \\cdot 0^3 + b \\cdot 0^2 + c \\cdot 0 + d = 4 \\\\[8pt]\n\\text{II:} & 3a \\cdot 0^2 + 2b \\cdot 0 + c = 0 \\\\[8pt]\n\\text{III:} & a \\cdot 2^3 + b \\cdot 2^2 + c \\cdot 2 + d = 0 \\\\[8pt]\n\\text{IV:} & a \\cdot 1^3 + b \\cdot 1^2 + c \\cdot 1 + d = 3\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{l}\n\\\\\n\\\\\n\\textbf{Lineares Gleichungssystem aufstellen:} \\\\\n\\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{ll}\n\\text{I:} & d = 4 \\\\[8pt]\n\\text{II:} & c = 0 \\\\[8pt]\n\\text{III:} & 8a + 4b + 0 + 4 = 0 \\\\[5pt]\n\\text{Hieraus folgt: } 8a + 4b = -4 \\\\[8pt]\n\\text{IV:} & 1a + 1b + 0 + 4 = 3 \\\\[5pt]\n\\text{Hieraus folgt: } a + b = -1\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{l}\n\\\\\n\\\\\n\\textbf{Lineares Gleichungssystem lösen:} \\\\\n\\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{lll}\n\\text{I:} & 8a + 4b = -4 \\\\[8pt]\n\\text{II:} & a + b = -1 & | \\cdot (-4) \\\\[15pt]\n\n\\text{I:} & 8a + 4b = -4 \\\\[8pt]\n\\text{II:} & -4a - 4b = 4 \\\\[8pt]\n\\text{I + II:} & 4a = 0 \\\\[5pt]\n\\text{Hieraus folgt: } a = 0 \\\\[15pt]\n\n\\text{$a = 0$ in II einsetzen:} \\\\[8pt]\n0 + b = -1 \\\\[5pt]\n\\text{Hieraus folgt: } b = -1\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{l}\n\\\\\n\\\\\n\\textbf{Ergebnis:} f(x) = -x^2 + 4\n\\end{array}"
-    }
+      "sampleSolutionCollaborativeWork": "\\begin{array}{l}\n\\textbf{Musterlösung} \\\\\n\\\\\n\\textbf{Aufgabe:} \\text{Gesucht ist eine ganzrationale Funktion dritten Grades, }\\\\\n\\text{deren Graph den Wendepunkt (0 | 1) besitzt } \\\\\n\\text{und den Hochpunkt H (1 | 2) hat.} \\\\\n\\\\\n\\\\\n\\textbf{Ansatz:} \\\\\n\\\\\nf(x) = ax^3 + bx^2 + cx + d \\\\[10pt]\nf'(x) = 3ax^2 + 2bx + c \\\\[10pt]\nf''(x) = 6ax + 2b \\\\\n\\\\\n\\\\\n\\textbf{Informationen aus dem Aufgabentext:} \\\\\n\\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{ll}\n\\text{I:} & f(0) = 1 \\\\[8pt]\n\\text{II:} & f''(0) = 0 \\\\[8pt]\n\\text{III:} & f(1) = 2 \\\\[8pt]\n\\text{IV:} & f’(1) = 0 \\\\\n\\end{array}\n\n\\\\\n\n\\begin{array}{l}\n\\\\\n\\textbf{Einsetzen in die Funktion:} \\\\\n\\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{ll}\n\\text{I:} & a \\cdot 0^3 + b \\cdot 0^2 + c \\cdot 0 + d = 1 \\\\[8pt]\n\\text{II:} & 6a \\cdot 0 + 2b = 0 \\\\[8pt]\n\\text{III:} & 3a \\cdot 1^2 + 2b \\cdot 1 + c = 0  = 0 \\\\[8pt]\n\\text{IV:} & a \\cdot 1^3 + b \\cdot 1^2 + c \\cdot 1 + d = 2\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{l}\n\\\\\n\\\\\n\\textbf{Lineares Gleichungssystem aufstellen:} \\\\\n\\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{lll}\n\\text{I:} & d = 1 \\\\[8pt]\n\\text{II:} & b = 0 \\\\[8pt]\n\\text{III:} & 3a + c  = 0 \\\\[5pt]\n\\text{IV:} & 1a + c + 1 = 2 & | -1\\\\[5pt]\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{l}\n\\\\\n\\\\\n\\textbf{Lineares Gleichungssystem lösen:} \\\\\n\\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{ll}\n\\text{I:} & a + c = 1 \\\\[8pt]\n\\text{II:} & 3a + c = 0  \\\\[15pt]\n\n\\text{II - I:} & 2a = -1 \\\\[5pt]\n\\text{Hieraus folgt: } a = - 0,5 \\\\[15pt]\n\n\\text{$a = -0,5$ in I einsetzen:} \\\\[8pt]\n- 0,5 + c = 1 \\\\[5pt]\n\\text{Hieraus folgt: } b = 1,5\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{l}\n\\\\\n\\\\\n\\textbf{Ergebnis:} f(x) = -x^3 + 1,5x\n\\end{array}"}
   }
 }
 

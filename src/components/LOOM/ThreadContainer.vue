@@ -61,6 +61,7 @@ import { useApplicationStore } from "src/stores/applicationStore";
 import { useVueFlow } from "@vue-flow/core";
 import { unref, ref } from "vue";
 import { useCollaborationStore } from "stores/collaborationStore";
+import { useRouter } from "vue-router";
 
 type ThreadContainerProps = NodeProps;
 
@@ -71,7 +72,8 @@ const minWidth = unref(props.data.width);
 
 const applicationStore = useApplicationStore();
 const [xModifier, yModifier] = applicationStore.SNAP_GRID;
-
+const router = useRouter();
+const collabStore = useCollaborationStore();
 const taskGraphStore = useTaskGraphStore();
 const currentNodeId = taskGraphStore.currentNode;
 const currentNode = taskGraphStore.getCurrentNode;
@@ -245,14 +247,18 @@ const actionHandler = async (actionType: string, payload: any) => {
       }
       break;
     case "submitProposal":
-      //useCollaborationStore().startSubmitProposal();
-      useCollaborationStore().showSampleSolution();
+      //collabStore.startSubmitProposal();
+      collabStore.showSampleSolution();
       break;
+
     case "exit":
       console.debug("Kollaboration schließen");
+
+      collabStore.clearGroup();
+      await router.push({ path: "/student-selection" });
       break;
+
     case "fetch":
-      // Beispiel – falls du weiterhin "fetch" verwendest
       console.log("fetch‑payload", payload);
       break;
 

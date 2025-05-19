@@ -143,7 +143,7 @@ export async function joinSession(
     path : "$.documentReady",
     value: true
   });
-  taskGraphStore.setProperty({ path: "$.nodes.2.components.0.nestedComponents.extraRightComponents.canvas.state.fieldValue", value: "Hallo Welt" });
+
   console.debug("automerge, automergeSync ruft extractFieldValues auf")
   taskGraphStore.extractFieldValues();
 
@@ -159,6 +159,14 @@ export async function joinSession(
   syncFromDocComponents(snapshot, taskGraphStore);
   }
   isJoinSessionProcessing = false;
+}
+
+export async function leaveSession() {
+  console.debug("automerge, leave session");
+
+  documentReady.value = false;
+  isJoinSessionProcessing = false;
+  lastComponentsDataCache.value = null;
 }
 
 /**
