@@ -19,8 +19,8 @@
                 />
                 <q-btn
                   color="grey-5"
-                  label="Aufgabe kommentieren (noch nicht verfügbar)"
-                  @click="notImplemented"
+                  label="Aufzeichnung kommentieren"
+                  @click="goToSessionComment"
                 />
               </q-card-actions>
             </q-card>
@@ -41,7 +41,7 @@ function goToTaskEdit() {
   router.push("/main-layout");
 }
 
-function notImplemented() {
-  //TODO
+function goToSessionComment() {
+  router.push("/comment-selection");
 }
 </script>

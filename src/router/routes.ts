@@ -42,6 +42,12 @@ const routes: RouteRecordRaw[] = [
       import(/* webpackChunkName: "task" */ "pages/TaskPage.vue"),
   },
 
+  {
+    path: "/comment-selection",
+    name: "Aufzeichungsauswahl",
+    component: () => import("pages/CommentSelection.vue")
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {
