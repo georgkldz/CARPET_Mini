@@ -6,6 +6,7 @@ import { useTaskGraphStore } from "./taskGraphStore";
 interface SessionMember {
   userId: number;
   roleId: number;
+  nickname: string;
 }
 
 interface SessionData {

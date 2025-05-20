@@ -70,10 +70,10 @@
                   <q-td key="timestamp"         :props="props">{{ formatDate(props.row.timestamp) }}</q-td>
 
                   <!-- Nun vier Zellen für die Rollen -->
-                  <q-td>{{ getRoleMember(props.row.sessionId, 0) }}</q-td>
-                  <q-td>{{ getRoleMember(props.row.sessionId, 1) }}</q-td>
-                  <q-td>{{ getRoleMember(props.row.sessionId, 2) }}</q-td>
-                  <q-td>{{ getRoleMember(props.row.sessionId, 3) }}</q-td>
+                  <q-td key="owner"   :props="props" class="text-center">{{ props.row.owner }}</q-td>
+                  <q-td key="scribe"  :props="props" class="text-center">{{ props.row.scribe }}</q-td>
+                  <q-td key="lead"    :props="props" class="text-center">{{ props.row.lead }}</q-td>
+                  <q-td key="timer"   :props="props" class="text-center">{{ props.row.timer }}</q-td>
                 </q-tr>
               </template>
             </q-table>
@@ -113,14 +113,55 @@ export default defineComponent({
 
     // Tabellenstruktur
     const columns = [
-      { name: "sessionId", label: "Aufzeichnung Nr.", field: "sessionId", sortable: true, style: "width: 10%" },
-      { name: "taskId",     label: "Aufgabe Nr.",      field: "taskId",     sortable: true, style: "width: 10%" },
+      { name: "sessionId", label: "Aufzeichnung Nr.", field: "sessionId", sortable: true, style: "width: 10%",   align: "center" },
+      { name: "taskId",     label: "Aufgabe Nr.",      field: "taskId",     sortable: true, style: "width: 10%" ,   align: "center" },
       { name: "taskDescription", label: "Aufgabenstellung", field: "taskDescription", style: "width: 20%", align: "left", classes: "q-pa-xs wrap-description" },
-      { name: "timestamp", align: "left", label: "Datum", field: "timestamp", sortable: true }
+      { name: "timestamp", label: "Datum", field: "timestamp", sortable: true,   align: "center"  },
+      { name: "owner",   label: "Ergeb.-verantw.",    field: "owner",   align: "center" },
+      { name: "scribe",  label: "Kommentarprot.",      field: "scribe",  align: "center" },
+      { name: "lead",    label: "Gesprächsleiter",     field: "lead",    align: "center" },
+      { name: "timer",   label: "Zeitwächter",         field: "timer",   align: "center" }
     ];
 
     // Sessions aus dem Store abrufen
-    const sessions = computed(() => commentStore.availableSessions);
+    const sessions = computed(() => {
+      const out = []
+
+      for (const s of commentStore.availableSessions) {
+        // 👉 Logge hier die rohen Daten jeder Session
+        console.debug("DEBUG Session ${s.sessionId}: members=",s.members," description=", s.taskDescription  )  // ✅ so siehst du alle Member-Objekte und Beschreibungen :contentReference[oaicite:0]{index=0}
+
+        let owner  = "–"
+        let scribe = "–"
+        let lead   = "–"
+        let timer  = "–"
+
+        for (const m of s.members) {
+          console.debug("DEBUG Mapping role ${m.roleId} →", m.nickname || m.userId  )  // ✅ hier siehst du jeden Role­-Zuordnungsschritt :contentReference[oaicite:1]{index=1}
+
+          if (m.roleId === 0) owner  = m.nickname || m.userId
+          if (m.roleId === 1) scribe = m.nickname || m.userId
+          if (m.roleId === 2) lead   = m.nickname || m.userId
+          if (m.roleId === 3) timer  = m.nickname || m.userId
+        }
+
+        out.push({
+          sessionId:       s.sessionId,
+          taskId:          s.taskId,
+          taskDescription: s.taskDescription,
+          timestamp:       s.timestamp,
+          owner,
+          scribe,
+          lead,
+          timer
+        })
+        // 👉 Optional: Logge das fertige Mapping-Objekt
+        console.debug("DEBUG Mapped row:", out[out.length - 1])
+      }
+
+      return out
+    })
+
 
     // Datum formatieren: deutsches Format ohne Sekunden
     const formatDate = (timestamp) => {
