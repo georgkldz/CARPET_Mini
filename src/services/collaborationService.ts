@@ -82,7 +82,7 @@ async function applyGroupAssignment(group: GroupInfo, myUserId: number) {      /
   const collaborationStore = useCollaborationStore();
   const applicationStore = useApplicationStore();
   const taskGraphStore = useTaskGraphStore();
-
+  console.debug("collabservice, empfange Gruppendaten vom Backend ", group);
   collaborationStore.setGroup(group, myUserId);
   console.debug("collabservice, applyGroupAssignment speichert roleId ", collaborationStore.myCollabRoleId);
   taskGraphStore.setProperty({

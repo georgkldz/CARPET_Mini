@@ -9,6 +9,7 @@ import { leaveSession } from "stores/sync/automergeSync";
 export interface GroupMember {
   userId: number;
   collabRoleId: number;
+  nickname: string;
 }
 
 export interface GroupInfo {
