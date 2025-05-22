@@ -182,8 +182,9 @@ export default defineComponent({
     };
 
     // Session auswählen und zur nächsten Seite navigieren
-    const selectSession = (sessionId) => {
+    const selectSession = async (sessionId) => {
       commentStore.setCurrentSessionId(sessionId);
+      await commentStore.fetchCommentsForSession(sessionId);
       // Hier Navigation zur Kommentar-Seite einbauen
       // router.push('/comment-editor');
     };
