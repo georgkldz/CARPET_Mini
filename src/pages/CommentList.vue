@@ -17,7 +17,7 @@
 
         <!-- Kommentare gruppiert nach Feldern -->
         <q-expansion-item
-          v-for="({ fieldId, label, comments }, idx) in grouped"
+          v-for="({ fieldId, comments }, idx) in grouped"
           :key="`${fieldId}-${idx}`"
           v-model="open[fieldId]"
           @mouseenter="emit('highlightField', fieldId)"
@@ -26,13 +26,14 @@
         >
           <template #header>
             <div class="row items-center no-wrap full-width">
-              <span class="text-bold">{{ label || fieldId }}</span>
+              <span class="text-bold">{{ fieldId }}</span>
               <q-space />
-              <q-badge color="primary" rounded>
-                {{ comments.length }}
-              </q-badge>
+              <div class="comment-count-badge">
+                <q-icon name="chat_bubble_outline" size="24px" color="primary" />
+                <span class="comment-count">{{ comments.length }}</span>
+              </div>
             </div>
-          </template>
+          </template>>
 
           <!-- Kommentare für dieses Feld -->
           <q-item
@@ -183,5 +184,19 @@ watch(
 .comment-list-card {
   height: calc(100vh - 100px);
   overflow-y: auto;
+}
+
+.comment-count-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.comment-count {
+  position: absolute;
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--q-primary);
 }
 </style>

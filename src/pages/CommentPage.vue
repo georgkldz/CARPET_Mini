@@ -38,6 +38,7 @@ import { useRoute } from "vue-router";
 import { useTaskGraphStore } from "src/stores/taskGraphStore";
 import { useCommentStore } from "src/stores/commentStore";
 import CommentList from "pages/CommentList.vue";
+import { JSONPathExpression } from "carpet-component-library";
 
 const route = useRoute();
 const sessionId = Number(route.params.sessionId);
@@ -120,9 +121,26 @@ function handleFormClick(event: MouseEvent): void {
 
     if (fieldClass) {
       const fieldId = fieldClass.replace("form__elements-", "");
-      setSelectedField(fieldId);
+      if (fieldId && isFieldCommentable(fieldId)) {
+        setSelectedField(fieldId);
+      }
     }
   }
+}
+
+function isFieldCommentable(fieldId: string): boolean {
+  const sections = ["formComponents", "extraRightComponents", "actionComponents"];
+
+  for (const section of sections) {
+    const path = `$.nodes.${currentNodeId.value}.components.0.nestedComponents.${section}.${fieldId}.componentConfiguration.isCommentable` as JSONPathExpression;
+    const isCommentable = taskGraphStore.getProperty(path);
+
+    if (isCommentable === true) {
+      return true;
+    }
+  }
+
+  return false;
 }
 </script>
 
