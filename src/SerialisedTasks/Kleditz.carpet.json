@@ -56,7 +56,7 @@
                   "isCorrect": false,
                   "textSegments": [
                     {
-                      "text": "HatnichtgeklapptHatnichtgeklappt"
+                      "text": "Gesucht ist eine ganzrationale Funktion dritten Grades, deren Graph in A(0 | 4) einen Extrempunkt hat, die x-Achse bei x = 2 schneidet und durch den Punkt B(1 | 3) geht."
                     }
                   ],
                   "fieldValue": "",
@@ -102,7 +102,8 @@
                 },
                 "componentConfiguration": {
                   "prepend": "f(x)=",
-                  "placeholder": "z.B. x³ + ..."
+                  "placeholder": "z.B. x³ + ...",
+                  "isCommentable": true
                 },
                 "dependencies": {},
                 "validationConfiguration": {
@@ -120,7 +121,8 @@
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {
-                  "prepend": "f'(x)="
+                  "prepend": "f'(x)=",
+                  "isCommentable": true
                 },
                 "dependencies": {},
                 "validationConfiguration": {
@@ -138,7 +140,8 @@
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {
-                  "prepend": "f''(x)="
+                  "prepend": "f''(x)=",
+                  "isCommentable": true
                 },
                 "dependencies": {},
                 "validationConfiguration": {
@@ -182,7 +185,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": "z. B. f(7) = 11"
+                  "placeholder": "z. B. f(7) = 11",
+                  "isCommentable": true
                 },
                 "dependencies": {},
                 "validationConfiguration": {
@@ -431,7 +435,7 @@
                   "isCorrect": false,
                   "textSegments": [
                     {
-                      "text": "HatnichtgeklapptHatnichtgeklappt"
+                      "text": "Gesucht ist eine ganzrationale Funktion dritten Grades, deren Graph in A(0 | 4) einen Extrempunkt hat, die x-Achse bei x = 2 schneidet und durch den Punkt B(1 | 3) geht."
                     }
                   ],
                   "fieldValue": "",
@@ -487,7 +491,8 @@
                 },
                 "componentConfiguration": {
                   "prepend": "f(x)=",
-                  "placeholder": "z.B. x³ + ..."
+                  "placeholder": "z.B. x³ + ...",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -512,7 +517,8 @@
                 },
                 "componentConfiguration": {
                   "prepend": "f(x)=",
-                  "placeholder": "z.B. x³ + ..."
+                  "placeholder": "z.B. x³ + ...",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -537,7 +543,8 @@
                 },
                 "componentConfiguration": {
                   "prepend": "f(x)=",
-                  "placeholder": "z.B. x³ + ..."
+                  "placeholder": "z.B. x³ + ...",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -562,7 +569,8 @@
                 },
                 "componentConfiguration": {
                   "prepend": "f(x)=",
-                  "placeholder": "z.B. x³ + ..."
+                  "placeholder": "z.B. x³ + ...",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -588,7 +596,8 @@
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {
-                  "prepend": "f'(x)="
+                  "prepend": "f'(x)=",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -614,7 +623,8 @@
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {
-                  "prepend": "f'(x)="
+                  "prepend": "f'(x)=",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -640,7 +650,8 @@
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {
-                  "prepend": "f'(x)="
+                  "prepend": "f'(x)=",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -666,7 +677,8 @@
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {
-                  "prepend": "f'(x)="
+                  "prepend": "f'(x)=",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -690,7 +702,8 @@
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {
-                  "prepend": "f''(x)="
+                  "prepend": "f''(x)=",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -714,7 +727,8 @@
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {
-                  "prepend": "f''(x)="
+                  "prepend": "f''(x)=",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -738,7 +752,8 @@
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {
-                  "prepend": "f''(x)="
+                  "prepend": "f''(x)=",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -762,7 +777,8 @@
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {
-                  "prepend": "f''(x)="
+                  "prepend": "f''(x)=",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -792,7 +808,7 @@
                   "fieldValue": "",
                   "fieldConfiguration": {}
                 },
-                "componentConfiguration": {},
+                "componentConfiguration": {                },
                 "dependencies": {
                 },
                 "validationConfiguration": {}
@@ -815,7 +831,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": "z. B. f(7) = 11"
+                  "placeholder": "z. B. f(7) = 11",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -848,7 +865,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": "z. B. f(7) = 11"
+                  "placeholder": "z. B. f(7) = 11",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -881,7 +899,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": "z. B. f(7) = 11"
+                  "placeholder": "z. B. f(7) = 11",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -914,7 +933,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": "z. B. f(7) = 11"
+                  "placeholder": "z. B. f(7) = 11",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -947,7 +967,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -980,7 +1001,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1013,7 +1035,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1046,7 +1069,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1079,7 +1103,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1112,7 +1137,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1145,7 +1171,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1178,7 +1205,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1211,7 +1239,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1244,7 +1273,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1277,7 +1307,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1310,7 +1341,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1343,7 +1375,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1376,7 +1409,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1409,7 +1443,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1442,7 +1477,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1486,7 +1522,8 @@
                   "column": "right",
                   "type": "textarea",
                   "autogrow": true,
-                  "editAllowedForRole": 0
+                  "editAllowedForRole": 0,
+                  "isCommentable": true
                 },
                 "state": {
                   "fieldValue": "",
@@ -1527,7 +1564,8 @@
                 "componentConfiguration": {
                   "type": "textarea",
                   "column": "right",
-                  "editAllowedForRole": 1
+                  "editAllowedForRole": 1,
+                  "isCommentable": true
                 },
                 "state": {
                   "fieldValue": "",
@@ -1578,7 +1616,8 @@
                   "hint": "",
                   "placeholder": "",
                   "column": "right",
-                  "editAllowedForRole": 0
+                  "editAllowedForRole": 0,
+                  "isCommentable": true
                 },
                 "dependencies": {},
                 "validationConfiguration": {
@@ -1617,7 +1656,7 @@
     },
     "3": {
       "collaboration": {
-        "mode": "collaboration"
+        "mode": "single"
       },
       "layouts": {
         "desktop": {
@@ -1673,7 +1712,7 @@
                   "isCorrect": false,
                   "textSegments": [
                     {
-                      "text": "HatnichtgeklapptHatnichtgeklappt"
+                      "text": "Gesucht ist eine ganzrationale Funktion dritten Grades, deren Graph in A(0 | 4) einen Extrempunkt hat, die x-Achse bei x = 2 schneidet und durch den Punkt B(1 | 3) geht."
                     }
                   ],
                   "fieldValue": "",

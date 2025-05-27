@@ -56,7 +56,7 @@
                   "isCorrect": false,
                   "textSegments": [
                     {
-                      "text": "HatnichtgeklapptHatnichtgeklappt"
+                      "text": "Gesucht ist eine Funktion 3. Grades, deren Graph den Wendepunkt W (0|1) besitzt und den Hochpunkt H( 1|2) hat."
                     }
                   ],
                   "fieldValue": "",
@@ -431,7 +431,7 @@
                   "isCorrect": false,
                   "textSegments": [
                     {
-                      "text": "HatnichtgeklapptHatnichtgeklappt"
+                      "text": "Gesucht ist eine Funktion 3. Grades, deren Graph den Wendepunkt W (0|1) besitzt und den Hochpunkt H( 1|2) hat."
                     }
                   ],
                   "fieldValue": "",
@@ -487,7 +487,8 @@
                 },
                 "componentConfiguration": {
                   "prepend": "f(x)=",
-                  "placeholder": "z.B. x³ + ..."
+                  "placeholder": "z.B. x³ + ...",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -512,7 +513,8 @@
                 },
                 "componentConfiguration": {
                   "prepend": "f(x)=",
-                  "placeholder": "z.B. x³ + ..."
+                  "placeholder": "z.B. x³ + ...",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -537,7 +539,8 @@
                 },
                 "componentConfiguration": {
                   "prepend": "f(x)=",
-                  "placeholder": "z.B. x³ + ..."
+                  "placeholder": "z.B. x³ + ...",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -562,7 +565,8 @@
                 },
                 "componentConfiguration": {
                   "prepend": "f(x)=",
-                  "placeholder": "z.B. x³ + ..."
+                  "placeholder": "z.B. x³ + ...",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -588,7 +592,8 @@
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {
-                  "prepend": "f'(x)="
+                  "prepend": "f'(x)=",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -614,7 +619,8 @@
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {
-                  "prepend": "f'(x)="
+                  "prepend": "f'(x)=",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -640,7 +646,8 @@
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {
-                  "prepend": "f'(x)="
+                  "prepend": "f'(x)=",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -666,7 +673,8 @@
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {
-                  "prepend": "f'(x)="
+                  "prepend": "f'(x)=",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -690,7 +698,8 @@
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {
-                  "prepend": "f''(x)="
+                  "prepend": "f''(x)=",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -714,7 +723,8 @@
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {
-                  "prepend": "f''(x)="
+                  "prepend": "f''(x)=",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -738,7 +748,8 @@
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {
-                  "prepend": "f''(x)="
+                  "prepend": "f''(x)=",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -762,7 +773,8 @@
                   "fieldConfiguration": {}
                 },
                 "componentConfiguration": {
-                  "prepend": "f''(x)="
+                  "prepend": "f''(x)=",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -815,7 +827,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": "z. B. f(7) = 11"
+                  "placeholder": "z. B. f(7) = 11",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -848,7 +861,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": "z. B. f(7) = 11"
+                  "placeholder": "z. B. f(7) = 11",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -881,7 +895,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": "z. B. f(7) = 11"
+                  "placeholder": "z. B. f(7) = 11",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -914,7 +929,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": "z. B. f(7) = 11"
+                  "placeholder": "z. B. f(7) = 11",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -947,7 +963,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -980,7 +997,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1013,7 +1031,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1046,7 +1065,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1079,7 +1099,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1112,7 +1133,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1145,7 +1167,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1178,7 +1201,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1211,7 +1235,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1244,7 +1269,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1277,7 +1303,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1310,7 +1337,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1343,7 +1371,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1376,7 +1405,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1409,7 +1439,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1442,7 +1473,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {
                 },
@@ -1486,7 +1518,8 @@
                   "column": "right",
                   "type": "textarea",
                   "autogrow": true,
-                  "editAllowedForRole": 0
+                  "editAllowedForRole": 0,
+                  "isCommentable": true
                 },
                 "state": {
                   "fieldValue": "",
@@ -1527,7 +1560,8 @@
                 "componentConfiguration": {
                   "type": "textarea",
                   "column": "right",
-                  "editAllowedForRole": 1
+                  "editAllowedForRole": 1,
+                  "isCommentable": true
                 },
                 "state": {
                   "fieldValue": "",
@@ -1578,7 +1612,8 @@
                   "hint": "",
                   "placeholder": "",
                   "column": "right",
-                  "editAllowedForRole": 0
+                  "editAllowedForRole": 0,
+                  "isCommentable": true
                 },
                 "dependencies": {},
                 "validationConfiguration": {
@@ -1617,7 +1652,7 @@
     },
     "3": {
       "collaboration": {
-        "mode": "collaboration"
+        "mode": "single"
       },
       "layouts": {
         "desktop": {
@@ -1673,7 +1708,7 @@
                   "isCorrect": false,
                   "textSegments": [
                     {
-                      "text": "HatnichtgeklapptHatnichtgeklappt"
+                      "text": "Gesucht ist eine Funktion 3. Grades, deren Graph den Wendepunkt W (0|1) besitzt und den Hochpunkt H( 1|2) hat."
                     }
                   ],
                   "fieldValue": "",

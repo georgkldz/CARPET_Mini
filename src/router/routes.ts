@@ -48,6 +48,13 @@ const routes: RouteRecordRaw[] = [
     component: () => import("pages/CommentSelection.vue")
   },
 
+  {
+    path: "/comment/:sessionId",
+    name: "CommentPage",
+    component: () => import("src/pages/CommentPage.vue"),
+    props: true
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {

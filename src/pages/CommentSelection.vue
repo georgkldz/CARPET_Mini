@@ -96,16 +96,18 @@
 
 <script>
 import { defineComponent, ref, computed, onMounted } from "vue";
-//import { useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { Notify } from "quasar";
 import { useCommentStore } from "src/stores/commentStore";
+import { useTaskGraphStore } from "stores/taskGraphStore.js";
 
 export default defineComponent({
   name: "CommentSelection",
 
   setup() {
     const commentStore = useCommentStore();
-    //const router = useRouter();
+    const taskGraphStore = useTaskGraphStore();
+    const router = useRouter();
 
     const manualSessionId = ref(null);
     const validating = ref(false);
@@ -183,10 +185,11 @@ export default defineComponent({
 
     // Session auswählen und zur nächsten Seite navigieren
     const selectSession = async (sessionId) => {
-      commentStore.setCurrentSessionId(sessionId);
+      await commentStore.setCurrentSessionId(sessionId);
       await commentStore.fetchCommentsForSession(sessionId);
+      await taskGraphStore.loadSessionForCommentMode(sessionId);
       // Hier Navigation zur Kommentar-Seite einbauen
-      // router.push('/comment-editor');
+      router.push({ name: "CommentPage", params: { sessionId } });
     };
 
     // Eingegebene Session-ID validieren

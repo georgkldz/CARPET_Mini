@@ -353,6 +353,10 @@
           "properties": {},
           "type": "object"
         },
+        "isCommentable": {
+          "type": "boolean",
+          "description": "Gibt an, ob Kommentare erlaubt sind."
+        },
         "language": {
           "description": "The language-property is a string that may be used to determine the syntax highlighting of the CodeEditor."
         }
@@ -542,7 +546,11 @@
           "description": "Some components may offer a customizable inner component layout. The layout is required to be built with CSS Grid.",
           "properties": {},
           "type": "object"
-        }
+        },
+        "isCommentable": {
+          "type": "boolean",
+          "description": "Definition, if comments related to this component will be allowed in commentMode" }
+
       },
       "type": "object"
     },
@@ -670,6 +678,11 @@
           "$ref": "#/definitions/VueClassProp",
           "description": "Class definitions to be attributed to the underlying input tag"
         },
+        "isCommentable": {
+          "type": "boolean",
+          "description": "Gibt an, ob Kommentare erlaubt sind."
+        },
+
         "itemAligned": {
           "description": "Match inner content alignment to that of QItem",
           "type": "boolean"
@@ -1020,6 +1033,11 @@
         "fieldValueByUser": {
           "$ref": "#/definitions/Record<string,string|number|FileList>"
         },
+        "isCommentable": {
+          "type": "boolean",
+          "description": "Gibt an, ob Kommentare erlaubt sind."
+        },
+
         "isCorrect": {
           "description": "Specifices whether the user-inputs put the component in a correct state. Inputs are validated according to the components validation specification.",
           "type": "boolean"
@@ -1133,6 +1151,10 @@
         "inputClass": {
           "$ref": "#/definitions/VueClassProp",
           "description": "Class definitions to be attributed to the underlying input tag"
+        },
+        "isCommentable": {
+          "type": "boolean",
+          "description": "Definition, if comments related to this component will be allowed in commentMode"
         },
         "itemAligned": {
           "description": "Match inner content alignment to that of QItem",

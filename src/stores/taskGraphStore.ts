@@ -16,6 +16,7 @@ import type {
 import { useTasksStore } from "stores/tasksStore";
 import { nextTick } from "vue";
 import { useCollaborationStore } from "stores/collaborationStore";
+import { useCommentStore } from "stores/commentStore";
 
 export interface EventLog {
   interactionEvents: Array<object>;
@@ -33,6 +34,7 @@ export interface CARPETStoreAPI extends StoreAPI {
 export interface TaskGraphState extends SerialisedTask {
   applyingRemote: boolean;
   isPromotingToCollab: boolean;
+  isCommentMode: boolean;
   userId: number | undefined;
   myCollabRoleId: number | undefined;
   submitProposal?: Record<number, "pending" | "accepted" | "rejected">;
@@ -59,6 +61,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     currentNode: null,
     previousNode: null,
     applyingRemote: false,
+    isCommentMode: false,
     isPromotingToCollab: false,
     taskData: {},
     replayLog: {
@@ -231,6 +234,149 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       });
       console.debug(" taskGraphStore, extractValuesByPaths schreibt " + result);
       return result;
+    },
+
+    extractSessionData(): { collaborationNodes: Record<string, unknown>, taskData: unknown } {
+      const result = {
+        collaborationNodes: {} as Record<string, unknown>,
+        taskData: {}
+      };
+
+      const nodes = this.getProperty("$.nodes") as Record<string, unknown> || {};
+
+      Object.entries(nodes).forEach(([nodeId, nodeData]) => {
+        const collaborationMode = this.getProperty(`$.nodes.${nodeId}.collaboration.mode`);
+
+        if (collaborationMode === "collaboration") {
+          console.debug(`Collaboration-Knoten gefunden: ${nodeId}`);
+          result.collaborationNodes[nodeId] = nodeData;
+        }
+      });
+
+      result.taskData = this.getProperty("$.taskData") || {};
+
+      console.debug("Extrahierte Session-Daten:", {
+        collaborationNodes: Object.keys(result.collaborationNodes),
+        taskDataKeys: Object.keys(result.taskData as Record<string, unknown>)
+      });
+
+      return result;
+    },
+
+    async loadSessionForCommentMode(sessionId: number) {
+      const commentStore = useCommentStore();
+
+      // Session-Details laden (falls noch nicht geladen)
+      await commentStore.fetchSessionDetails(sessionId);
+
+      const sessionDetails = commentStore.currentSessionDetails;
+      if (!sessionDetails) {
+        console.error(`Keine Session-Details für ID ${sessionId} gefunden`);
+        return false;
+      }
+
+      // Modus auf Kommentar setzen
+      this.isCommentMode = true;
+
+      let { collaborationNodes, taskData } = sessionDetails;
+
+      // Sicherstellen, dass collaborationNodes ein Object ist
+      if (typeof collaborationNodes === "string") {
+        try {
+          collaborationNodes = JSON.parse(collaborationNodes);
+        } catch (e) {
+          console.error("Fehler beim Parsen der collaborationNodes:", e);
+          return false;
+        }
+      }
+
+      // Gleiches für taskData
+      if (typeof taskData === "string") {
+        try {
+          taskData = JSON.parse(taskData);
+        } catch (e) {
+          console.error("Fehler beim Parsen der taskData:", e);
+          return false;
+        }
+      }
+
+      // Debug-Ausgabe
+      console.log("Geladene collaborationNodes:", collaborationNodes);
+      console.log("Anzahl Knoten:", Object.keys(collaborationNodes).length);
+
+      // TaskData setzen
+      this.setProperty({
+        path: "$.taskData",
+        value: taskData
+      });
+
+      // Jeden Collaboration-Knoten einzeln setzen
+      Object.entries(collaborationNodes).forEach(([nodeId, nodeData]) => {
+        console.log(`Setze Node ${nodeId}:`, nodeData);
+        this.setProperty({
+          path: `$.nodes.${nodeId}`,
+          value: nodeData
+        });
+      });
+
+      // Aktuellen Knoten auf den ersten Collaboration-Knoten setzen
+      const firstCollabNodeId = Object.keys(collaborationNodes)[0];
+      if (firstCollabNodeId) {
+        this.setProperty({
+          path: "$.currentNode",
+          value: parseInt(firstCollabNodeId)
+        });
+      }
+
+
+      this.setAllFieldsReadonly();
+
+      return true;
+    },
+
+    setAllFieldsReadonly() {
+      const currentNode = this.getCurrentNode;
+      if (!currentNode?.components) return;
+
+      Object.entries(currentNode.components).forEach(([componentId, component]) => {
+        const basePath = `$.nodes.${this.currentNode}.components.${componentId}`;
+
+        if (component.type === "CollaborativeForm") {
+          ["formComponents", "extraRightComponents"].forEach(section => {
+            const sectionPath = `${basePath}.nestedComponents.${section}`;
+            const components = this.getProperty(sectionPath as JSONPathExpression);
+
+            if (components) {
+              Object.keys(components).forEach(fieldId => {
+                this.setProperty({
+                  path: `${sectionPath}.${fieldId}.componentConfiguration.readonly` as JSONPathExpression,
+                  value: true
+                });
+              });
+            }
+          });
+
+          // Submit-Button deaktivieren
+          const submitPath = `${basePath}.nestedComponents.actionComponents.submit`;
+          if (this.getProperty(submitPath as JSONPathExpression)) {
+            this.setProperty({
+              path: `${submitPath}.componentConfiguration.disabled` as JSONPathExpression,
+              value: true
+            });
+            // Zusätzlich den State auf disabled setzen
+            this.setProperty({
+              path: `${submitPath}.state.disabled` as JSONPathExpression,
+              value: true
+            });
+          }
+        }
+      });
+    },
+
+    exitCommentMode() {
+      this.isCommentMode = false;
+      // Optional: Store zurücksetzen oder zur Task-Auswahl navigieren
+      this.$reset();
     },
 
     // In den actions des useTaskGraphStore

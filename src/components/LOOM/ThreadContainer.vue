@@ -208,6 +208,17 @@ const actionHandler = async (actionType: string, payload: any) => {
         console.log("Evaluation fehlgeschlagen", error);
         return;
       }
+      try {
+        const { joinCollaboration } = await import(
+          "../../services/collaborationService"
+          );
+        console.debug("Threadcontainer, versende Gruppenbildungsanfrage");
+        await joinCollaboration();
+      } catch (e) {
+        console.error("Evaluation fehlgeschlagen:", e);
+      }
+      await taskGraphStore.extractFieldValues();
+
       const currentNodeId = taskGraphStore.currentNode;
       if (currentNodeId === null) {
         console.error(
@@ -236,15 +247,7 @@ const actionHandler = async (actionType: string, payload: any) => {
         );
       }
 
-      try {
-        const { joinCollaboration } = await import(
-          "../../services/collaborationService"
-        );
-        console.debug("Threadcontainer, versende Gruppenbildungsanfrage");
-        await joinCollaboration();
-      } catch (e) {
-        console.error("Evaluation fehlgeschlagen:", e);
-      }
+
       break;
     case "submitProposal":
       //collabStore.startSubmitProposal();

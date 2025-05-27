@@ -119,20 +119,20 @@ export const useCollaborationStore = defineStore("collaborationStore", {
         member.userId
       ]);
 
-      const fieldPaths = this.generateFieldPaths();
-      const fieldValues = taskGraphStore.extractValuesByPaths(fieldPaths);
+      // Anstelle von fieldValues: Alle Collaboration-Knoten extrahieren
+      const sessionData = taskGraphStore.extractSessionData();
 
       try {
         // API-Call zum Backend
         const response = await axios.post("http://localhost:3000/api/v1/sessionData", {
           taskId,
           memberIds,
-          fieldValues
+          sessionData
         });
 
         // SessionId aus der Antwort extrahieren
         const sessionId = response.data.sessionId;
-        console.debug("Session-Daten erfolgreich gespeichert, SessionId: ${sessionId}");
+        console.debug(`Session-Daten erfolgreich gespeichert, SessionId: ${sessionId}`);
 
         return sessionId;
       } catch (error) {

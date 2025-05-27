@@ -21,7 +21,8 @@ interface SessionDetails {
   sessionId: number;
   taskId: number;
   timestamp: string;
-  userInputs: Record<string, unknown>;
+  collaborationNodes: Record<string, unknown>;
+  taskData: Record<string, unknown>;
 }
 
 interface Comment {
@@ -30,7 +31,7 @@ interface Comment {
   fieldId: string;
   userId: number;
   text: string;
-  timeStamp: string;
+  timestamp: string;
   nickname?: string;
 }
 
@@ -115,6 +116,7 @@ export const useCommentStore = defineStore("commentStore", {
         console.error(`Fehler beim Laden der Session-Details für ID ${sessionId}:`, error);
         return null;
       }
+
     },
 
     async validateSessionId(sessionId: number): Promise<boolean> {
