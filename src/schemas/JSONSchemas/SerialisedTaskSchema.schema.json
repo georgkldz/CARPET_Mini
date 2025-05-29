@@ -508,7 +508,7 @@
       "type": "object"
     },
     "CollaborationMode": {
-      "enum": ["collaboration", "groupBuilding", "single"],
+      "enum": ["collaboration", "groupBuilding", "single", "solutionView"],
       "type": "string"
     },
     "ComparisonConfiguration": {
@@ -3208,6 +3208,10 @@
     },
     "rootNode": {
       "type": "number"
+    },
+    "roles": {
+      "type": "object",
+      "description": "Definition of the roles and there permissions"
     },
     "taskData": {
       "$ref": "#/definitions/TaskData"

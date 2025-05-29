@@ -80,5 +80,6 @@ export default z
     }),
     rootNode: z.number().optional(),
     taskData: z.any().optional(),
+    roles: z.any().optional(),
   })
   .strict();

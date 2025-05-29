@@ -1,7 +1,7 @@
 // src/stores/collaborationStore.ts
 import { defineStore } from "pinia";
 import axios from "axios";
-import {useTaskGraphStore } from "stores/taskGraphStore";
+import { Role, useTaskGraphStore } from "stores/taskGraphStore";
 import { connectUISocket, disconnectUISocket, notifyShowSolution } from "../services/uiSocketService";
 import { leaveSession } from "stores/sync/automergeSync";
 
@@ -20,11 +20,20 @@ export interface GroupInfo {
   memberIds: number[];             // Redundanz, aber praktisch
 }
 
+export interface RoleInfo {
+  roleId: number;
+  name: string;
+  description: string;
+  writeAccess: string[];
+  colorHex: string;
+}
+
 export const useCollaborationStore = defineStore("collaborationStore", {
   state: () => ({
     group: null as GroupInfo | null,
     groupId: null as number | null,
     myUserId: null as number | null,
+    roleInfos: {} as Record<number, RoleInfo>,
   }),
 
   getters: {
@@ -54,10 +63,45 @@ export const useCollaborationStore = defineStore("collaborationStore", {
       this.group = g;
       this.groupId = g.groupId;
       this.myUserId = myUserId;
-
+      this.setRoleInfos();
       connectUISocket(g.groupId, myUserId).catch((error) => {
         console.error("Fehler beim Verbinden mit dem UI-Socket:", error);
       });
+    },
+
+    // Im collaborationStore
+    setRoleInfos() {
+      const taskGraphStore = useTaskGraphStore();
+      const rolesData = taskGraphStore.getProperty("$.roles") as Record<number, Role>;
+      console.debug("Rollesarray aus dem taskGraphStore", rolesData);
+      console.debug("Type aus dem taskGraphStore", typeof rolesData);
+      console.debug("Is Array:", Array.isArray(rolesData));
+
+      const defaultColor = "#6b7280";
+      const transformedRoles: Record<number, RoleInfo> = {};
+
+      // Prüfe auf Object mit numerischen Keys statt auf Array
+      if (rolesData && typeof rolesData === "object") {
+        console.debug("Object-Struktur erkannt, verarbeite Keys:", Object.keys(rolesData));
+
+        Object.entries(rolesData).forEach(([key, role]: [string, Role]) => {
+          const index = parseInt(key);
+
+          if (!isNaN(index) && role && typeof role === "object") {
+            transformedRoles[index] = {
+              roleId: index,
+              name: role.name || "",
+              description: role.description || "",
+              writeAccess: role.writeAccess || [],
+              colorHex: role.colorHex || defaultColor
+            };
+            console.debug("Geparste Rolle", index, transformedRoles[index]);
+          }
+        });
+      }
+
+      this.roleInfos = transformedRoles;
+      console.debug("Loaded roles:", this.roleInfos);
     },
 
     async clearGroup() {

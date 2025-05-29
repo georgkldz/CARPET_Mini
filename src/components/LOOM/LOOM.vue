@@ -1,5 +1,5 @@
 <template>
-  <div class="loom">
+  <div class="loom " >
     <VueFlow
       :nodes="componentContainers"
       :edges="[]"
@@ -21,6 +21,15 @@
         <ThreadContainer v-bind="props" />
       </template>
     </VueFlow>
+
+    <div
+      v-if="showAwareness"
+      class="awareness-overlay column q-gutter-xs items-end"
+    >
+      <AwarenessRoleInfo />
+      <AwarenessGroupAvatars />
+    </div>
+
   </div>
 </template>
 
@@ -30,6 +39,8 @@ import { VueFlow } from "@vue-flow/core";
 import { Background } from "@vue-flow/background";
 import { MiniMap } from "@vue-flow/minimap";
 import ControlBar from "./ControlBar.vue";
+import AwarenessRoleInfo from "components/Collaboration/AwarenessRoleInfo.vue";
+import AwarenessGroupAvatars from "components/Collaboration/AwarenessGroupAvatars.vue";
 import { computed } from "vue";
 
 import ThreadContainer from "./ThreadContainer.vue";
@@ -52,6 +63,10 @@ interface ComponentContainer {
   type: string;
 }
 
+const showAwareness = computed(() => {
+  const mode = taskGraphStore.getCurrentCollaborationMode;
+  return mode === "collaboration" || mode === "solutionView";
+});
 const currentNode = computed(() => taskGraphStore.getCurrentNode);
 
 const componentContainers = computed(() => {
@@ -88,6 +103,14 @@ const componentContainers = computed(() => {
 @import "https://cdn.jsdelivr.net/npm/@vue-flow/controls@latest/dist/style.css";
 @import "https://cdn.jsdelivr.net/npm/@vue-flow/minimap@latest/dist/style.css";
 @import "https://cdn.jsdelivr.net/npm/@vue-flow/node-resizer@latest/dist/style.css";
+
+.awareness-overlay {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  z-index: 1000;
+  pointer-events: auto;
+}
 
 .loom {
   height: 100%;

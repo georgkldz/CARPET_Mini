@@ -12,7 +12,7 @@ import type {
   JSONPathExpression,
   StoreSetterPayload,
 } from "carpet-component-library";
-//import { useAuthStore } from "stores/authStore";
+
 import { useTasksStore } from "stores/tasksStore";
 import { nextTick } from "vue";
 import { useCollaborationStore } from "stores/collaborationStore";
@@ -24,6 +24,13 @@ export interface EventLog {
   panningEvents: Array<object>;
   zoomingEvents: Array<object>;
   metaData: object;
+}
+
+export interface Role {
+  name: string;
+  description: string;
+  writeAccess: string[];
+  colorHex: string;
 }
 
 export interface CARPETStoreAPI extends StoreAPI {
@@ -43,6 +50,7 @@ export interface TaskGraphState extends SerialisedTask {
   currentNode: number | null;
   previousNode: number | null;
   replayLog: EventLog;
+  roles: Record<number, Role>;
 }
 
 export type TaskGraphStateKey = keyof TaskGraphState;
@@ -63,6 +71,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
     applyingRemote: false,
     isCommentMode: false,
     isPromotingToCollab: false,
+    roles: {},
     taskData: {},
     replayLog: {
       interactionEvents: [],
@@ -92,7 +101,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
 
     getCurrentCollaborationMode: (
       state: TaskGraphState,
-    ): "single" | "groupBuilding" | "collaboration" => {
+    ): "single" | "groupBuilding" | "collaboration" | "solutionView"=> {
       if (state.currentNode === null) return "single";
       return state.nodes[state.currentNode]?.collaboration?.mode ?? "single";
     },

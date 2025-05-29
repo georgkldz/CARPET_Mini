@@ -1656,7 +1656,7 @@
     },
     "3": {
       "collaboration": {
-        "mode": "single"
+        "mode": "solutionView"
       },
       "layouts": {
         "desktop": {
@@ -2961,6 +2961,32 @@
     ]
   },
   "layoutSize": "desktop",
+  "roles": {
+    "0": {
+      "name": "Ergebnisverantwortlicher",
+      "description": "Schreibt die Gruppenlösung in Canvas und Result und gibt ab.",
+      "writeAccess": ["canvas", "result"],
+      "colorHex": "#bfdbfe"
+    },
+    "1": {
+      "name": "Kommentarprotokoll",
+      "description": "Erklärt den Lösungsweg im Explanation-Feld.",
+      "writeAccess": ["explanation"],
+      "colorHex": "#bbf7d0"
+    },
+    "2": {
+      "name": "Gesprächsleiter",
+      "description": "Leitet die Diskussion und die Gruppenarbeit. Keine Schreibrechte",
+      "writeAccess": [],
+      "colorHex": "#fed7aa"
+    },
+    "3": {
+      "name": "Zeitwächter",
+      "description": "Achtet auf die Zeit. Keine Schreibrechte.",
+      "writeAccess": [],
+      "colorHex": "#e9d5ff"
+    }
+  },
   "taskData": {
     "taskDescription": "Gesucht ist eine ganzrationale Funktion dritten Grades, deren Graph in A(0 | 4) einen Extrempunkt hat, die x-Achse bei x = 2 schneidet und durch den Punkt B(1 | 3) geht.",
     "degree": 3,

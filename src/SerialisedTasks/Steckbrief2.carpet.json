@@ -1652,7 +1652,7 @@
     },
     "3": {
       "collaboration": {
-        "mode": "single"
+        "mode": "solutionView"
       },
       "layouts": {
         "desktop": {
@@ -2957,6 +2957,32 @@
     ]
   },
   "layoutSize": "desktop",
+  "roles": {
+    "0": {
+      "name": "Ergebnisverantwortlicher",
+      "description": "Schreibt die Gruppenlösung in Canvas und Result und gibt ab.",
+      "writeAccess": ["canvas", "result"],
+      "colorHex": "#bfdbfe"
+    },
+    "1": {
+      "name": "Kommentarprotokoll",
+      "description": "Erklärt den Lösungsweg im Explanation-Feld.",
+      "writeAccess": ["explanation"],
+      "colorHex": "#bbf7d0"
+    },
+    "2": {
+      "name": "Gesprächsleiter",
+      "description": "Leitet die Diskussion und die Gruppenarbeit. Keine Schreibrechte",
+      "writeAccess": [],
+      "colorHex": "#fed7aa"
+    },
+    "3": {
+      "name": "Zeitwächter",
+      "description": "Achtet auf die Zeit. Keine Schreibrechte.",
+      "writeAccess": [],
+      "colorHex": "#e9d5ff"
+    }
+  },
   "taskData": {
     "taskDescription": "Gesucht ist eine Funktion 3. Grades, deren Graph den Wendepunkt W (0|1) besitzt und den Hochpunkt H( 1|2) hat.",
     "degree": 3,
