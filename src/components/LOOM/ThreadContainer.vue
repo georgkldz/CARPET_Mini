@@ -250,8 +250,8 @@ const actionHandler = async (actionType: string, payload: any) => {
 
       break;
     case "submitProposal":
-      //collabStore.startSubmitProposal();
-      collabStore.showSampleSolution();
+      collabStore.startSubmitProposal();
+      //collabStore.showSampleSolution();
       break;
 
     case "exit":

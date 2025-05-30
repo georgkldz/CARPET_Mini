@@ -1,6 +1,8 @@
 // src/services/uiSocketService.ts
 import { ref } from "vue";
 import { useTaskGraphStore } from "stores/taskGraphStore";
+import { Dialog } from "quasar";
+import SubmitPermissionDialog from "components/SubmitPermissionDialog.vue";
 
 // Typdefinitionen
 interface UISocketMessage {
@@ -10,6 +12,9 @@ interface UISocketMessage {
   senderRoleId?: number;
   targetNode?: number;
   currentNode?: number | null;
+  votingRound?: number;
+  vote?: "accepted" | "rejected";
+  allApproved?: boolean;
 }
 
 // Status der Verbindung
@@ -115,13 +120,18 @@ export const connectUISocket = (groupId: number, userId: number): Promise<void> 
 
 // Nachricht senden
 export const sendMessage = (message: UISocketMessage): boolean => {
+  console.debug("[UI-Socket] sendMessage aufgerufen mit:", message);
+
   if (!socket || socket.readyState !== WebSocket.OPEN) {
     console.error("UI-Socket: Keine Verbindung für das Senden der Nachricht");
+    console.error("UI-Socket: Socket-Status:", socket ? socket.readyState : "null");
     return false;
   }
 
   try {
-    socket.send(JSON.stringify(message));
+    const messageStr = JSON.stringify(message);
+    console.debug("[UI-Socket] Sende JSON:", messageStr);
+    socket.send(messageStr);
     return true;
   } catch (error) {
     console.error("UI-Socket: Fehler beim Senden der Nachricht", error);
@@ -129,7 +139,43 @@ export const sendMessage = (message: UISocketMessage): boolean => {
   }
 };
 
-// Zeigt die Musterlösung für alle anderen Gruppenmitglieder an
+
+export const notifySubmitProposal = (
+  groupId: number,
+  userId: number,
+  senderRoleId: number,
+  votingRound: number
+): boolean => {
+  return sendMessage({
+    type: "submitProposal",
+    groupId,
+    userId,
+    senderRoleId,
+    votingRound
+  });
+};
+
+// NEU: Abstimmung senden
+export const sendVote = (
+  groupId: number,
+  userId: number,
+  vote: "accepted" | "rejected",
+  votingRound: number
+): boolean => {
+  const message = {
+    type: "vote",
+    groupId,
+    userId,
+    vote,
+    votingRound
+  };
+  console.debug("[UI-Socket] sendVote aufgerufen:", { groupId, userId, vote, votingRound });
+  console.debug("[UI-Socket] Sende Nachricht:", message);
+
+  return sendMessage(message);
+};
+
+// NEU: Zeigt die Musterlösung für alle anderen Gruppenmitglieder an
 export const notifyShowSolution = (
   groupId: number,
   userId: number,
@@ -144,7 +190,6 @@ export const notifyShowSolution = (
     currentNode
   });
 };
-
 // Verbindung schließen
 export const disconnectUISocket = (): void => {
   if (socket) {
@@ -159,13 +204,34 @@ export const disconnectUISocket = (): void => {
 const handleMessage = (event: MessageEvent): void => {
   try {
     const message = JSON.parse(event.data) as UISocketMessage;
-    console.log("UI-Socket: Nachricht empfangen", message);
+    console.debug("UI-Socket: Nachricht empfangen", message);
 
     const taskGraphStore = useTaskGraphStore();
 
     switch (message.type) {
+      case "voteRequest":
+        console.debug("UI-Socket: Abstimmungsanfrage erhalten", message);
+        // Dialog für Abstimmung anzeigen
+        showVotingDialog(message.groupId!, message.votingRound!);
+        break;
+
+      case "voteResult":
+        console.log("UI-Socket: Abstimmungsergebnis erhalten", message);
+
+        import("stores/collaborationStore").then(({ useCollaborationStore }) => {
+          const collabStore = useCollaborationStore();
+          if (message.allApproved) {
+            console.debug("UI-Socket: Abstimmung angenommen, zeige Musterlösung");
+            collabStore.finishVoting(true);
+          } else {
+            console.debug("UI-Socket: Abstimmung wurde abgelehnt, setze Status zurück");
+            collabStore.finishVoting(false);
+          }
+        });
+        break;
+
       case "showSolution":
-        console.log("UI-Socket: Musterlösung anzeigen", message);
+        console.debug("UI-Socket: Musterlösung anzeigen", message);
         // Aktuellen Node als vorherigen Node speichern
         taskGraphStore.setProperty({
           path: "$.previousNode",
@@ -186,6 +252,36 @@ const handleMessage = (event: MessageEvent): void => {
   } catch (error) {
     console.error("UI-Socket: Fehler beim Verarbeiten der Nachricht", error);
   }
+};
+
+const showVotingDialog = (groupId: number, votingRound: number) => {
+  console.debug("erzeuge Voting-Dialog");
+  Dialog.create({
+    component: SubmitPermissionDialog,
+    componentProps: {
+      // Keine Props nötig
+    }
+  }).onOk((vote: "accepted" | "rejected") => {
+    console.debug(`[UI-Socket] Dialog-Vote erhalten: ${vote}`);
+    import("stores/collaborationStore").then(({ useCollaborationStore }) => {
+      const collabStore = useCollaborationStore();
+      console.debug("[UI-Socket] CollaborationStore geladen, myUserId:", collabStore.myUserId);
+      console.debug("[UI-Socket] Verfügbare Parameter:", { groupId, userId: collabStore.myUserId, vote, votingRound });
+
+      if (collabStore.myUserId) {
+        sendVote(groupId, collabStore.myUserId, vote, votingRound);
+        console.debug(`[UI-Socket] Stimme gesendet: ${vote} für Runde ${votingRound}`);
+      }
+    });
+  }).onCancel(() => {
+    console.debug("[UI-Socket] Dialog abgebrochen, sende 'rejected'");
+    import("stores/collaborationStore").then(({ useCollaborationStore }) => {
+      const collabStore = useCollaborationStore();
+      if (collabStore.myUserId) {
+        sendVote(groupId, collabStore.myUserId, "rejected", votingRound);
+      }
+    });
+  });
 };
 
 // Verbindungsstatus exportieren

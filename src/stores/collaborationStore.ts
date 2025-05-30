@@ -2,7 +2,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import { Role, useTaskGraphStore } from "stores/taskGraphStore";
-import { connectUISocket, disconnectUISocket, notifyShowSolution } from "../services/uiSocketService";
+import {  connectUISocket, disconnectUISocket, notifyShowSolution, notifySubmitProposal  } from "../services/uiSocketService";
 import { leaveSession } from "stores/sync/automergeSync";
 
 
@@ -34,6 +34,8 @@ export const useCollaborationStore = defineStore("collaborationStore", {
     groupId: null as number | null,
     myUserId: null as number | null,
     roleInfos: {} as Record<number, RoleInfo>,
+    currentVotingRound: 0,
+    isVotingInProgress: false,
   }),
 
   getters: {
@@ -182,6 +184,54 @@ export const useCollaborationStore = defineStore("collaborationStore", {
       } catch (error) {
         console.error("Fehler beim Speichern der Session-Daten:", error);
         return null;
+      }
+    },
+
+    startSubmitProposal() {
+      console.debug("[Collab] Abstimmung für Musterlösung starten");
+
+      // Nur der Gruppensprecher kann eine Abstimmung starten
+      if (this.myCollabRoleId !== 0) {
+        console.warn("[Collab] Nur der Gruppensprecher kann eine Abstimmung starten");
+        return;
+      }
+      if (!this.groupId || !this.myUserId) {
+        console.error("[Collab] Keine Gruppen- oder Benutzer-ID verfügbar");
+        return;
+      }
+      if (this.isVotingInProgress) {
+        console.debug("[Collab] Eine Abstimmung ist bereits im Gange");
+        return;
+      }
+
+      // Abstimmungsrunde erhöhen
+      this.currentVotingRound++;
+      this.isVotingInProgress = true;
+
+      // Abstimmungsvorschlag über WebSocket senden
+      const success = notifySubmitProposal(
+        this.groupId,
+        this.myUserId,
+        this.myCollabRoleId,
+        this.currentVotingRound
+      );
+
+      if (success) {
+        console.debug(`[Collab] Abstimmungsrunde ${this.currentVotingRound} gestartet`);
+      } else {
+        console.error("[Collab] Fehler beim Senden der Abstimmungsanfrage");
+        this.isVotingInProgress = false;
+      }
+    },
+
+    finishVoting(approved: boolean) {
+      this.isVotingInProgress = false;
+
+      if (approved) {
+        console.debug("[Collab] Abstimmung erfolgreich, zeige Musterlösung an");
+        this.showSampleSolution();
+      } else {
+        console.debug("[Collab] Abstimmung abgelehnt, neue Abstimmung möglich");
       }
     },
 
