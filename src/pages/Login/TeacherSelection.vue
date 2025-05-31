@@ -24,7 +24,7 @@
                 <q-btn
                   color="secondary"
                   label="Zurückliegende Bearbeitungen kommentieren"
-                  @click="notImplemented"
+                  @click="goToSessionComment"
                   class="full-width"
                 />
                 <q-btn
@@ -57,12 +57,12 @@ function goToNewTask() {
   router.push("/create-task");
 }
 
-function notImplemented() {
-  //TODO
+function goToSessionComment() {
+  router.push("/comment-selection");
 }
 
 function guideAssessment() {
-  router.push("/guide-assessment");
+  router.push("/grouping-admin");
 }
 
 function configureAssessment() {

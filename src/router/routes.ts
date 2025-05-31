@@ -6,9 +6,36 @@ const routes: RouteRecordRaw[] = [
     redirect: "/login",
   },
   {
+    path: "/comment/:sessionId",
+    name: "CommentPage",
+    component: () => import("src/pages/CommentPage.vue"),
+    props: true
+  },
+  {
+    path: "/comment-selection",
+    name: "Aufzeichungsauswahl",
+    component: () => import("pages/CommentSelection.vue")
+  },
+  {
+    path: "/create-task",
+    name: "CreateTask",
+    component: () => import("pages/TeacherNewTask.vue"),
+  },
+  {
+    path: "/grouping-admin",
+    name: "GroupingAdmin",
+    component: () => import("pages/GroupingAdmin.vue"),
+  },
+  {
     path: "/login",
     name: "Login",
     component: () => import("pages/Login/LoginScreen.vue"),
+  },
+
+  {
+    path: "/main-layout",
+    name: "MainLayout",
+    component: () => import("layouts/MainLayout/MainLayout.vue"),
   },
   {
     path: "/student-selection",
@@ -21,17 +48,6 @@ const routes: RouteRecordRaw[] = [
     component: () => import("pages/Login/TeacherSelection.vue"),
   },
   {
-    path: "/create-task",
-    name: "CreateTask",
-    component: () => import("pages/TeacherNewTask.vue"),
-  },
-  {
-    path: "/main-layout",
-    name: "MainLayout",
-    component: () => import("layouts/MainLayout/MainLayout.vue"),
-  },
-
-  {
     path: "/task/:taskName",
     name: "Task",
 
@@ -40,19 +56,6 @@ const routes: RouteRecordRaw[] = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "task" */ "pages/TaskPage.vue"),
-  },
-
-  {
-    path: "/comment-selection",
-    name: "Aufzeichungsauswahl",
-    component: () => import("pages/CommentSelection.vue")
-  },
-
-  {
-    path: "/comment/:sessionId",
-    name: "CommentPage",
-    component: () => import("src/pages/CommentPage.vue"),
-    props: true
   },
 
   // Always leave this as last one,
