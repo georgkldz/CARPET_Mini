@@ -10,6 +10,9 @@ import type { GroupInfo } from "stores/collaborationStore";
 const API_URL = "http://localhost:3000/api/v1";
 const STATUS_FALLBACK_DELAY = 9000;
 
+let eventSource: EventSource | null = null;
+
+
 /**
  * Sendet die Proficiency an den Grouping-Service und startet den Warteprozess
  */
@@ -101,15 +104,27 @@ async function applyGroupAssignment(group: GroupInfo, myUserId: number) {      /
   }
   applicationStore.joinSession();
 
+}
+
+
+export function resetSSEListener(): void {
+  console.debug("collabservice, resetSSEListener - Schließe bestehende Verbindung");
+
+  if (eventSource) {
+    eventSource.close();
+    eventSource = null;
+  }
+
 
 }
+
 
 /**
  * Richtet einen SSE-Listener ein, der auf Gruppenzuweisungen wartet
  */
 function setupSSEListener(myUserId: number): void {
   console.debug("collabservice, setupSSEListener eingerichtet");
-  const eventSource = new EventSource(`${API_URL}/events`);
+  eventSource = new EventSource(`${API_URL}/events`);
 
   eventSource.onmessage = (event) => {
     console.debug("collabservice, SSE-Event empfangen");
@@ -118,13 +133,13 @@ function setupSSEListener(myUserId: number): void {
 
       if (group.groupId && group.members?.length) {
         applyGroupAssignment(group, myUserId);         // ⇐ ersetzt alten Code
-        eventSource.close();
+        eventSource?.close();
       }
     } catch (err) { console.error("SSE-Fehler:", err); }
   };
 
   eventSource.onerror = () => {
     console.error("SSE-Verbindung fehlgeschlagen");
-    eventSource.close();
+    eventSource?.close();
   };
 }

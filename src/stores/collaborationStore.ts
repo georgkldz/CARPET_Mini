@@ -3,7 +3,8 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import { Role, useTaskGraphStore } from "stores/taskGraphStore";
 import {  connectUISocket, disconnectUISocket, notifyShowSolution, notifySubmitProposal  } from "../services/uiSocketService";
-import { leaveSession } from "stores/sync/automergeSync";
+import { leaveSession, softResetSession } from "stores/sync/automergeSync";
+import { resetSSEListener } from "src/services/collaborationService";
 
 
 export interface GroupMember {
@@ -107,13 +108,25 @@ export const useCollaborationStore = defineStore("collaborationStore", {
     },
 
     async clearGroup() {
+      console.debug("[Collab] Starte Cleanup der Gruppe mit Soft-Reset");
+      resetSSEListener();
       disconnectUISocket();
+      if (this.groupId) {
+        const resetSuccess = await softResetSession(this.groupId);
+        if (resetSuccess) {
+          console.debug("[Collab] Server Soft-Reset erfolgreich für Gruppe:", this.groupId);
+        } else {
+          console.error("[Collab] Server Soft-Reset fehlgeschlagen");
+        }
+      }
+      await leaveSession();
+      this.resetFields();
       this.group = null;
       this.groupId = null;
       this.myUserId = null;
-      this.currentVotingRound = 0,
-      await leaveSession();
-      this.resetFields();
+      this.currentVotingRound = 0;
+      this.isVotingInProgress = false;
+      this.roleInfos = {};
     },
 
     generateFieldPaths() {

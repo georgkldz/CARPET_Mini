@@ -47,6 +47,42 @@ const repo = new Repo({
   storage: new IndexedDBStorageAdapter(),
 });
 
+// Typdefinition für Change-Handler ohne ChangeEvent
+type ChangeHandler = (event: { doc: ComponentDoc }) => void;
+
+// Variable für Change-Handler Referenz
+let changeHandlerRef: ChangeHandler | null = null;
+
+/**
+ * Soft-Reset der Session - ruft Server-Endpunkt auf
+ */
+export async function softResetSession(sessionId: number): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_BASE}/softResetSession`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ sessionId }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Soft-Reset fehlgeschlagen: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.debug("Soft-Reset erfolgreich:", data);
+
+    // Lokalen Cache leeren
+    lastComponentsDataCache.value = {};
+
+    return true;
+  } catch (error) {
+    console.error("Fehler beim Soft-Reset:", error);
+    return false;
+  }
+}
+
 /**
  * Verbesserte Funktion zum Entfernen aller Vue-internen Eigenschaften
  * Extrahiert auch .value aus Ref-Objekten
@@ -104,7 +140,7 @@ function extractCleanValue(value: any): any {
 export async function joinSession(
   sessionId: number,
   taskGraphStore: ReturnType<typeof useTaskGraphStore>,
-) {
+): Promise<void>  {
   console.debug("automerge, joining session mit sessionId", sessionId);
   if (isJoinSessionProcessing) {
     console.debug("automerge, joinSession läuft gerade, breche erneuten Aufruf ab");
@@ -147,11 +183,14 @@ export async function joinSession(
   console.debug("automerge, automergeSync ruft extractFieldValues auf")
   taskGraphStore.extractFieldValues();
 
-  /* ---------------- Listener erst NACH dem Voll-Sync aktivieren ---------------- */
-  handle.on("change", d => {
-    console.debug("automerge, Change-Event von anderem Peer empfangen", d);
-    syncFromDocComponents(d.doc, taskGraphStore);
-  });
+  const handleChange: ChangeHandler = (event) => {
+    console.debug("automerge, Change-Event empfangen", event);
+    syncFromDocComponents(event.doc, taskGraphStore);
+  };
+
+  // Handler speichern für späteren Cleanup
+  changeHandlerRef = handleChange;
+  handle.on("change", handleChange);
   /* -------- Initiale lokale Übernahme der bereits existierenden Daten -------- */
 
   if (snapshot) {
@@ -161,12 +200,44 @@ export async function joinSession(
   isJoinSessionProcessing = false;
 }
 
-export async function leaveSession() {
-  console.debug("automerge, leave session");
+export async function leaveSession(): Promise<void> {
+  console.debug("automerge, leave session - Cleanup");
 
-  documentReady.value = false;
-  isJoinSessionProcessing = false;
-  lastComponentsDataCache.value = null;
+  try {
+    // 1. Change-Listener entfernen
+    if (changeHandlerRef && handle) {
+      handle.off("change", changeHandlerRef);
+      changeHandlerRef = null;
+      console.debug("Change-Listener entfernt");
+    }
+
+    // 2. Handle zurücksetzen (ohne Dokument zu löschen)
+    if (handle) {
+      // Wir löschen das Dokument NICHT, da wir Soft-Reset verwenden
+      handle = null as unknown as DocHandle<ComponentDoc>;
+    }
+
+    // 3. Variablen zurücksetzen
+    documentId = null as unknown as AnyDocumentId;
+    documentReady.value = false;
+    isJoinSessionProcessing = false;
+    lastComponentsDataCache.value = null;
+
+    // 4. TaskGraphStore benachrichtigen
+    const taskGraphStore = useTaskGraphStore();
+    taskGraphStore.setProperty({
+      path: "$.documentReady",
+      value: false
+    });
+
+    console.debug("Session-Cleanup abgeschlossen");
+
+  } catch (error) {
+    console.error("Fehler beim Session-Cleanup:", error);
+    // Trotzdem Variablen zurücksetzen
+    documentReady.value = false;
+    isJoinSessionProcessing = false;
+  }
 }
 
 /**
