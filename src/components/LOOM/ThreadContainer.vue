@@ -245,7 +245,7 @@ const actionHandler = async (actionType: string, payload: any) => {
       } catch (e) {
         console.error("Evaluation fehlgeschlagen:", e);
       }
-      await taskGraphStore.extractFieldValues();
+      //await taskGraphStore.extractFieldValues();
 
       break;
     case "submitProposal":
