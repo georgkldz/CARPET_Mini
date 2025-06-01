@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import type { StateTree } from "pinia";
-import { useApplicationStore } from "./applicationStore";
+import { SerialisedNodes, useApplicationStore } from "./applicationStore";
 import type { AvailableTasks } from "./applicationStore";
 import type { SerialisedTask } from "./applicationStore";
 import { JSONPath } from "jsonpath-plus";
@@ -10,12 +10,11 @@ import type { Task } from "src/models/Task";
 import type {
   StoreAPI,
   JSONPathExpression,
-  StoreSetterPayload,
+  StoreSetterPayload, NestedComponents, SerializedBaseComponent
 } from "carpet-component-library";
 
 import { useTasksStore } from "stores/tasksStore";
 import { nextTick } from "vue";
-import { useCollaborationStore } from "stores/collaborationStore";
 import { useCommentStore } from "stores/commentStore";
 
 export interface EventLog {
@@ -196,12 +195,218 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       console.log("loadDBTaskIntoGraph: Task übernommen:", foundTask);
     },
 
+    /**
+     * Diese Methode sucht automatisch:
+     *  - den Node mit `collaboration.mode === "single"`
+     *  - den Node mit `collaboration.mode === "collaboration"`
+     * Dann kopiert sie für jede NestedComponent, die:
+     *  - `componentConfiguration.isCommentable === true`
+     *  - für jeden key in `transferToCollab` (z.B. ["fieldValue"])
+     * den Wert aus dem Single-Knoten in den Collaboration-Knoten unter dem Präfix `r{roleId}_`.
+     */
+    /**
+     * Überträgt alle in `transferToCollab` aufgelisteten State-Felder
+     * von den kommentierbaren Nested-Components des SINGLE-Knotens
+     * in den COLLABORATION-Knoten unter r{roleId}_<compId>.
+     *
+     * Erwartet:
+     *  - Jeder Node, der kopiert werden soll, hat unter
+     *      collaboration.mode            "single" | "collaboration"
+     *      collaboration.transferToCollab string[]
+     *  - Nur Komponenten mit
+     *      componentConfiguration.isCommentable === true
+     *    werden berücksichtigt.
+     */
+    async transferStateValuesToCollab() {
+      /* ----------------------------------------------------------
+       * 1) Warten bis der TaskGraph geladen ist
+       * -------------------------------------------------------- */
+      while (!this.getProperty("$.documentReady")) {
+        await nextTick();
+      }
+
+      /* ----------------------------------------------------------
+       * 2) Knoten bestimmen
+       * -------------------------------------------------------- */
+      const allNodes = this.getProperty("$.nodes") as SerialisedNodes;
+
+      let srcNodeKey: string | null = null;
+      let dstNodeKey: string | null = null;
+
+      for (const [key, node] of Object.entries(allNodes)) {
+        switch (node.collaboration?.mode) {
+          case "single":
+            srcNodeKey = key;
+            break;
+          case "collaboration":
+            dstNodeKey = key;
+            break;
+        }
+        if (srcNodeKey && dstNodeKey) break;
+      }
+      if (!srcNodeKey || !dstNodeKey) {
+        console.warn("[transferStateValuesToCollab] Kein gültiges single/collaboration-Paar gefunden.");
+        return;
+      }
+
+      const srcNode = allNodes[Number(srcNodeKey)];
+
+
+      /* ----------------------------------------------------------
+       * 3) Welche State-Keys sollen kopiert werden?
+       * -------------------------------------------------------- */
+      const transferKeys = srcNode.collaboration?.transferToCollab ?? [];
+      if (transferKeys.length === 0) return;
+
+      const myRoleId = this.myCollabRoleId;
+
+      /* ----------------------------------------------------------
+       * 4) Loop über alle Components & NestedComponents
+       * -------------------------------------------------------- */
+      const srcComponentsBase = `$.nodes.${srcNodeKey}.components` as JSONPathExpression;
+      const dstComponentsBase = `$.nodes.${dstNodeKey}.components` as JSONPathExpression;
+
+      const srcComponentIDs = Object.keys(
+        this.getProperty(srcComponentsBase) as Record<string, unknown>
+      );
+
+      for (const compKey of srcComponentIDs) {
+        // nestedComponents des aktuellen Components
+        const nestedGroups = this.getProperty(
+          `${srcComponentsBase}.${compKey}.nestedComponents`
+        ) as NestedComponents;
+
+        for (const groupName of Object.keys(nestedGroups)) {
+          // In der Form haben die Gruppen (formComponents, actionComponents, …)
+          // typischerweise nur SerializedBaseComponents
+          const group =
+            nestedGroups[groupName] as Record<string, SerializedBaseComponent>;
+
+          for (const nestedCompKey of Object.keys(group)) {
+            const nestedComp = group[nestedCompKey];
+
+            /* ---- 4.1) Filter ------------------------------------------------- */
+            const cfg = nestedComp.componentConfiguration;
+            if (!cfg || cfg.isCommentable !== true) continue; // nicht kommentierbar
+
+            const stateObj = nestedComp.state as Record<string, unknown>;
+            // nur Keys kopieren, die 1) in transferKeys stehen & 2) im State existieren
+            const keysToCopy = transferKeys.filter((k) => k in stateObj);
+            if (keysToCopy.length === 0) continue;
+
+            /* ---- 4.2) Werte kopieren ----------------------------------------- */
+            for (const tKey of keysToCopy) {
+              const val = stateObj[tKey];
+              if (val === undefined) continue;
+
+              const dstNestedCompKey = `r${myRoleId}_${nestedCompKey}`;
+              const dstPath = `${dstComponentsBase}.${compKey}.nestedComponents.${groupName}.${dstNestedCompKey}.state.${tKey}`;
+
+              console.debug(
+                `[transferStateValuesToCollab] ${tKey}: ${srcNodeKey}/${nestedCompKey} → ${dstNodeKey}/${dstNestedCompKey}`,
+                val
+              );
+
+              this.setProperty({
+                path: dstPath as JSONPathExpression,
+                value: val,
+              });
+            }
+          }
+        }
+      }
+    },
+
+    /**
+     * Löscht alle synchronisierbaren State-Felder im SINGLE-Knoten,
+     * indem sie auf den leeren String "" gesetzt werden.
+     *
+     *  • Sucht automatisch den Node mit collaboration.mode === "single".
+     *  • Liest dessen collaboration.transferToCollab (z. B. ["fieldValue"]).
+     *  • Durchläuft alle Nested-Components und setzt – **ausschließlich bei
+     *    isCommentable === true** – jedes dieser Felder auf "".
+     *
+     * Achtung: Falls ein Feld ursprünglich kein String war (z. B. Zahl oder Objekt),
+     * wird es dennoch auf "" gesetzt.  Solltest du dort lieber `null` o. Ä. brauchen,
+     * muss die Zuweisung in der `resetValue`-Funktion angepasst werden.
+     */
+    async clearSinglePhaseValues() {
+      /* ----------------------------------------------------------
+       * 1) Dokument fertig?
+       * -------------------------------------------------------- */
+      while (!this.getProperty("$.documentReady")) {
+        await nextTick();
+      }
+
+      /* ----------------------------------------------------------
+       * 2) SINGLE-Node finden und Transfer-Keys lesen
+       * -------------------------------------------------------- */
+      const nodes = this.getProperty("$.nodes") as SerialisedNodes;
+
+      const singleNodeEntry = Object.entries(nodes).find(
+        ([, node]) => node.collaboration?.mode === "single"
+      );
+      if (!singleNodeEntry) return;
+
+      const [singleKeyStr, singleNode] = singleNodeEntry;
+      const transferKeys = singleNode.collaboration?.transferToCollab ?? [];
+      if (transferKeys.length === 0) return;
+
+      /* ----------------------------------------------------------
+       * 3) Schleife über alle Components & NestedComponents
+       * -------------------------------------------------------- */
+      const srcComponentsBase = `$.nodes.${singleKeyStr}.components` as JSONPathExpression;
+      const componentIDs = Object.keys(
+        this.getProperty(srcComponentsBase) as Record<string, unknown>
+      );
+
+      // Hilfsfunktion: auf welchen Wert soll zurückgesetzt werden?
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const resetValue = (_old: unknown): string => "";
+
+      for (const compKey of componentIDs) {
+        const nestedGroups = this.getProperty(
+          `${srcComponentsBase}.${compKey}.nestedComponents`
+        ) as NestedComponents;
+
+        for (const groupName of Object.keys(nestedGroups)) {
+          const group = nestedGroups[groupName] as Record<
+            string,
+            SerializedBaseComponent
+          >;
+
+          for (const nestedCompKey of Object.keys(group)) {
+            const nestedComp = group[nestedCompKey];
+
+            // nur kommentierbare Komponenten
+            if (nestedComp.componentConfiguration?.isCommentable !== true) continue;
+
+            const stateObj = nestedComp.state as Record<string, unknown>;
+            const keysToClear = transferKeys.filter((k: string) => k in stateObj);
+            if (keysToClear.length === 0) continue;
+
+            // zurücksetzen
+            for (const tKey of keysToClear) {
+              const srcPath =
+                `${srcComponentsBase}.` +
+                `${compKey}.nestedComponents.${groupName}.` +
+                `${nestedCompKey}.state.${tKey}`;
+
+              this.setProperty({
+                path: srcPath as JSONPathExpression,
+                value: resetValue(stateObj[tKey]),
+              });
+            }
+          }
+        }
+      }
+    },
 
     async extractFieldValues() {
       while (!this.getProperty("$.documentReady")) {
         await nextTick()
       }
-      const myRoleId  = useCollaborationStore().myCollabRoleId ?? 0;
+      const myRoleId  =this.myCollabRoleId;
       console.debug("extractFieldvalues lädt aus collabStore roleId ", myRoleId);
       const srcBase = "$.nodes.0.components.0.nestedComponents.formComponents";
       const dstBase = "$.nodes.2.components.0.nestedComponents.formComponents";

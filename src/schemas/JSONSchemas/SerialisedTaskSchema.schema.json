@@ -1851,12 +1851,19 @@
       "properties": {
         "collaboration": {
           "additionalProperties": false,
-          "properties": {
-            "mode": {
-              "$ref": "#/definitions/CollaborationMode"
+             "properties": {
+                "mode": {
+                  "$ref": "#/definitions/CollaborationMode"
+               },
+             "transferToCollab": {
+                 "type": "array",
+               "description": "Welche state-Felder (z.B. \"fieldValue\") übertragen werden sollen.",
+               "items": {
+                   "type": "string"
+               }
             }
-          },
-          "required": ["mode"],
+           },
+           "required": ["mode"],
           "type": "object"
         },
         "components": {

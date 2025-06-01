@@ -120,6 +120,8 @@ export const useCollaborationStore = defineStore("collaborationStore", {
         }
       }
       await leaveSession();
+      const taskGraphStore = useTaskGraphStore();
+      taskGraphStore.clearSinglePhaseValues();
       this.resetFields();
       this.group = null;
       this.groupId = null;

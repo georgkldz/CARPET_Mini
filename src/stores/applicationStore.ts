@@ -80,6 +80,7 @@ export interface SerialisedNode {
   components: SerialisedComponents;
   collaboration?: {
     mode: CollaborationMode;
+    transferToCollab?: string[];
   };
   hints?: Hints;
   modal?: Modals;

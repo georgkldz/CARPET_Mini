@@ -4,7 +4,8 @@
   "nodes": {
     "0": {
       "collaboration": {
-        "mode": "single"
+        "mode": "single",
+        "transferToCollab": ["fieldValue"]
       },
       "layouts": {
         "desktop": {
@@ -64,7 +65,8 @@
                 },
                 "componentConfiguration": {},
                 "dependencies": {
-                  "referenceValue": "$.taskData.taskDescription"
+                  "referenceValue": "$.taskData.taskDescription",
+                  "isCommentable": false
                 },
                 "validationConfiguration": {}
               },
@@ -86,7 +88,9 @@
                   "fieldValue": "",
                   "fieldConfiguration": {}
                 },
-                "componentConfiguration": {},
+                "componentConfiguration": {
+                  "isCommentable": false
+                },
                 "dependencies": {},
                 "validationConfiguration": {}
               },
@@ -166,7 +170,9 @@
                   "fieldValue": "",
                   "fieldConfiguration": {}
                 },
-                "componentConfiguration": {},
+                "componentConfiguration": {
+                  "isCommentable": false
+                },
                 "dependencies": {
                   "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.textView3.state.fieldValue"
                 },
@@ -208,7 +214,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {},
                 "validationConfiguration": {
@@ -230,7 +237,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {},
                 "validationConfiguration": {
@@ -257,7 +265,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {},
                 "validationConfiguration": {
@@ -284,7 +293,8 @@
                   "icon": "",
                   "label": "",
                   "hint": "",
-                  "placeholder": ""
+                  "placeholder": "",
+                  "isCommentable": true
                 },
                 "dependencies": {},
                 "validationConfiguration": {
