@@ -20,11 +20,11 @@ import { useRoute } from "vue-router";
 import LOOM from "src/components/LOOM/LOOM.vue";
 import LoadingSpinner from "src/components/LoadingSpinner.vue";
 import { useTaskGraphStore } from "src/stores/taskGraphStore";
-import { useApplicationStore } from "stores/applicationStore";
+
 //import WaitingRoom from "components/LOOM/WaitingRoom.vue";
 
 const taskStore = useTaskGraphStore();
-const applicationStore = useApplicationStore();
+
 const { getProperty } = taskStore;
 
 const route = useRoute();
@@ -70,7 +70,7 @@ const trackMouse = (event: MouseEvent) => {
 };
 onMounted(() => {
   document.addEventListener("mousemove", trackMouse);
-  applicationStore.joinSession();
+
 });
 
 onBeforeUnmount(() => {

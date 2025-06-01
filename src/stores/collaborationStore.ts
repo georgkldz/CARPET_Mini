@@ -111,6 +111,7 @@ export const useCollaborationStore = defineStore("collaborationStore", {
       this.group = null;
       this.groupId = null;
       this.myUserId = null;
+      this.currentVotingRound = 0,
       await leaveSession();
       this.resetFields();
     },
