@@ -22,7 +22,7 @@ const WS_URL = "ws://localhost:3000/sync"; // Automerge‑Socket
 
 interface ComponentDoc {
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  componentsData?: { [idOrPath: string]: any };
+  jsonData?: { [idOrPath: string]: any };
 }
 
 
@@ -167,7 +167,7 @@ export async function joinSession(
     console.debug("automerge, DocHandle ist bereit", handle.documentId);
 
   const snapshot = await handle.doc();
-  console.debug("automerge, doc geladen", snapshot?.componentsData);
+  console.debug("automerge, doc geladen", snapshot?.jsonData);
 
 
 
@@ -261,29 +261,29 @@ export async function syncSingleComponentChange(
 
   handle.change((doc) => {
     console.debug("automergeSync, handle.change innerhalb syncSingleComponentChange betreten", path, doc);
-    if (!doc.componentsData) {
+    if (!doc.jsonData) {
       console.debug("automerge, innerhalb syncSingleComponentChange wird automerge-Dokument initial angelegt weil keine Struktur vorhanden");
-      doc.componentsData = {}; // nur ein Mal anlegen
+      doc.jsonData = {}; // nur ein Mal anlegen
     }
-    doc.componentsData[path] = cleanVal;             // NEU
+    doc.jsonData[path] = cleanVal;             // NEU
     console.debug("automerge, syncSingleComponentChange (flat) ->", path, cleanVal, uid);
 
   });
 }
 
 /**
- * syncFromDocComponents - compares doc.componentsData with lastComponentsDataCache
+ * syncFromDocComponents - compares doc.jsonData with lastComponentsDataCache
  * and applies changes from Automerge to the Store
  */
 export function syncFromDocComponents(
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  doc: { componentsData?: Record<string, any> },
+  doc: { jsonData?: Record<string, any> },
   taskGraphStore: ReturnType<typeof useTaskGraphStore>,
 ) {
-  console.log("automerge, syncFromDocComponents betreten, erhaltenes Dokument: ", doc.componentsData);
-  if (!doc.componentsData) return;
+  console.log("automerge, syncFromDocComponents betreten, erhaltenes Dokument: ", doc.jsonData);
+  if (!doc.jsonData) return;
 
-  const newComponentsRaw = doc.componentsData;
+  const newComponentsRaw = doc.jsonData;
 
   // 1) Filtere Vue-spezifische Keys heraus und nur .fieldValue-Pfade beibehalten
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
