@@ -13,6 +13,7 @@ import { isEqual } from "lodash";
 
 import { useTaskGraphStore } from "stores/taskGraphStore.js";
 import { JSONPathExpression } from "carpet-component-library";
+import {isTransferablePath} from "stores/helpers/collabHelpers";
 
 
 // Server-Endpunkt
@@ -251,8 +252,7 @@ export async function syncSingleComponentChange(
     console.warn("Dokument noch nicht bereit, kann nicht syncen");
     return;
   }
-
-  if (!(path.endsWith(".fieldValue") || path.includes("fieldValueByUser") )) {
+  if (!isTransferablePath(path)) {
     console.log("Ignoriere Sync, da kein relevantes Feld:", path);
     return;
   }
@@ -321,7 +321,7 @@ export function syncFromDocComponents(
   // 3) Find deleted Keys
   if (oldComponents.value) {
     for (const key of Object.keys(oldComponents.value)) {
-      if (!key.endsWith(".fieldValue") && !key.includes("fieldValueByUser")) {
+      if (!isTransferablePath(key)) {
         console.debug("Übersprungen wird ", key, oldComponents.value[key]);
         continue;
       }
@@ -348,7 +348,7 @@ export function syncFromDocComponents(
     }
 
     // Sicherheits­check für beide Typen
-    if (!path.endsWith(".fieldValue") && !path.includes("fieldValueByUser")) {
+    if (!isTransferablePath(path)) {
       console.debug("Ignoriere Patch, keiner der erlaubten Pfade:", path);
       return;
     }

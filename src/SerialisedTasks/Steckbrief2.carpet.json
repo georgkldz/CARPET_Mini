@@ -375,7 +375,8 @@
     },
     "2": {
       "collaboration": {
-        "mode": "collaboration"
+        "mode": "collaboration",
+        "transferToCollab": ["fieldValue"]
       },
       "layouts": {
         "desktop": {

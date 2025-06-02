@@ -372,6 +372,7 @@ export const useCollaborationStore = defineStore("collaborationStore", {
         );
         console.debug("[Collab] Musterlösungsanzeige an andere Gruppenmitglieder gesendet");
       }
-    }
+    },
+
   }
 });
