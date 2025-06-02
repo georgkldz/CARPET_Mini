@@ -73,7 +73,7 @@ export interface Modal {
 }
 export type Modals = Array<Modal>;
 
-export type CollaborationMode = "single" | "groupBuilding" | "collaboration";
+export type CollaborationMode = "single" | "groupBuilding" | "collaboration" | "solutionView";
 
 export interface SerialisedNode {
   layouts: Layouts;

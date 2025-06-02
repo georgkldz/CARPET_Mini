@@ -5,7 +5,6 @@ import type { AvailableTasks } from "./applicationStore";
 import type { SerialisedTask } from "./applicationStore";
 import { JSONPath } from "jsonpath-plus";
 import { syncSingleComponentChange } from "stores/sync/automergeSync";
-import type { Task } from "src/models/Task";
 
 import type {
   StoreAPI,
@@ -13,7 +12,6 @@ import type {
   StoreSetterPayload, NestedComponents, SerializedBaseComponent
 } from "carpet-component-library";
 
-import { useTasksStore } from "stores/tasksStore";
 import { nextTick } from "vue";
 import { useCommentStore } from "stores/commentStore";
 
@@ -109,111 +107,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
   },
 
   actions: {
-    /**
-     * Extra-Action, um den Task aus der DB (bzw. tasksStore) zu laden
-     * und bestimmte Felder in das JSON des SerialisedTask zu schreiben
-     * (z.B. description, hint, etc.).
-     */
-    loadDBTaskIntoGraph() {
-      console.log("loadDBTaskIntoGraph gestartet");
-      // 1. Task-ID holen
-      const taskId = this.getCurrentTaskId;
-      if (!taskId) {
-        console.warn("Keine aktuelle Task-ID definiert.");
-        return;
-      }
-      console.log("currentTaskId ist ", taskId);
-      // 2. tasksStore importieren + Task finden
-      const tasksStore = useTasksStore();
-      const foundTask: Task | undefined = tasksStore.getTaskById(taskId);
-      if (!foundTask) {
-        console.warn(`Task mit ID=${taskId} nicht im tasksStore gefunden.`);
-        return;
-      }
 
-      // 3. Gewünschte Felder in den "taskGraphState" schreiben,
-      //    z. B. an JSON-Pfade für description/hint
-      //  (Passe diese Pfade an deine JSON-Struktur an!)
-      this.setProperty({
-        path: "$.nodes.0.components.0.nestedComponents.formComponents.textView1.state.textSegments[0].text",
-        value: foundTask.description,
-      });
-      this.setProperty({
-        path: "$.nodes.2.components.0.nestedComponents.formComponents.textView1.state.textSegments[0].text",
-        value: foundTask.description,
-      });
-      this.setProperty({
-        path: "$.nodes.3.components.5.nestedComponents.formComponents.textView1.state.textSegments[0].text",
-        value: foundTask.description,
-      });
-      this.setProperty({
-        path: "$.taskData.taskDescription",
-        value: foundTask.description,
-      });
-      this.setProperty({
-        path: "$.taskData.hint",
-        value: foundTask.hint ?? "",
-      });
-      // Im loadDBTaskIntoGraph():
-      this.setProperty({
-        path: "$.taskData.degree",
-        value: foundTask.degree,
-      });
-      this.setProperty({
-        path: "$.taskData.symmetry",
-        value: foundTask.symmetry,
-      });
-      this.setProperty({
-        path: "$.taskData.solutions.textFieldEquation1",
-        value: foundTask.solutions?.textFieldEquation1 ?? "",
-      });
-      this.setProperty({
-        path: "$.taskData.solutions.textFieldEquation2",
-        value: foundTask.solutions?.textFieldEquation2 ?? "",
-      });
-      this.setProperty({
-        path: "$.taskData.solutions.textFieldEquation3",
-        value: foundTask.solutions?.textFieldEquation3 ?? "",
-      });
-      this.setProperty({
-        path: "$.taskData.solutions.textFieldEquation4",
-        value: foundTask.solutions?.textFieldEquation4 ?? "",
-      });
-      this.setProperty({
-        path: "$.taskData.solutions.textFieldEquation5",
-        value: foundTask.solutions?.textFieldEquation5 ?? "",
-      });
-      this.setProperty({
-        path: "$.taskData.solutions.sampleSolutionCollaborativeWork",
-        value: foundTask.solutions?.sampleSolutionCollaborativeWork ?? "",
-      });
-
-      // Ggf. weitere Felder
-      console.log("loadDBTaskIntoGraph: Task übernommen:", foundTask);
-    },
-
-    /**
-     * Diese Methode sucht automatisch:
-     *  - den Node mit `collaboration.mode === "single"`
-     *  - den Node mit `collaboration.mode === "collaboration"`
-     * Dann kopiert sie für jede NestedComponent, die:
-     *  - `componentConfiguration.isCommentable === true`
-     *  - für jeden key in `transferToCollab` (z.B. ["fieldValue"])
-     * den Wert aus dem Single-Knoten in den Collaboration-Knoten unter dem Präfix `r{roleId}_`.
-     */
-    /**
-     * Überträgt alle in `transferToCollab` aufgelisteten State-Felder
-     * von den kommentierbaren Nested-Components des SINGLE-Knotens
-     * in den COLLABORATION-Knoten unter r{roleId}_<compId>.
-     *
-     * Erwartet:
-     *  - Jeder Node, der kopiert werden soll, hat unter
-     *      collaboration.mode            "single" | "collaboration"
-     *      collaboration.transferToCollab string[]
-     *  - Nur Komponenten mit
-     *      componentConfiguration.isCommentable === true
-     *    werden berücksichtigt.
-     */
     async transferStateValuesToCollab() {
       /* ----------------------------------------------------------
        * 1) Warten bis der TaskGraph geladen ist
@@ -314,20 +208,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       }
     },
 
-    /**
-     * Löscht alle synchronisierbaren State-Felder im SINGLE-Knoten,
-     * indem sie auf den leeren String "" gesetzt werden.
-     *
-     *  • Sucht automatisch den Node mit collaboration.mode === "single".
-     *  • Liest dessen collaboration.transferToCollab (z. B. ["fieldValue"]).
-     *  • Durchläuft alle Nested-Components und setzt – **ausschließlich bei
-     *    isCommentable === true** – jedes dieser Felder auf "".
-     *
-     * Achtung: Falls ein Feld ursprünglich kein String war (z. B. Zahl oder Objekt),
-     * wird es dennoch auf "" gesetzt.  Solltest du dort lieber `null` o. Ä. brauchen,
-     * muss die Zuweisung in der `resetValue`-Funktion angepasst werden.
-     */
-    async clearSinglePhaseValues() {
+     async clearSinglePhaseValues() {
       console.debug("TaskGraphStore, clearSinglePhaseValues aufgerufen");
       /* ----------------------------------------------------------
        * 1) Dokument fertig?
@@ -398,40 +279,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
           }
         }
       }
-    },
-
-    async extractFieldValues() {
-      while (!this.getProperty("$.documentReady")) {
-        await nextTick()
-      }
-      const myRoleId  =this.myCollabRoleId;
-      console.debug("extractFieldvalues lädt aus collabStore roleId ", myRoleId);
-      const srcBase = "$.nodes.0.components.0.nestedComponents.formComponents";
-      const dstBase = "$.nodes.2.components.0.nestedComponents.formComponents";
-
-      // alle Feld-IDs der Steckbrief-Aufgabe
-      const fields = [
-        "latexInputField1",
-        "latexInputField2",
-        "latexInputField3",
-        "inputField1",
-        "inputField2",
-        "inputField3",
-        "inputField4",
-      ];
-      fields.forEach((fid) => {
-        const srcPath = `${srcBase}.${fid}.state.fieldValue` as JSONPathExpression;
-        const val = this.getProperty(srcPath);
-
-        if (val === undefined) return;
-
-        const compId = `r${myRoleId}_${fid}`;
-        console.debug("taskGraphStore, extractFieldValues schreibt " + `${dstBase}.${compId}.state.fieldValue`, val);
-        this.setProperty({
-          path: `${dstBase}.${compId}.state.fieldValue`,
-          value: val,
-        });
-      });
     },
 
     extractValuesByPaths(paths: string[]): Record<string, unknown> {
@@ -587,8 +434,6 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
 
     exitCommentMode() {
       this.isCommentMode = false;
-      // Optional: Store zurücksetzen oder zur Task-Auswahl navigieren
-      this.$reset();
     },
 
     // In den actions des useTaskGraphStore
