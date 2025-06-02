@@ -181,7 +181,7 @@ export async function joinSession(
   });
 
   console.debug("automerge, automergeSync ruft extractFieldValues auf")
-  taskGraphStore.extractFieldValues();
+  taskGraphStore.transferStateValuesToCollab();
 
   const handleChange: ChangeHandler = (event) => {
     console.debug("automerge, Change-Event empfangen", event);

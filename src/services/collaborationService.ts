@@ -3,12 +3,11 @@ import axios from "axios";
 import { useUserStore } from "stores/userStore";
 import { useCollaborationStore } from "stores/collaborationStore";
 import { useApplicationStore } from "stores/applicationStore";
-import { useTasksStore } from "stores/tasksStore";
 import { useTaskGraphStore } from "stores/taskGraphStore";
 import type { GroupInfo } from "stores/collaborationStore";
 
 const API_URL = "http://localhost:3000/api/v1";
-const STATUS_FALLBACK_DELAY = 9000;
+const STATUS_FALLBACK_DELAY = 4000;
 
 let eventSource: EventSource | null = null;
 
@@ -20,8 +19,8 @@ export async function joinCollaboration(): Promise<void> {
   const userStore = useUserStore();
 
   // Direkter Zugriff auf tasksStore statt über Getter
-  const tasksStore = useTasksStore();
-  const taskId = tasksStore.getCurrentTaskId;
+  const taskGraphStore = useTaskGraphStore();
+  const taskId = taskGraphStore.getCurrentTaskId;
   const userId = userStore.userId;
 
   if (!userId || !taskId) {

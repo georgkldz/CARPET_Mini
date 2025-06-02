@@ -105,9 +105,8 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
       return state.nodes[state.currentNode]?.collaboration?.mode ?? "single";
     },
     // Ruft den Getter aus dem authStore auf, der die ID der aktuellen Aufgabe liefert
-    getCurrentTaskId(): number | null {
-      const tasksStore = useTasksStore();
-      return tasksStore.getCurrentTaskId;
+    getCurrentTaskId( state: TaskGraphState,): number | null {
+      return state.taskData?.taskId;
     },
   },
 
@@ -331,6 +330,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
      * muss die Zuweisung in der `resetValue`-Funktion angepasst werden.
      */
     async clearSinglePhaseValues() {
+      console.debug("TaskGraphStore, clearSinglePhaseValues aufgerufen");
       /* ----------------------------------------------------------
        * 1) Dokument fertig?
        * -------------------------------------------------------- */
@@ -391,7 +391,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
                 `${srcComponentsBase}.` +
                 `${compKey}.nestedComponents.${groupName}.` +
                 `${nestedCompKey}.state.${tKey}`;
-
+             console.debug("taskGraphStore, clearSinglePhaseValues schreibt", srcPath, resetValue(stateObj[tKey]));
               this.setProperty({
                 path: srcPath as JSONPathExpression,
                 value: resetValue(stateObj[tKey]),
@@ -681,6 +681,7 @@ export const useTaskGraphStore = defineStore("taskGraphStore", {
           value: currentTask.rootNode,
         });
       }
+
 
       const taskDescription = this.getProperty("$.taskData.taskDescription");
       this.setProperty({

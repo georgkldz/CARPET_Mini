@@ -5,6 +5,8 @@ import { Role, useTaskGraphStore } from "stores/taskGraphStore";
 import {  connectUISocket, disconnectUISocket, notifyShowSolution, notifySubmitProposal  } from "../services/uiSocketService";
 import { leaveSession, softResetSession } from "stores/sync/automergeSync";
 import { resetSSEListener } from "src/services/collaborationService";
+import { SerialisedNodes } from "stores/applicationStore";
+import { NestedComponents, SerializedBaseComponent } from "carpet-component-library";
 
 
 export interface GroupMember {
@@ -110,6 +112,16 @@ export const useCollaborationStore = defineStore("collaborationStore", {
     async clearGroup() {
       console.debug("[Collab] Starte Cleanup der Gruppe mit Soft-Reset");
       resetSSEListener();
+
+      try {
+        await axios.post("http://localhost:3000/api/v1/grouping/leave", {
+          userId: this.myUserId
+        });
+        console.debug("[Collab] Backend über Gruppenverlassen informiert");
+      } catch (error) {
+        console.error("[Collab] Fehler beim Informieren des Backends:", error);
+      }
+
       disconnectUISocket();
       if (this.groupId) {
         const resetSuccess = await softResetSession(this.groupId);
@@ -122,7 +134,7 @@ export const useCollaborationStore = defineStore("collaborationStore", {
       await leaveSession();
       const taskGraphStore = useTaskGraphStore();
       taskGraphStore.clearSinglePhaseValues();
-      this.resetFields();
+      this.clearCollaborationInputs();
       this.group = null;
       this.groupId = null;
       this.myUserId = null;
@@ -131,40 +143,122 @@ export const useCollaborationStore = defineStore("collaborationStore", {
       this.roleInfos = {};
     },
 
-    generateFieldPaths() {
-      const roles = ["r0", "r1", "r2", "r3"];
-      const fieldTypes = [
-        { prefix: "latexInputField", count: 3 },
-        { prefix: "inputField", count: 5 }
-      ];
+    // generateFieldPaths() {
+    //   const roles = ["r0", "r1", "r2", "r3"];
+    //   const fieldTypes = [
+    //     { prefix: "latexInputField", count: 3 },
+    //     { prefix: "inputField", count: 5 }
+    //   ];
+    //
+    //   const paths = [];
+    //
+    //   roles.forEach(role => {
+    //     fieldTypes.forEach(type => {
+    //       for (let i = 1; i <= type.count; i++) {
+    //         paths.push(`$.nodes.2.components.0.nestedComponents.formComponents.${role}_${type.prefix}${i}.state.fieldValue`);
+    //       }
+    //     });
+    //   });
+    //
+    //   // Spezielle Pfade hinzufügen
+    //   paths.push("$.nodes.2.components.0.nestedComponents.extraRightComponents.canvas.state.fieldValue");
+    //   paths.push("$.nodes.2.components.0.nestedComponents.extraRightComponents.explanation.state.fieldValue");
+    //   paths.push("$.nodes.2.components.0.nestedComponents.extraRightComponents.result.state.fieldValue");
+    //
+    //   return paths;
+    // },
+    //
+    // // In den actions des useCollaborationStore
+    // resetFields() {
+    //   const taskGraphStore = useTaskGraphStore();
+    //   const fieldPaths = this.generateFieldPaths();
+    //
+    //   // Rufe die neue resetValuesByPath-Methode im taskGraphStore auf
+    //   taskGraphStore.resetValuesByPath(fieldPaths);
+    //   console.debug("[Collab] Alle Kollaborationsfelder wurden zurückgesetzt");
+    // },
 
-      const paths = [];
+    collectPaths(
+      basePath: string,                        // aktueller JSONPath-Prefix
+      node: SerializedBaseComponent | NestedComponents,
+      transferKeys: string[],
+      out: string[]
+    ) {
+      // Fall A: echtes Component-Objekt (enthält "type")
+      if ((node as SerializedBaseComponent).type) {
+        const comp = node as SerializedBaseComponent;
+        if (comp.componentConfiguration?.isCommentable === true) {
+          const stateObj = comp.state as Record<string, unknown>;
+          transferKeys
+            .filter((k) => k in stateObj)
+            .forEach((k) => out.push(`${basePath}.state.${k}`));
+        }
+        return;
+      }
 
-      roles.forEach(role => {
-        fieldTypes.forEach(type => {
-          for (let i = 1; i <= type.count; i++) {
-            paths.push(`$.nodes.2.components.0.nestedComponents.formComponents.${role}_${type.prefix}${i}.state.fieldValue`);
-          }
-        });
+      // Fall B: weiterer Container – rekursiv tiefer gehen
+      const container = node as NestedComponents;
+      Object.entries(container).forEach(([childKey, childVal]) => {
+        this.collectPaths(
+          `${basePath}.${childKey}`,
+          childVal as SerializedBaseComponent | NestedComponents,
+          transferKeys,
+          out
+        );
+      });
+    },
+
+    /**  Haupt­aktion: setzt alle synchronisierbaren Felder der Kollaborations­phase auf ""  */
+    clearCollaborationInputs() {
+      const taskGraphStore = useTaskGraphStore();
+      const nodes = taskGraphStore.getProperty("$.nodes") as SerialisedNodes;
+
+      /* ---------- 1) Collaboration-Node finden ------------------------- */
+      const collabEntry = Object.entries(nodes).find(
+        ([, n]) => n.collaboration?.mode === "collaboration"
+      );
+      if (!collabEntry) {
+        console.warn("[Collab] Kein Node mit mode=collaboration gefunden");
+        return;
+      }
+      const [collabKey, collabNode] = collabEntry;
+
+      /* ---------- 2) transferKeys bestimmen ---------------------------- */
+      const transferKeys =
+        collabNode.collaboration?.transferToCollab?.length
+          ? collabNode.collaboration.transferToCollab
+          : ["fieldValue"]; // Fallback
+      const pathsToClear: string[] = [];
+
+      /* ---------- 3) Rekursiv durch alle Components -------------------- */
+      const components = taskGraphStore.getProperty(
+        `$.nodes.${collabKey}.components`
+      ) as Record<string, unknown>;
+
+      Object.keys(components).forEach((cid) => {
+        const nestedRoot = taskGraphStore.getProperty(
+          `$.nodes.${collabKey}.components.${cid}.nestedComponents`
+        ) as NestedComponents;
+
+        this.collectPaths(
+          `$.nodes.${collabKey}.components.${cid}.nestedComponents`,
+          nestedRoot,
+          transferKeys,
+          pathsToClear
+        );
       });
 
-      // Spezielle Pfade hinzufügen
-      paths.push("$.nodes.2.components.0.nestedComponents.extraRightComponents.canvas.state.fieldValue");
-      paths.push("$.nodes.2.components.0.nestedComponents.extraRightComponents.explanation.state.fieldValue");
-      paths.push("$.nodes.2.components.0.nestedComponents.extraRightComponents.result.state.fieldValue");
-
-      return paths;
+      /* ---------- 4) Batch-Reset via taskGraphStore -------------------- */
+      if (pathsToClear.length) {
+        taskGraphStore.resetValuesByPath(pathsToClear);
+        console.debug(
+          `[Collab] ${pathsToClear.length} Kollaborations­felder geleert`
+        );
+      } else {
+        console.debug("[Collab] Keine Felder zu leeren gefunden");
+      }
     },
 
-    // In den actions des useCollaborationStore
-    resetFields() {
-      const taskGraphStore = useTaskGraphStore();
-      const fieldPaths = this.generateFieldPaths();
-
-      // Rufe die neue resetValuesByPath-Methode im taskGraphStore auf
-      taskGraphStore.resetValuesByPath(fieldPaths);
-      console.debug("[Collab] Alle Kollaborationsfelder wurden zurückgesetzt");
-    },
 
     async saveSessionData() {
       if (!this.group || !this.groupId || !this.myUserId) {

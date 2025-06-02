@@ -2985,6 +2985,7 @@
     }
   },
   "taskData": {
+    "taskId": 2,
     "taskDescription": "Gesucht ist eine Funktion 3. Grades, deren Graph den Wendepunkt W (0|1) besitzt und den Hochpunkt H( 1|2) hat.",
     "degree": 3,
     "symmetry": "none",
