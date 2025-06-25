@@ -9,10 +9,12 @@
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
     "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
-    "test": "echo \"No test specified\" && exit 0",
+    "test": "echo \"See package.json => scripts for available tests.\" && exit 0",
     "dev": "quasar dev",
     "build": "quasar build",
-    "build:schema": "npx typescript-json-schema ./src/stores/applicationStore.ts \"SerialisedTask\" --ignoreErrors --noExtraProps --required --out ./src/schemas/JSONSchemas/SerialisedTaskSchema.schema.json && npx json-schema-to-zod -i ./src/schemas/JSONSchemas/SerialisedTaskSchema.schema.json -o ./src/schemas/zodSchemas/SerialisedTaskSchema.ts && prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore"
+    "build:schema": "npx typescript-json-schema ./src/stores/applicationStore.ts \"SerialisedTask\" --ignoreErrors --noExtraProps --required --out ./src/schemas/JSONSchemas/SerialisedTaskSchema.schema.json && npx json-schema-to-zod -i ./src/schemas/JSONSchemas/SerialisedTaskSchema.schema.json -o ./src/schemas/zodSchemas/SerialisedTaskSchema.ts && prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
+    "test:unit": "vitest",
+    "test:unit:ci": "vitest run"
   },
   "dependencies": {
     "@automerge/automerge-repo": "^1.2.1",
@@ -44,12 +46,15 @@
   },
   "devDependencies": {
     "@intlify/unplugin-vue-i18n": "^2.0.0",
+    "@pinia/testing": "^1.0.2",
     "@quasar/app-vite": "^2.0.8",
+    "@quasar/quasar-app-extension-testing-unit-vitest": "^1.2.3",
     "@types/katex": "^0.16.7",
     "@types/lodash": "^4.17.16",
     "@types/node": "^20.5.9",
     "@typescript-eslint/eslint-plugin": "^7.16.0",
     "@typescript-eslint/parser": "^7.16.0",
+    "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.2",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.0.0",
@@ -61,6 +66,7 @@
     "vite-plugin-checker": "^0.7.2",
     "vite-plugin-vue-devtools": "^7.4.6",
     "vite-plugin-wasm": "^3.3.0",
+    "vitest": "^3.1.2",
     "vue-tsc": "2.0.29"
   },
   "engines": {
