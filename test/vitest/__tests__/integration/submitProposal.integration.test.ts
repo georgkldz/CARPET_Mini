@@ -123,7 +123,7 @@ describe("submitProposal – nur Ergebnis-Verantwortlicher darf", () => {
     const collab = await init(0); // Sprecher
 
     // Spy auf die echte startSubmitProposal Methode
-    const startSubmitProposalSpy = vi.spyOn(collab, 'startSubmitProposal');
+    const startSubmitProposalSpy = vi.spyOn(collab, "startSubmitProposal");
 
     collab.startSubmitProposal();
 
