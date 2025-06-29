@@ -151,6 +151,52 @@
       "required": ["dependencies", "name", "state", "type"],
       "type": "object"
     },
+    "PictureViewComponentState": {
+      "description": "State-Objekt der PictureView-Komponente.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "src":        { "type": "string", "description": "Aktueller Bildpfad / URL." },
+        "objectFit":  { "enum": ["contain","cover","fill","none","scale-down"], "type": "string" },
+        "isCorrect":  { "type": "boolean", "description": "… analog zu anderen Komponenten" },
+        "isValid":    { "type": "boolean", "description": "…" }
+      },
+      "required": ["src","isCorrect","isValid"]
+    },
+    "SerializedPictureViewDependencies": {
+      "description": "Die PictureView kann den Bildpfad aus dem Store beziehen.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "src": { "$ref": "#/definitions/JSONPathExpression" }
+      }
+    },
+    "SerializedPictureViewComponent": {
+      "description": "Serialisierte Form der PictureView-Komponente.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "PictureView",
+          "type":  "string",
+          "description": "Komponententyp"
+        },
+        "name":  { "type": "string" },
+        "dependencies": { "$ref": "#/definitions/SerializedPictureViewDependencies" },
+        "state":        { "$ref": "#/definitions/PictureViewComponentState" },
+        "actions":      { "$ref": "#/definitions/ComponentActions" },
+        "componentConfiguration": { "$ref": "#/definitions/ComponentConfiguration" },
+        "contextMenu":  { "$ref": "#/definitions/SerializedBaseComponent<string>/properties/contextMenu" },
+        "methods":      { "$ref": "#/definitions/MethodReferences" },
+        "nestedComponents": { "$ref": "#/definitions/NestedComponents" },
+        "ui":           { "$ref": "#/definitions/UIProperties" },
+        "validationConfiguration": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      "required": ["dependencies","name","state","type"]
+    },
     "SampleSolutionNestedComponents": {
       "additionalProperties": false,
       "properties": {
@@ -169,7 +215,8 @@
               { "$ref": "#/definitions/SerializedInputFieldComponent" },
               { "$ref": "#/definitions/SerializedLatexInputFieldComponent" },
               { "$ref": "#/definitions/SerializedTextViewComponent" },
-              { "$ref": "#/definitions/SerializedLatexViewComponent" }
+              { "$ref": "#/definitions/SerializedLatexViewComponent" },
+              { "$ref": "#/definitions/SerializedPictureViewComponent" }
             ]
           },
           "type": "object"
@@ -180,13 +227,22 @@
               { "$ref": "#/definitions/SerializedInputFieldComponent" },
               { "$ref": "#/definitions/SerializedLatexInputFieldComponent" },
               { "$ref": "#/definitions/SerializedTextViewComponent" },
-              { "$ref": "#/definitions/SerializedLatexViewComponent" }
+              { "$ref": "#/definitions/SerializedLatexViewComponent" },
+              { "$ref": "#/definitions/SerializedPictureViewComponent" }
             ]
           },
           "type": "object"
         },
         "solutionComponents": {
-          "additionalProperties": { "$ref": "#/definitions/SerializedLatexViewComponent" },
+          "additionalProperties": {
+            "anyOf": [
+              { "$ref": "#/definitions/SerializedInputFieldComponent" },
+              { "$ref": "#/definitions/SerializedLatexInputFieldComponent" },
+              { "$ref": "#/definitions/SerializedTextViewComponent" },
+              { "$ref": "#/definitions/SerializedLatexViewComponent" },
+              { "$ref": "#/definitions/SerializedPictureViewComponent" }
+            ]
+          },
           "type": "object"
         }
       },
@@ -460,7 +516,8 @@
               },
               {
                 "$ref": "#/definitions/SerializedTextViewComponent"
-              }
+              },
+              { "$ref": "#/definitions/SerializedPictureViewComponent" }
             ]
           },
           "type": "object"
@@ -476,7 +533,8 @@
               },
               {
                 "$ref": "#/definitions/SerializedTextViewComponent"
-              }
+              },
+              { "$ref": "#/definitions/SerializedPictureViewComponent" }
             ]
           },
           "description": "Components used as formComponents MUST expose their user input value as fieldValue in their componentState. See InputField for an example.",
@@ -916,7 +974,8 @@
               },
               {
                 "$ref": "#/definitions/SerializedTextViewComponent"
-              }
+              },
+              { "$ref": "#/definitions/SerializedPictureViewComponent" }
             ]
           },
           "description": "Components used as formComponents MUST expose their user input value as fieldValue in their componentState. See InputField for an example.",
@@ -2083,6 +2142,9 @@
         },
         {
           "$ref": "#/definitions/SerializedLatexViewComponent"
+        },
+        {
+          "$ref": "#/definitions/SerializedPictureViewComponent"
         },
         {
           "$ref": "#/definitions/SerializedSampleSolutionComponent"

@@ -7,9 +7,13 @@ import type { SerializedCARPETComponents } from "carpet-component-library";
 
 import SteckbriefTask1 from "../SerialisedTasks/Kleditz.carpet.json";
 import SteckbriefTask2 from "../SerialisedTasks/Steckbrief2.carpet.json";
+import SteckbriefTask3 from "../SerialisedTasks/SteckbriefGraph.carpet.json";
+import ExampleTask from "../SerialisedTasks/Example.carpet.json"
 const staticTasks = {
   Steckbriefaufgabe: serialisedTaskSchema.parse(SteckbriefTask1),
   Steckbriefaufgabe2: serialisedTaskSchema.parse(SteckbriefTask2),
+  Steckbriefaufgabe3: serialisedTaskSchema.parse(SteckbriefTask3),
+  Example: serialisedTaskSchema.parse(ExampleTask),
 };
 import { useTaskGraphStore } from "./taskGraphStore";
 import {

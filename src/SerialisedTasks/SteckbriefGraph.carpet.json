@@ -1,0 +1,3033 @@
+{
+  "feedbackLevel": "none",
+  "rootNode": 0,
+  "nodes": {
+    "0": {
+      "collaboration": {
+        "mode": "single",
+        "transferToCollab": ["fieldValue"]
+      },
+      "layouts": {
+        "desktop": {
+          "0": {
+            "x": 1,
+            "y": 1,
+            "width": 20,
+            "height": 25
+          }
+        },
+        "phone": {
+          "0": {
+            "x": 20,
+            "y": 20,
+            "width": 2,
+            "height": 2
+          }
+        },
+        "tablet": {
+          "0": {
+            "x": 20,
+            "y": 20,
+            "width": 2,
+            "height": 2
+          }
+        }
+      },
+      "components": {
+        "0": {
+          "type": "GenericForm",
+          "name": "Einzelbearbeitung",
+          "dependencies": {},
+          "validationConfiguration": {
+            "submitableWhen": "isValid"
+          },
+          "state": {
+            "isValid": true,
+            "isCorrect": true,
+            "dependenciesAreValidAndFormFieldsAreCorrect": false,
+            "formFieldsAreValidAndDependenciesAreCorrect": false
+          },
+          "nestedComponents": {
+            "formComponents": {
+              "pictureView1": {
+                "type": "PictureView",
+                "name": "Grafik 1",
+                "state": {
+                  "isValid": false,
+                  "isCorrect": true,
+                  "fieldValue": "/public/Fkt1.png",
+                  "alt": "Funktionsgraph zur Aufgabe",
+                  "objectFit": "cover"
+                },
+                "dependencies": {},
+                "componentConfiguration": {},
+                "validationConfiguration": {}
+              },
+
+              "textView1": {
+                "type": "TextView",
+                "name": "TextView1",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "Gesucht ist eine ganzrationale Funktion dritten Grades, deren Graph in A(0 | 4) einen Extrempunkt hat, die x-Achse bei x = 2 schneidet und durch den Punkt B(1 | 3) geht."
+                    }
+                  ],
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {},
+                "dependencies": {
+                  "referenceValue": "$.taskData.taskDescription",
+                  "isCommentable": false
+                },
+                "validationConfiguration": {}
+              },
+              "textView2": {
+                "type": "TextView",
+                "name": "TextView2",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "1. Schritt: ",
+                      "bold": true
+                    },
+                    {
+                      "text": "Ansatz"
+                    }
+                  ],
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "isCommentable": false
+                },
+                "dependencies": {},
+                "validationConfiguration": {}
+              },
+              "latexInputField1": {
+                "type": "LatexInputField",
+                "name": "LatexInputField1",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {},
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f(x)=",
+                  "placeholder": "z.B. x³ + ...",
+                  "isCommentable": true
+                },
+                "dependencies": {},
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "latexInputField2": {
+                "type": "LatexInputField",
+                "name": "LatexInputField2",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {},
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f'(x)=",
+                  "isCommentable": true
+                },
+                "dependencies": {},
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "latexInputField3": {
+                "type": "LatexInputField",
+                "name": "LatexInputField3",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {},
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f''(x)=",
+                  "isCommentable": true
+                },
+                "dependencies": {},
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "textView3": {
+                "type": "TextView",
+                "name": "TextView3",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "2. Schritt: ",
+                      "bold": true
+                    },
+                    {
+                      "text": "notiere Gleichungen"
+                    }
+                  ],
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "isCommentable": false
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.0.components.0.nestedComponents.formComponents.textView3.state.fieldValue"
+                },
+                "validationConfiguration": {}
+              },
+              "inputField1": {
+                "type": "InputField",
+                "name": "InputField1",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {}
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "z. B. f(7) = 11",
+                  "isCommentable": true
+                },
+                "dependencies": {},
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [],
+                  "validOnEmptyField": false
+                }
+              },
+              "inputField2": {
+                "type": "InputField",
+                "name": "InputField2",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {}
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {},
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [],
+                  "validOnEmptyField": true
+                }
+              },
+              "inputField3": {
+                "type": "InputField",
+                "name": "InputField3",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {}
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {},
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "inputField4": {
+                "type": "InputField",
+                "name": "InputField4",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {}
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {},
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "inputField5": {
+                "type": "InputField",
+                "name": "InputField5",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {}
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {},
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              }
+            },
+            "actionComponents": {
+              "submit": {
+                "type": "GenericButton",
+                "name": "Submit",
+                "dependencies": {},
+                "validationConfiguration": {},
+                "state": {
+                  "isValid": true,
+                  "isCorrect": true,
+                  "label": "an Gruppe senden",
+                  "loadingState": false
+                },
+                "componentConfiguration": {
+                  "disableOnInvalid": true
+                }
+              }
+            }
+          },
+          "actions": {
+            "submit": {
+              "type": "evaluate"
+            }
+          }
+        }
+      }
+    },
+    "1": {
+      "collaboration": {
+        "mode": "groupBuilding"
+      },
+      "layouts": {
+        "desktop": {
+          "4": {
+            "x": 1,
+            "y": 1,
+            "width": 25,
+            "height": 10
+          }
+        },
+        "phone": {
+          "4": {
+            "x": 20,
+            "y": 20,
+            "width": 2,
+            "height": 2
+          }
+        },
+        "tablet": {
+          "4": {
+            "x": 20,
+            "y": 20,
+            "width": 2,
+            "height": 2
+          }
+        }
+      },
+      "components": {
+        "4": {
+          "type": "TextView",
+          "name": "Warte auf Gruppenzuweisung",
+          "state": {
+            "isValid": true,
+            "isCorrect": false,
+            "textSegments": [
+              {
+                "text": "Deine Antworten wurden ausgewertet und wir suchen passende Teammitglieder für dich. Bitte warte einen Moment, bis die Gruppenzuweisung abgeschlossen ist."
+              }
+            ],
+            "fieldValue": "",
+            "fieldConfiguration": {}
+          },
+          "componentConfiguration": {},
+          "dependencies": {},
+          "validationConfiguration": {}
+        }
+      }
+    },
+    "2": {
+      "collaboration": {
+        "mode": "collaboration",
+        "transferToCollab": ["fieldValue"]
+      },
+      "layouts": {
+        "desktop": {
+          "0": {
+            "x": 1,
+            "y": 1,
+            "width": 35,
+            "height": 25
+          }
+        },
+        "phone": {
+          "0": {
+            "x": 20,
+            "y": 20,
+            "width": 2,
+            "height": 2
+          }
+        },
+        "tablet": {
+          "0": {
+            "x": 20,
+            "y": 20,
+            "width": 2,
+            "height": 2
+          }
+        }
+      },
+      "components": {
+        "0": {
+          "type": "CollaborativeForm",
+          "name": "Kollaborative Bearbeitung",
+          "dependencies": {},
+          "validationConfiguration": {
+            "submitableWhen": "isValid"
+          },
+          "state": {
+            "isValid": true,
+            "isCorrect": true,
+            "dependenciesAreValidAndFormFieldsAreCorrect": false,
+            "formFieldsAreValidAndDependenciesAreCorrect": false,
+            "fieldLocksSatisfied": false
+          },
+          "nestedComponents": {
+            "formComponents": {
+              "textView1": {
+                "type": "TextView",
+                "name": "TextView1",
+                "ui": {
+                  "order": 1,
+                  "accordion": false
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "Gesucht ist eine ganzrationale Funktion dritten Grades, deren Graph in A(0 | 4) einen Extrempunkt hat, die x-Achse bei x = 2 schneidet und durch den Punkt B(1 | 3) geht."
+                    }
+                  ],
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {},
+                "dependencies": {
+                  "referenceValue": "$.taskData.taskDescription"
+                },
+                "validationConfiguration": {}
+              },
+              "textView2": {
+                "type": "TextView",
+                "name": "TextView2",
+                "ui": {
+                  "order": 2,
+                  "accordion": false
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "1. Schritt: ",
+                      "bold": true
+                    },
+                    {
+                      "text": "Ansatz"
+                    }
+                  ],
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {},
+                "dependencies": {
+                },
+                "validationConfiguration": {}
+              },
+              "r0_latexInputField1": {
+                "type": "LatexInputField",
+                "name": "r0_LatexInputField1",
+                "ui": {
+                  "order": 3,
+                  "accordion": true,
+                  "accordionName": "ansatzFx",
+                  "accordionLabel": "Ansatz für f(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f(x)=",
+                  "placeholder": "z.B. x³ + ...",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r1_latexInputField1": {
+                "type": "LatexInputField",
+                "name": "r1_LatexInputField1",
+                "ui": {
+                  "order": 4,
+                  "accordion": true,
+                  "accordionName": "ansatzFx",
+                  "accordionLabel": "Ansatz für f(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f(x)=",
+                  "placeholder": "z.B. x³ + ...",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r2_latexInputField1": {
+                "type": "LatexInputField",
+                "name": "r2_LatexInputField1",
+                "ui": {
+                  "order": 5,
+                  "accordion": true,
+                  "accordionName": "ansatzFx",
+                  "accordionLabel": "Ansatz für f(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f(x)=",
+                  "placeholder": "z.B. x³ + ...",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r3_latexInputField1": {
+                "type": "LatexInputField",
+                "name": "r3_LatexInputField1",
+                "ui": {
+                  "order": 6,
+                  "accordion": true,
+                  "accordionName": "ansatzFx",
+                  "accordionLabel": "Ansatz für f(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f(x)=",
+                  "placeholder": "z.B. x³ + ...",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r0_latexInputField2": {
+                "type": "LatexInputField",
+                "name": "r0_LatexInputField2",
+                "ui": {
+                  "order": 7,
+                  "accordion": true,
+                  "accordionName": "ansatzF'x",
+                  "accordionLabel": "Ansatz für f'(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {
+                  },
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f'(x)=",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r1_latexInputField2": {
+                "type": "LatexInputField",
+                "name": "r1_LatexInputField2",
+                "ui": {
+                  "order": 8,
+                  "accordion": true,
+                  "accordionName": "ansatzF'x",
+                  "accordionLabel": "Ansatz für f'(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {
+                  },
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f'(x)=",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r2_latexInputField2": {
+                "type": "LatexInputField",
+                "name": "r2_LatexInputField2",
+                "ui": {
+                  "order": 9,
+                  "accordion": true,
+                  "accordionName": "ansatzF'x",
+                  "accordionLabel": "Ansatz für f'(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {
+                  },
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f'(x)=",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r3_latexInputField2": {
+                "type": "LatexInputField",
+                "name": "r3_LatexInputField2",
+                "ui": {
+                  "order": 10,
+                  "accordion": true,
+                  "accordionName": "ansatzF'x",
+                  "accordionLabel": "Ansatz für f'(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {
+                  },
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f'(x)=",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r0_latexInputField3": {
+                "type": "LatexInputField",
+                "name": "r0_LatexInputField3",
+                "ui": {
+                  "order": 11,
+                  "accordion": true,
+                  "accordionName": "ansatzF''x",
+                  "accordionLabel": "Ansatz für f''(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f''(x)=",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r1_latexInputField3": {
+                "type": "LatexInputField",
+                "name": "r1_LatexInputField3",
+                "ui": {
+                  "order": 12,
+                  "accordion": true,
+                  "accordionName": "ansatzF''x",
+                  "accordionLabel": "Ansatz für f''(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f''(x)=",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r2_latexInputField3": {
+                "type": "LatexInputField",
+                "name": "r2_LatexInputField3",
+                "ui": {
+                  "order": 13,
+                  "accordion": true,
+                  "accordionName": "ansatzF''x",
+                  "accordionLabel": "Ansatz für f''(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f''(x)=",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r3_latexInputField3": {
+                "type": "LatexInputField",
+                "name": "r3_LatexInputField3",
+                "ui": {
+                  "order": 14,
+                  "accordion": true,
+                  "accordionName": "ansatzF''x",
+                  "accordionLabel": "Ansatz für f''(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f''(x)=",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "textView3": {
+                "type": "TextView",
+                "name": "TextView3",
+                "ui": {
+                  "order": 15,
+                  "accordion": false
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "2. Schritt: ",
+                      "bold": true
+                    },
+                    {
+                      "text": "notiere Gleichungen"
+                    }
+                  ],
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {                },
+                "dependencies": {
+                },
+                "validationConfiguration": {}
+              },
+              "r0_inputField1": {
+                "type": "InputField",
+                "name": "r0_InputField1",
+                "ui": {
+                  "order": 16,
+                  "accordion": true,
+                  "accordionName": "gleichung1",
+                  "accordionLabel": "Gleichung 1"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "z. B. f(7) = 11",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r1_inputField1": {
+                "type": "InputField",
+                "name": "r1_InputField1",
+                "ui": {
+                  "order": 17,
+                  "accordion": true,
+                  "accordionName": "gleichung1",
+                  "accordionLabel": "Gleichung 1"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "z. B. f(7) = 11",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r2_inputField1": {
+                "type": "InputField",
+                "name": "r2_InputField1",
+                "ui": {
+                  "order": 18,
+                  "accordion": true,
+                  "accordionName": "gleichung1",
+                  "accordionLabel": "Gleichung 1"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "z. B. f(7) = 11",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r3_inputField1": {
+                "type": "InputField",
+                "name": "r3_InputField1",
+                "ui": {
+                  "order": 19,
+                  "accordion": true,
+                  "accordionName": "gleichung1",
+                  "accordionLabel": "Gleichung 1"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "z. B. f(7) = 11",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r0_inputField2": {
+                "type": "InputField",
+                "name": "r0_InputField2",
+                "ui": {
+                  "order": 20,
+                  "accordion": true,
+                  "accordionName": "gleichung2",
+                  "accordionLabel": "Gleichung 2"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r1_inputField2": {
+                "type": "InputField",
+                "name": "r1_InputField2",
+                "ui": {
+                  "order": 21,
+                  "accordion": true,
+                  "accordionName": "gleichung2",
+                  "accordionLabel": "Gleichung 2"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r2_inputField2": {
+                "type": "InputField",
+                "name": "r2_InputField2",
+                "ui": {
+                  "order": 22,
+                  "accordion": true,
+                  "accordionName": "gleichung2",
+                  "accordionLabel": "Gleichung 2"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r3_inputField2": {
+                "type": "InputField",
+                "name": "r3_InputField2",
+                "ui": {
+                  "order": 23,
+                  "accordion": true,
+                  "accordionName": "gleichung2",
+                  "accordionLabel": "Gleichung 2"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r0_inputField3": {
+                "type": "InputField",
+                "name": "r0_InputField3",
+                "ui": {
+                  "order": 24,
+                  "accordion": true,
+                  "accordionName": "gleichung3",
+                  "accordionLabel": "Gleichung 3"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r1_inputField3": {
+                "type": "InputField",
+                "name": "r1_InputField3",
+                "ui": {
+                  "order": 25,
+                  "accordion": true,
+                  "accordionName": "gleichung3",
+                  "accordionLabel": "Gleichung 3"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r2_inputField3": {
+                "type": "InputField",
+                "name": "r2_InputField3",
+                "ui": {
+                  "order": 26,
+                  "accordion": true,
+                  "accordionName": "gleichung3",
+                  "accordionLabel": "Gleichung 3"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r3_inputField3": {
+                "type": "InputField",
+                "name": "r3_InputField3",
+                "ui": {
+                  "order": 27,
+                  "accordion": true,
+                  "accordionName": "gleichung3",
+                  "accordionLabel": "Gleichung 3"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r0_inputField4": {
+                "type": "InputField",
+                "name": "r0_InputField4",
+                "ui": {
+                  "order": 28,
+                  "accordion": true,
+                  "accordionName": "gleichung4",
+                  "accordionLabel": "Gleichung 4"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r1_inputField4": {
+                "type": "InputField",
+                "name": "r1_InputField4",
+                "ui": {
+                  "order": 29,
+                  "accordion": true,
+                  "accordionName": "gleichung4",
+                  "accordionLabel": "Gleichung 4"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r2_inputField4": {
+                "type": "InputField",
+                "name": "r2_InputField4",
+                "ui": {
+                  "order": 30,
+                  "accordion": true,
+                  "accordionName": "gleichung4",
+                  "accordionLabel": "Gleichung 4"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r3_inputField4": {
+                "type": "InputField",
+                "name": "r3_InputField4",
+                "ui": {
+                  "order": 31,
+                  "accordion": true,
+                  "accordionName": "gleichung4",
+                  "accordionLabel": "Gleichung 4"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r0_inputField5": {
+                "type": "InputField",
+                "name": "r0_InputField5",
+                "ui": {
+                  "order": 32,
+                  "accordion": true,
+                  "accordionName": "gleichung5",
+                  "accordionLabel": "Gleichung 5"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r1_inputField5": {
+                "type": "InputField",
+                "name": "r1_InputField5",
+                "ui": {
+                  "order": 33,
+                  "accordion": true,
+                  "accordionName": "gleichung5",
+                  "accordionLabel": "Gleichung 5"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r2_inputField5": {
+                "type": "InputField",
+                "name": "r2_InputField5",
+                "ui": {
+                  "order": 34,
+                  "accordion": true,
+                  "accordionName": "gleichung5",
+                  "accordionLabel": "Gleichung 5"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r3_inputField5": {
+                "type": "InputField",
+                "name": "r3_InputField5",
+                "ui": {
+                  "order": 35,
+                  "accordion": true,
+                  "accordionName": "gleichung5",
+                  "accordionLabel": "Gleichung 5"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "isCommentable": true
+                },
+                "dependencies": {
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              }
+            },
+            "extraRightComponents": {
+              "textView4": {
+                "type": "TextView",
+                "name": "TextView4",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "Bearbeitet in diesem Feld die Aufgabe"
+                    }
+                  ],
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "column": "right"
+                },
+                "dependencies": {},
+                "validationConfiguration": {}
+              },
+              "canvas": {
+                "type": "InputField",
+                "name": "canvas",
+                "componentConfiguration": {
+                  "column": "right",
+                  "type": "textarea",
+                  "autogrow": true,
+                  "editAllowedForRole": 0,
+                  "isCommentable": true
+                },
+                "state": {
+                  "fieldValue": "",
+                  "fieldValueByUser": {},
+                  "isValid": true,
+                  "isCorrect": false
+                },
+                "dependencies": {},
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [],
+                  "validOnEmptyField": false
+                }
+              },
+              "textView5": {
+                "type": "TextView",
+                "name": "TextView5",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "Erläutert euren Lösungsweg:"
+                    }
+                  ],
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "column": "right"
+                },
+                "dependencies": {},
+                "validationConfiguration": {}
+              },
+              "explanation": {
+                "type": "InputField",
+                "name": "explanation",
+                "componentConfiguration": {
+                  "type": "textarea",
+                  "column": "right",
+                  "editAllowedForRole": 1,
+                  "isCommentable": true
+                },
+                "state": {
+                  "fieldValue": "",
+                  "fieldValueByUser": {},
+                  "isValid": true,
+                  "isCorrect": false
+                },
+                "dependencies": {},
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [],
+                  "validOnEmptyField": true
+                }
+              },
+              "textView6": {
+                "type": "TextView",
+                "name": "TextView6",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "Euer Ergebnis:",
+                      "bold": true
+                    }
+                  ],
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "column": "right"
+                },
+                "dependencies": {},
+                "validationConfiguration": {}
+              },
+              "result": {
+                "type": "InputField",
+                "name": "result",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {}
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "column": "right",
+                  "editAllowedForRole": 0,
+                  "isCommentable": true
+                },
+                "dependencies": {},
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [],
+                  "validOnEmptyField": false
+                }
+              }
+            },
+            "actionComponents": {
+              "submit": {
+                "type": "GenericButton",
+                "name": "Submit",
+                "dependencies": {},
+                "validationConfiguration": {},
+                "state": {
+                  "isValid": true,
+                  "isCorrect": true,
+                  "label": "Aufgabe abschließen",
+                  "loadingState": false
+                },
+                "componentConfiguration": {
+                  "disableOnInvalid": true,
+                  "submitAllowedForRole": 0
+                }
+              }
+            }
+          },
+          "actions": {
+            "submit": {
+              "type": "submitProposal"
+            }
+          }
+        }
+      }
+    },
+    "3": {
+      "collaboration": {
+        "mode": "solutionView"
+      },
+      "layouts": {
+        "desktop": {
+
+          "5": {
+            "x": 5,
+            "y": 5,
+            "width": 40,
+            "height": 25
+          }
+        },
+        "tablet": {
+          "0": {
+            "x": 20,
+            "y": 20,
+            "width": 5,
+            "height": 5
+          }
+        },
+        "phone": {
+          "0": {
+            "x": 20,
+            "y": 20,
+            "width": 5,
+            "height": 5
+          }
+        }
+      },
+      "components": {
+        "5": {
+          "type": "SampleSolutionView",
+          "name": "Musterlösung",
+          "dependencies": {},
+          "validationConfiguration": {
+            "submitableWhen": "isValid"
+          },
+          "state": {
+            "isValid": true,
+            "isCorrect": true
+
+          },
+          "nestedComponents": {
+            "formComponents": {
+              "textView1": {
+                "type": "TextView",
+                "name": "TextView1",
+                "ui": {
+                  "order": 1,
+                  "accordion": false
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "Gesucht ist eine ganzrationale Funktion dritten Grades, deren Graph in A(0 | 4) einen Extrempunkt hat, die x-Achse bei x = 2 schneidet und durch den Punkt B(1 | 3) geht."
+                    }
+                  ],
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {},
+                "dependencies": {
+                  "referenceValue": "$.taskData.taskDescription"
+                },
+                "validationConfiguration": {}
+              },
+              "textView2": {
+                "type": "TextView",
+                "name": "TextView2",
+                "ui": {
+                  "order": 2,
+                  "accordion": false
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "1. Schritt: ",
+                      "bold": true
+                    },
+                    {
+                      "text": "Ansatz"
+                    }
+                  ],
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {},
+                "dependencies": {
+                },
+                "validationConfiguration": {}
+              },
+              "r0_latexInputField1": {
+                "type": "LatexInputField",
+                "name": "r0_LatexInputField1",
+                "ui": {
+                  "order": 3,
+                  "accordion": true,
+                  "accordionName": "ansatzFx",
+                  "accordionLabel": "Ansatz für f(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f(x)=",
+                  "placeholder": "z.B. x³ + ..."
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r0_latexInputField1.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r1_latexInputField1": {
+                "type": "LatexInputField",
+                "name": "r1_LatexInputField1",
+                "ui": {
+                  "order": 4,
+                  "accordion": true,
+                  "accordionName": "ansatzFx",
+                  "accordionLabel": "Ansatz für f(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f(x)=",
+                  "placeholder": "z.B. x³ + ..."
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r1_latexInputField1.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r2_latexInputField1": {
+                "type": "LatexInputField",
+                "name": "r2_LatexInputField1",
+                "ui": {
+                  "order": 5,
+                  "accordion": true,
+                  "accordionName": "ansatzFx",
+                  "accordionLabel": "Ansatz für f(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f(x)=",
+                  "placeholder": "z.B. x³ + ..."
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r2_latexInputField1.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r3_latexInputField1": {
+                "type": "LatexInputField",
+                "name": "r3_LatexInputField1",
+                "ui": {
+                  "order": 6,
+                  "accordion": true,
+                  "accordionName": "ansatzFx",
+                  "accordionLabel": "Ansatz für f(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f(x)=",
+                  "placeholder": "z.B. x³ + ..."
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r3_latexInputField1.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r0_latexInputField2": {
+                "type": "LatexInputField",
+                "name": "r0_LatexInputField2",
+                "ui": {
+                  "order": 7,
+                  "accordion": true,
+                  "accordionName": "ansatzF'x",
+                  "accordionLabel": "Ansatz für f'(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {
+                  },
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f'(x)="
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r0_latexInputField2.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r1_latexInputField2": {
+                "type": "LatexInputField",
+                "name": "r1_LatexInputField2",
+                "ui": {
+                  "order": 8,
+                  "accordion": true,
+                  "accordionName": "ansatzF'x",
+                  "accordionLabel": "Ansatz für f'(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {
+                  },
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f'(x)="
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r1_latexInputField2.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r2_latexInputField2": {
+                "type": "LatexInputField",
+                "name": "r2_LatexInputField2",
+                "ui": {
+                  "order": 9,
+                  "accordion": true,
+                  "accordionName": "ansatzF'x",
+                  "accordionLabel": "Ansatz für f'(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {
+                  },
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f'(x)="
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r2_latexInputField2.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r3_latexInputField2": {
+                "type": "LatexInputField",
+                "name": "r3_LatexInputField2",
+                "ui": {
+                  "order": 10,
+                  "accordion": true,
+                  "accordionName": "ansatzF'x",
+                  "accordionLabel": "Ansatz für f'(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {
+                  },
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f'(x)="
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r3_latexInputField2.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r0_latexInputField3": {
+                "type": "LatexInputField",
+                "name": "r0_LatexInputField3",
+                "ui": {
+                  "order": 11,
+                  "accordion": true,
+                  "accordionName": "ansatzF''x",
+                  "accordionLabel": "Ansatz für f''(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f''(x)="
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r0_latexInputField3.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r1_latexInputField3": {
+                "type": "LatexInputField",
+                "name": "r1_LatexInputField3",
+                "ui": {
+                  "order": 12,
+                  "accordion": true,
+                  "accordionName": "ansatzF''x",
+                  "accordionLabel": "Ansatz für f''(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f''(x)="
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r1_latexInputField3.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r2_latexInputField3": {
+                "type": "LatexInputField",
+                "name": "r2_LatexInputField3",
+                "ui": {
+                  "order": 13,
+                  "accordion": true,
+                  "accordionName": "ansatzF''x",
+                  "accordionLabel": "Ansatz für f''(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f''(x)="
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r2_latexInputField3.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "r3_latexInputField3": {
+                "type": "LatexInputField",
+                "name": "r3_LatexInputField3",
+                "ui": {
+                  "order": 14,
+                  "accordion": true,
+                  "accordionName": "ansatzF''x",
+                  "accordionLabel": "Ansatz für f''(x)"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "prepend": "f''(x)="
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r3_latexInputField3.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "comparisons": []
+                }
+              },
+              "textView3": {
+                "type": "TextView",
+                "name": "TextView3",
+                "ui": {
+                  "order": 15,
+                  "accordion": false
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "2. Schritt: ",
+                      "bold": true
+                    },
+                    {
+                      "text": "notiere Gleichungen"
+                    }
+                  ],
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {},
+                "dependencies": {
+                },
+                "validationConfiguration": {}
+              },
+              "r0_inputField1": {
+                "type": "InputField",
+                "name": "r0_InputField1",
+                "ui": {
+                  "order": 16,
+                  "accordion": true,
+                  "accordionName": "gleichung1",
+                  "accordionLabel": "Gleichung 1"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "z. B. f(7) = 11"
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r0_inputField1.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r1_inputField1": {
+                "type": "InputField",
+                "name": "r1_InputField1",
+                "ui": {
+                  "order": 17,
+                  "accordion": true,
+                  "accordionName": "gleichung1",
+                  "accordionLabel": "Gleichung 1"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "z. B. f(7) = 11"
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r1_inputField1.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r2_inputField1": {
+                "type": "InputField",
+                "name": "r2_InputField1",
+                "ui": {
+                  "order": 18,
+                  "accordion": true,
+                  "accordionName": "gleichung1",
+                  "accordionLabel": "Gleichung 1"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "z. B. f(7) = 11"
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r2_inputField1.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r3_inputField1": {
+                "type": "InputField",
+                "name": "r3_InputField1",
+                "ui": {
+                  "order": 19,
+                  "accordion": true,
+                  "accordionName": "gleichung1",
+                  "accordionLabel": "Gleichung 1"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "z. B. f(7) = 11"
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r3_inputField1.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r0_inputField2": {
+                "type": "InputField",
+                "name": "r0_InputField2",
+                "ui": {
+                  "order": 20,
+                  "accordion": true,
+                  "accordionName": "gleichung2",
+                  "accordionLabel": "Gleichung 2"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r0_inputField2.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r1_inputField2": {
+                "type": "InputField",
+                "name": "r1_InputField2",
+                "ui": {
+                  "order": 21,
+                  "accordion": true,
+                  "accordionName": "gleichung2",
+                  "accordionLabel": "Gleichung 2"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r1_inputField2.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r2_inputField2": {
+                "type": "InputField",
+                "name": "r2_InputField2",
+                "ui": {
+                  "order": 22,
+                  "accordion": true,
+                  "accordionName": "gleichung2",
+                  "accordionLabel": "Gleichung 2"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r2_inputField2.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r3_inputField2": {
+                "type": "InputField",
+                "name": "r3_InputField2",
+                "ui": {
+                  "order": 23,
+                  "accordion": true,
+                  "accordionName": "gleichung2",
+                  "accordionLabel": "Gleichung 2"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r3_inputField2.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r0_inputField3": {
+                "type": "InputField",
+                "name": "r0_InputField3",
+                "ui": {
+                  "order": 24,
+                  "accordion": true,
+                  "accordionName": "gleichung3",
+                  "accordionLabel": "Gleichung 3"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r0_inputField3.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r1_inputField3": {
+                "type": "InputField",
+                "name": "r1_InputField3",
+                "ui": {
+                  "order": 25,
+                  "accordion": true,
+                  "accordionName": "gleichung3",
+                  "accordionLabel": "Gleichung 3"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r1_inputField3.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r2_inputField3": {
+                "type": "InputField",
+                "name": "r2_InputField3",
+                "ui": {
+                  "order": 26,
+                  "accordion": true,
+                  "accordionName": "gleichung3",
+                  "accordionLabel": "Gleichung 3"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r2_inputField3.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r3_inputField3": {
+                "type": "InputField",
+                "name": "r3_InputField3",
+                "ui": {
+                  "order": 27,
+                  "accordion": true,
+                  "accordionName": "gleichung3",
+                  "accordionLabel": "Gleichung 3"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r3_inputField3.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r0_inputField4": {
+                "type": "InputField",
+                "name": "r0_InputField4",
+                "ui": {
+                  "order": 28,
+                  "accordion": true,
+                  "accordionName": "gleichung4",
+                  "accordionLabel": "Gleichung 4"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r0_inputField4.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r1_inputField4": {
+                "type": "InputField",
+                "name": "r1_InputField4",
+                "ui": {
+                  "order": 29,
+                  "accordion": true,
+                  "accordionName": "gleichung4",
+                  "accordionLabel": "Gleichung 4"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r1_inputField4.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r2_inputField4": {
+                "type": "InputField",
+                "name": "r2_InputField4",
+                "ui": {
+                  "order": 30,
+                  "accordion": true,
+                  "accordionName": "gleichung4",
+                  "accordionLabel": "Gleichung 4"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r2_inputField4.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r3_inputField4": {
+                "type": "InputField",
+                "name": "r3_InputField4",
+                "ui": {
+                  "order": 31,
+                  "accordion": true,
+                  "accordionName": "gleichung4",
+                  "accordionLabel": "Gleichung 4"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r3_inputField4.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r0_inputField5": {
+                "type": "InputField",
+                "name": "r0_InputField5",
+                "ui": {
+                  "order": 32,
+                  "accordion": true,
+                  "accordionName": "gleichung5",
+                  "accordionLabel": "Gleichung 5"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r0_inputField5.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r1_inputField5": {
+                "type": "InputField",
+                "name": "r1_InputField5",
+                "ui": {
+                  "order": 33,
+                  "accordion": true,
+                  "accordionName": "gleichung5",
+                  "accordionLabel": "Gleichung 5"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r1_inputField5.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r2_inputField5": {
+                "type": "InputField",
+                "name": "r2_InputField5",
+                "ui": {
+                  "order": 34,
+                  "accordion": true,
+                  "accordionName": "gleichung5",
+                  "accordionLabel": "Gleichung 5"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r2_inputField5.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              },
+              "r3_inputField5": {
+                "type": "InputField",
+                "name": "r3_InputField5",
+                "ui": {
+                  "order": 35,
+                  "accordion": true,
+                  "accordionName": "gleichung5",
+                  "accordionLabel": "Gleichung 5"
+                },
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": ""
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": ""
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.formComponents.r3_inputField5.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [
+                    {
+                      "value": "test",
+                      "operator": "=="
+                    }
+                  ],
+                  "validOnEmptyField": true
+                }
+              }
+            },
+            "extraRightComponents": {
+              "textView4": {
+                "type": "TextView",
+                "name": "TextView4",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "Bearbeitet in diesem Feld die Aufgabe"
+                    }
+                  ],
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "column": "right"
+                },
+                "dependencies": {},
+                "validationConfiguration": {}
+              },
+              "canvas": {
+                "type": "InputField",
+                "name": "canvas",
+                "componentConfiguration": {
+                  "column": "right",
+                  "type": "textarea",
+                  "autogrow": true,
+                  "editAllowedForRole": 0
+                },
+                "state": {
+                  "fieldValue": "",
+                  "fieldValueByUser": {},
+                  "isValid": true,
+                  "isCorrect": false
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.extraRightComponents.canvas.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [],
+                  "validOnEmptyField": false
+                }
+              },
+              "textView5": {
+                "type": "TextView",
+                "name": "TextView5",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "Erläutert euren Lösungsweg:"
+                    }
+                  ],
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "column": "right"
+                },
+                "dependencies": {},
+                "validationConfiguration": {}
+              },
+              "explanation": {
+                "type": "InputField",
+                "name": "explanation",
+                "componentConfiguration": {
+                  "type": "textarea",
+                  "column": "right",
+                  "editAllowedForRole": 1
+                },
+                "state": {
+                  "fieldValue": "",
+                  "fieldValueByUser": {},
+                  "isValid": true,
+                  "isCorrect": false
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.extraRightComponents.explanation.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [],
+                  "validOnEmptyField": true
+                }
+              },
+              "textView6": {
+                "type": "TextView",
+                "name": "TextView6",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "textSegments": [
+                    {
+                      "text": "Euer Ergebnis:",
+                      "bold": true
+                    }
+                  ],
+                  "fieldValue": "",
+                  "fieldConfiguration": {}
+                },
+                "componentConfiguration": {
+                  "column": "right"
+                },
+                "dependencies": {},
+                "validationConfiguration": {}
+              },
+              "result": {
+                "type": "InputField",
+                "name": "result",
+                "state": {
+                  "isValid": true,
+                  "isCorrect": false,
+                  "fieldValue": "",
+                  "fieldValueByUser": {}
+                },
+                "componentConfiguration": {
+                  "icon": "",
+                  "label": "",
+                  "hint": "",
+                  "placeholder": "",
+                  "column": "right",
+                  "editAllowedForRole": 0
+                },
+                "dependencies": {
+                  "referenceValue": "$.nodes.2.components.0.nestedComponents.extraRightComponents.result.state.fieldValue"
+                },
+                "validationConfiguration": {
+                  "type": "compareValueFromStatic",
+                  "comparisons": [],
+                  "validOnEmptyField": false
+                }
+              }
+            },
+            "solutionComponents": {
+              "LatexView": {
+                "dependencies": {
+                  "referenceValue": "$.taskData.solutions.sampleSolutionCollaborativeWork"
+                },
+                "name": "",
+                "state": {
+                  "fieldValue": "",
+                  "isCorrect": false,
+                  "isValid": true
+                },
+                "type": "LatexView"
+              }
+            },
+            "actionComponents": {
+              "submit": {
+                "type": "GenericButton",
+                "name": "Submit",
+                "dependencies": {},
+                "validationConfiguration": {},
+                "state": {
+                  "isValid": true,
+                  "isCorrect": true,
+                  "label": "Beenden",
+                  "loadingState": false
+                },
+                "componentConfiguration": {
+                  "disableOnInvalid": false
+                }
+              }
+            }
+
+          },
+          "actions": {
+            "submit": {
+              "type": "exit"
+            }
+          }
+        }
+      }
+    }
+  },
+  "edges": {
+    "0": [
+      1
+    ],
+    "1": [
+      2
+    ],
+    "2": [
+      3
+    ]
+  },
+  "layoutSize": "desktop",
+  "roles": {
+    "0": {
+      "name": "Ergebnisverantwortlicher",
+      "description": "Schreibt die Gruppenlösung in Canvas und Result und gibt ab.",
+      "writeAccess": ["canvas", "result"],
+      "colorHex": "#bfdbfe"
+    },
+    "1": {
+      "name": "Kommentarprotokoll",
+      "description": "Erklärt den Lösungsweg im Explanation-Feld.",
+      "writeAccess": ["explanation"],
+      "colorHex": "#bbf7d0"
+    },
+    "2": {
+      "name": "Gesprächsleiter",
+      "description": "Leitet die Diskussion und die Gruppenarbeit. Keine Schreibrechte",
+      "writeAccess": [],
+      "colorHex": "#fed7aa"
+    },
+    "3": {
+      "name": "Zeitwächter",
+      "description": "Achtet auf die Zeit. Keine Schreibrechte.",
+      "writeAccess": [],
+      "colorHex": "#e9d5ff"
+    }
+  },
+  "taskData": {
+    "taskId": 1,
+    "taskDescription": "Gesucht ist eine ganzrationale Funktion dritten Grades, deren Graph in A(0 | 4) einen Extrempunkt hat, die x-Achse bei x = 2 schneidet und durch den Punkt B(1 | 3) geht.",
+    "degree": 3,
+    "symmetry": "none",
+    "hint": "",
+    "solutions": {
+      "textFieldEquation1": "f(0)=4",
+      "textFieldEquation2": "f(0)=0",
+      "textFieldEquation3": "f(2)=0",
+      "textFieldEquation4": "f(1)=3",
+      "textFieldEquation5": "",
+      "sampleSolutionCollaborativeWork": "\\begin{array}{l}\n\\textbf{Musterlösung} \\\\\n\\\\\n\\textbf{Aufgabe:} \\text{Gesucht ist eine ganzrationale Funktion dritten Grades, }\\\\\n\\text{deren Graph in A(0 | 4) einen Extrempunkt hat,} \\\\\n\\text{die x-Achse bei x = 2 schneidet und durch den Punkt B(1 | 3) geht.} \\\\\n\\\\\n\\\\\n\\textbf{Ansatz:} \\\\\n\\\\\nf(x) = ax^3 + bx^2 + cx + d \\\\[10pt]\nf'(x) = 3ax^2 + 2bx + c \\\\[10pt]\nf''(x) = 6ax + 2b \\\\\n\\\\\n\\\\\n\\textbf{Informationen aus dem Aufgabentext:} \\\\\n\\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{ll}\n\\text{I:} & f(0) = 4 \\\\[8pt]\n\\text{II:} & f'(0) = 0 \\\\[8pt]\n\\text{III:} & f(2) = 0 \\\\[8pt]\n\\text{IV:} & f(1) = 3 \\\\\n\\end{array}\n\n\\\\\n\n\\begin{array}{l}\n\\\\\n\\textbf{Einsetzen in die Funktion:} \\\\\n\\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{ll}\n\\text{I:} & a \\cdot 0^3 + b \\cdot 0^2 + c \\cdot 0 + d = 4 \\\\[8pt]\n\\text{II:} & 3a \\cdot 0^2 + 2b \\cdot 0 + c = 0 \\\\[8pt]\n\\text{III:} & a \\cdot 2^3 + b \\cdot 2^2 + c \\cdot 2 + d = 0 \\\\[8pt]\n\\text{IV:} & a \\cdot 1^3 + b \\cdot 1^2 + c \\cdot 1 + d = 3\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{l}\n\\\\\n\\\\\n\\textbf{Lineares Gleichungssystem aufstellen:} \\\\\n\\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{ll}\n\\text{I:} & d = 4 \\\\[8pt]\n\\text{II:} & c = 0 \\\\[8pt]\n\\text{III:} & 8a + 4b + 0 + 4 = 0 \\\\[5pt]\n\\text{Hieraus folgt: } 8a + 4b = -4 \\\\[8pt]\n\\text{IV:} & 1a + 1b + 0 + 4 = 3 \\\\[5pt]\n\\text{Hieraus folgt: } a + b = -1\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{l}\n\\\\\n\\\\\n\\textbf{Lineares Gleichungssystem lösen:} \\\\\n\\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{lll}\n\\text{I:} & 8a + 4b = -4 \\\\[8pt]\n\\text{II:} & a + b = -1 & | \\cdot (-4) \\\\[15pt]\n\n\\text{I:} & 8a + 4b = -4 \\\\[8pt]\n\\text{II:} & -4a - 4b = 4 \\\\[8pt]\n\\text{I + II:} & 4a = 0 \\\\[5pt]\n\\text{Hieraus folgt: } a = 0 \\\\[15pt]\n\n\\text{$a = 0$ in II einsetzen:} \\\\[8pt]\n0 + b = -1 \\\\[5pt]\n\\text{Hieraus folgt: } b = -1\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{l}\n\\\\\n\\\\\n\\textbf{Ergebnis:} f(x) = -x^2 + 4\n\\end{array}"
+    }
+  }
+}
+
+

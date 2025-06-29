@@ -52,15 +52,18 @@
       },
       "components": {
         "0": {
+          "type": "PictureView",
+          "name": "Grafik 1",
           "state": {
+            "isValid": false,
             "isCorrect": true,
-            "isValid": true
+            "fieldValue": "/Fkt1.png",
+            "alt": "Funktionsgraph zur Aufgabe",
+            "objectFit": "cover"
           },
-          "dependencies": {
-            "dotDescription": "$.taskData.dotDescription"
-          },
-          "name": "Beispielgraph",
-          "type": "DOTGraph"
+          "dependencies": {},
+          "componentConfiguration": {},
+          "validationConfiguration": {}
         },
         "1": {
           "name": "Code",
