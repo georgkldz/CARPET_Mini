@@ -52,19 +52,17 @@
       },
       "components": {
         "0": {
-          "type": "PictureView",
-          "name": "Grafik 1",
-          "state": {
-            "isValid": false,
-            "isCorrect": true,
-            "fieldValue": "/Fkt1.png",
-            "alt": "Funktionsgraph zur Aufgabe",
-            "objectFit": "cover"
+
+          "dependencies": {
+            "referenceValue": ""
           },
-          "dependencies": {},
-          "componentConfiguration": {},
-          "validationConfiguration": {}
-        },
+          "name": "Lösung",
+          "state": {
+            "fieldValue": "\begin{array}{l}\n\\textbf{Musterlösung} \\\\\\\\\n\\\\\\\\\n\\textbf{Aufgabe:} \\text{Bestimme zu dem abgebildeten Graphen eine Funktionsgleichung.}\\\\\n\\text{Lies die Koordinaten der markierten Punkte ab und stelle hiermit Gleichungen auf. } \\\\\n\\text{Achte auf den Grad der Funktion.} \\\\\\\\\n\\\\\\\\\n\\textbf{Ansatz:} \\\\\\\\\nf(x) = ax^4 + bx^2 + c \\\\\\\\\nf'(x) = 4ax^3 + 2bx \\\\\\\\\nf''(x) = 12ax^2 + 2b \\\\\\\\\n\\\\\\\\\n\\textbf{Informationen aus dem Aufgabentext:} \\\\\\\\\n\\end{array>\n\n\\\\\\\\\n\n\\begin{array}{ll}\n\\text{I:} & f(0) = 0 \\\\\\\\\n\\text{II:} & f(2) = -4 \\\\\\\\\n\\text{III:} & f'(2) = 0 \\\\\\\\\n\\text{IV:} & f'(0) = 0 \\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{l}\n\\textbf{Einsetzen in die Funktion:} \\\\\\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{ll}\n\\text{I:} & a \\cdot 0^4 + b \\cdot 0^2 + c = 0 \\\\\\\\\n\\text{II:} & a \\cdot 2^4 + b \\cdot 2^2 + c = -4 \\\\\\\\\n\\text{III:} & 4a \\cdot 2^3 + 2b \\cdot 2 = 0 \\\\\\\\\n\\text{IV:} & 4a \\cdot 0^3 + 2b \\cdot 0 = 0 \\text{ (automatisch erfüllt)} \\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{l}\n\\textbf{Lineares Gleichungssystem aufstellen:} \\\\\\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{ll}\n\\text{I:} & c = 0 \\\\\\\\\n\\text{II:} & 16a + 4b = -4 \\\\\\\\\n\\text{III:} & 32a + 4b = 0 \\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{l}\n\\textbf{Lösung des Gleichungssystems:} \\\\\\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{ll}\n\\text{III - II:} & (32a + 4b) - (16a + 4b) = 0 - (-4) \\\\\\\\\n& 16a = 4 \\\\\\\\\n& a = 0{,}25 \\\\\\\\\n\\\\\n\\text{Einsetzen in II:} & 16 \\cdot 0{,}25 + 4b = -4 \\\\\\\\\n& 4 + 4b = -4 \\\\\\\\\n& 4b = -8 \\\\\\\\\n& b = -2 \\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{l}\n\\textbf{Funktionsgleichung:} \\\\\\\\\n\\end{array}\n\n\\\\\\\\\n\nf(x) = 0{,}25x^4 - 2x^2\n\n\\\\\\\\\n\n\\begin{array}{l}\n\\textbf{Probe:} \\\\\\\\\n\\end{array}\n\n\\\\\\\\\n\n\\begin{array}{ll}\nf(0) &= 0{,}25 \\cdot 0^4 - 2 \\cdot 0^2 = 0 \\quad \\checkmark \\\\\\\\\nf(2) &= 0{,}25 \\cdot 16 - 2 \\cdot 4 = 4 - 8 = -4 \\quad \\checkmark \\\\\\\\\nf'(x) &= x^3 - 4x \\\\\\\\\nf'(0) &= 0^3 - 4 \\cdot 0 = 0 \\quad \\checkmark \\\\\\\\\nf'(2) &= 2^3 - 4 \\cdot 2 = 8 - 8 = 0 \\quad \\checkmark \\\\\n\\end{array}",
+            "isCorrect": false,
+            "isValid": true
+          },
+          "type": "LatexView"},
         "1": {
           "name": "Code",
           "type": "CodeEditor",
