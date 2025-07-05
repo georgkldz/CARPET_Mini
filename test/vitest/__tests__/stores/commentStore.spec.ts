@@ -75,19 +75,20 @@ describe("commentStore", () => {
       expect(await store.validateSessionId(999)).toBe(false);
     });
 
-    it("fetchCommentsForSession loads comments and triggers nickname loading", async () => {
+    it("fetchCommentsForSession loads comments and triggers user details loading", async () => {
       const comments = [
         { id: 1, sessionId: 7, fieldId: "a", userId: 42, text: "hi", timestamp: "" },
         { id: 2, sessionId: 7, fieldId: "b", userId: 55, text: "ho", timestamp: "" },
       ];
       (axios.get as Mock).mockResolvedValue({ data: comments });
-      // Spionieren der internen Action, um die Logik zu überprüfen
-      const spy = vi.spyOn(store, "loadNicknamesForUserIds").mockResolvedValue();
+
+      // GEÄNDERT: Spion auf die neue Action "loadUserDetailsForUserIds"
+      const spy = vi.spyOn(store, "loadUserDetailsForUserIds").mockResolvedValue();
 
       await store.fetchCommentsForSession(7);
 
       expect(store.comments).toEqual(comments);
-      // Stellt sicher, dass loadNicknamesForUserIds mit den einzigartigen User-IDs aufgerufen wird
+      // GEÄNDERT: Stellt sicher, dass die neue Action aufgerufen wird
       expect(spy).toHaveBeenCalledWith([42, 55]);
     });
 
@@ -106,17 +107,24 @@ describe("commentStore", () => {
       expect(store.comments).toContainEqual(responseComment);
     });
 
-    it("loadNicknamesForUserIds only fetches non-cached nicknames", async () => {
-      // Vorbefüllen des Caches
-      store.userNicknames = { 1: "Alice" };
+    it("loadUserDetailsForUserIds only fetches non-cached details", async () => {
+      // Vorbefüllen des Caches mit der neuen Struktur
+      store.userDetails = { 1: { nickname: "Alice", role: 1 } };
 
-      const getNicknamesSpy = vi.spyOn(store, "getMultipleUserNicknames").mockResolvedValue({ 2: "Bob" });
+      const mockDetails = { 2: { nickname: "Bob", role: 0 } };
+      // GEÄNDERT: Spion auf die neue Action "getMultipleUserDetails"
+      const getDetailsSpy = vi.spyOn(store, "getMultipleUserDetails").mockResolvedValue(mockDetails);
 
-      await store.loadNicknamesForUserIds([1, 2]);
+      // GEÄNDERT: Aufruf der neuen Action
+      await store.loadUserDetailsForUserIds([1, 2]);
 
       // Es sollte nur die ID 2 abrufen, da 1 bereits im Cache ist
-      expect(getNicknamesSpy).toHaveBeenCalledWith([2]);
-      expect(store.userNicknames).toEqual({ 1: "Alice", 2: "Bob" });
+      expect(getDetailsSpy).toHaveBeenCalledWith([2]);
+      // GEÄNDERT: Überprüft den neuen State "userDetails" mit der korrekten Objektstruktur
+      expect(store.userDetails).toEqual({
+        1: { nickname: "Alice", role: 1 },
+        2: { nickname: "Bob", role: 0 },
+      });
     });
   });
 
@@ -132,7 +140,11 @@ describe("commentStore", () => {
         { id: 102, sessionId: 1, fieldId: "f2", userId: 11, text: "Welt", timestamp: ""},
         { id: 103, sessionId: 2, fieldId: "f1", userId: 12, text: "Andere Session", timestamp: ""},
       ];
-      store.userNicknames = { 10: "Zehn" };
+      // GEÄNDERT: "userNicknames" zu "userDetails" mit neuer Objektstruktur
+      store.userDetails = {
+        10: { nickname: "Zehn", role: 1 },
+        11: { nickname: "Elf", role: 0 },
+      };
     });
 
     it("currentSession returns the correct session by id", () => {
@@ -157,8 +169,16 @@ describe("commentStore", () => {
     });
 
     it("getNicknameByUserId returns nickname or a default string", () => {
+      // Dieser Test funktioniert weiterhin, da der Getter angepasst wurde.
       expect(store.getNicknameByUserId(10)).toBe("Zehn");
       expect(store.getNicknameByUserId(99)).toBe("User 99"); // Nicht im Cache
+    });
+
+    // NEU: Test für den neuen Getter, der die Rolle formatiert.
+    it("getFormattedNicknameByUserId returns name with role", () => {
+      expect(store.getFormattedNicknameByUserId(10)).toBe("Zehn (Studierender)");
+      expect(store.getFormattedNicknameByUserId(11)).toBe("Elf (Lehrender)");
+      expect(store.getFormattedNicknameByUserId(99)).toBe("User 99"); // Fallback
     });
   });
 });

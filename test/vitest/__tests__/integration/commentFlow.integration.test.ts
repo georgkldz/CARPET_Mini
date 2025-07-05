@@ -68,7 +68,7 @@ const commentsFromBackend = [
   },
 ];
 
-const nicknames = { [USER_ID]: "Alice" } as Record<number, string>;
+const userDetails = { [USER_ID]: { nickname: "Alice", role: 1 } };
 
 // Utility to register the Pinia instance fresh for every test run
 function initStores() {
@@ -121,11 +121,11 @@ describe("Integration › Comment flow", () => {
     ).toBe(sessionDetails.taskData.taskDescription);
   });
 
-  it("fetches comments and nicknames for a session", async () => {
-    // Arrange – sequence of calls: 1) comments 2) nicknames
+  it("fetches comments and user details for a session", async () => {
+    // Arrange – sequence of calls: 1) comments 2) user details
     mockedAxios.get
       .mockResolvedValueOnce({ data: commentsFromBackend }) // comments
-      .mockResolvedValueOnce({ data: nicknames }); // nicknames
+      .mockResolvedValueOnce({ data: userDetails });         // user details
 
     const { commentStore } = initStores();
 
@@ -135,14 +135,16 @@ describe("Integration › Comment flow", () => {
     // Assert
     expect(commentStore.comments).toHaveLength(1);
     expect(commentStore.comments[0].text).toBe("Existing comment");
-    expect(commentStore.userNicknames[USER_ID]).toBe("Alice");
+    // GEÄNDERT: Überprüft das userDetails-Objekt statt eines einfachen Strings.
+    expect(commentStore.userDetails[USER_ID]).toEqual({ nickname: "Alice", role: 1 });
   });
 
+  // GEÄNDERT: Mock-Daten für den ersten Aufruf angepasst
   it("adds a new comment and updates the store", async () => {
-    // Arrange – first fetch  + then add
+    // Arrange – first fetch + then add
     mockedAxios.get
       .mockResolvedValueOnce({ data: commentsFromBackend }) // comments list
-      .mockResolvedValueOnce({ data: nicknames }); // nicknames
+      .mockResolvedValueOnce({ data: userDetails });         // user details
 
     const newComment = {
       id: 2,
