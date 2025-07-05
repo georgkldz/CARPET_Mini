@@ -128,7 +128,7 @@ function getFieldLabel(fieldId: string): string {
 
 // Kommentare gruppieren
 const grouped = computed(() => {
-  const list = commentStore.commentsForSession;
+  const list = commentStore.visibleCommentsForSession;
   const map: Record<string, {
     fieldId: string;
     label: string;

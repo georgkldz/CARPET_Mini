@@ -24,6 +24,7 @@ interface SessionDetails {
   timestamp: string;
   collaborationNodes: Record<string, unknown>;
   taskData: Record<string, unknown>;
+  members:   SessionMember[];
 }
 
 // NEU: Eine Schnittstelle für die Benutzerdetails, die Rolle und Nickname enthält.
@@ -78,6 +79,43 @@ export const useCommentStore = defineStore("commentStore", {
       const roleText = details.role === 1 ? "Studierender" : "Lehrender";
       return `${details.nickname} (${roleText})`;
     },
+
+    visibleCommentsForSession(state): Comment[] {
+      if (!state.currentSessionId) return [];
+
+      const taskGraphStore  = useTaskGraphStore();
+      const currentUserId   = taskGraphStore.userId!;
+      const currentUserRole = state.userDetails[currentUserId]?.role ?? 1; // 2 = Lehrender
+
+      // Alle Teilnehmer dieser Session
+      const memberIds = new Set(
+        state.currentSessionDetails?.members.map(m => m.userId) ?? []
+      );
+
+      return state.comments.filter(c => {
+        const authorRole = state.userDetails[c.userId]?.role ?? 1; // 1 = Stud.
+
+        /* ─────────────────── STUDIERENDEN-KOMMENTAR (Role 1) ─────────────────── */
+        if (authorRole === 1) {
+          // Kommentare von Studierenden dürfen immer angezeigt werden
+          return true;
+        }
+
+        /* ───────────────────── LEHRENDEN-KOMMENTAR (Role 2) ──────────────────── */
+        if (authorRole === 2) {
+          // Lehrende sehen alle Kommentare
+          if (currentUserRole === 2) return true;
+
+          // Studierende sehen Lehrer-Kommentare nur,
+          // wenn sie an dieser Session beteiligt waren
+          return memberIds.has(currentUserId);
+        }
+
+        /* ───────────────────── Andere/unbekannte Rollen ─────────────────────── */
+        return false; // sicherheitshalber ausfiltern
+      });
+    },
+
   },
 
   actions: {
@@ -216,7 +254,6 @@ export const useCommentStore = defineStore("commentStore", {
       }
     },
 
-    // GEÄNDERT: Holt die erweiterte Datenstruktur vom Backend.
     async getMultipleUserDetails(userIds: number[]): Promise<Record<number, UserDetails>> {
       if (userIds.length === 0) return {};
       try {
