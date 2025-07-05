@@ -2,6 +2,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import { useTaskGraphStore } from "./taskGraphStore";
+import {Comment} from "../models/Comment"
 
 interface SessionMember {
   userId: number;
@@ -25,16 +26,6 @@ interface SessionDetails {
   taskData: Record<string, unknown>;
 }
 
-interface Comment {
-  id: number;
-  sessionId: number;
-  fieldId: string;
-  userId: number;
-  text: string;
-  timestamp: string;
-  nickname?: string;
-}
-
 // NEU: Eine Schnittstelle für die Benutzerdetails, die Rolle und Nickname enthält.
 interface UserDetails {
   nickname: string;
@@ -49,8 +40,8 @@ export const useCommentStore = defineStore("commentStore", {
     isLoading: false,
     error: null as string | null,
     comments: [] as Comment[],
-    // GEÄNDERT: Statt userNicknames wird userDetails verwendet, um das Objekt zu speichern.
     userDetails: {} as Record<number, UserDetails>,
+    socket: null as WebSocket | null,
   }),
 
   getters: {
@@ -78,19 +69,67 @@ export const useCommentStore = defineStore("commentStore", {
     getNicknameByUserId: (state) => (userId: number) => {
       return state.userDetails[userId]?.nickname || `User ${userId}`;
     },
-    // NEU: Dieser Getter liefert den formatierten String mit Nickname und Rolle.
+
     getFormattedNicknameByUserId: (state) => (userId: number) => {
       const details = state.userDetails[userId];
       if (!details) {
         return `User ${userId}`;
       }
-      // Annahme: role 0 = Lehrender, andere Werte (z.B. 1) = Studierender
       const roleText = details.role === 1 ? "Studierender" : "Lehrender";
       return `${details.nickname} (${roleText})`;
     },
   },
 
   actions: {
+    initWebSocket() {
+      const taskGraphStore = useTaskGraphStore();
+      const userId = taskGraphStore.userId;
+      const sessionId = this.currentSessionId;
+
+      if (this.socket || !userId || !sessionId) {
+        return;
+      }
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const hostname = window.location.hostname;
+      const url = `${protocol}//${hostname}:3000/ui-events`;
+
+      this.socket = new WebSocket(url);
+
+      this.socket.onopen = () => {
+        console.log("WebSocket-Verbindung im Store geöffnet.");
+
+        this.socket?.send(JSON.stringify({
+          type: "register",
+          groupId: sessionId.toString(),
+          userId: userId,
+        }));
+      };
+      this.socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === "newCommentBroadcast") {
+          const newComment: Comment = data.comment;
+          console.log("Neuer Kommentar von anderem Client empfangen:", newComment);
+
+          this.comments.push(newComment);
+          if (!this.userDetails[newComment.userId]) {
+            console.log(`... Lade fehlende User-Details für User-ID: ${newComment.userId}`);
+            this.loadUserDetailsForUserIds([newComment.userId]);
+          }
+        }
+      };
+
+      this.socket.onclose = () => {
+        console.log("WebSocket-Verbindung im Store geschlossen.");
+        this.socket = null;
+      };
+    },
+
+    disconnectWebSocket() {
+      if (this.socket) {
+        this.socket.close();
+      }
+    },
+
     setCurrentSessionId(sessionId: number) {
       this.currentSessionId = sessionId;
       this.fetchSessionDetails(sessionId);
@@ -149,11 +188,14 @@ export const useCommentStore = defineStore("commentStore", {
       try {
         const response = await axios.get<Comment[]>(`http://localhost:3000/api/v1/comments/${sessionId}`);
         this.comments = response.data;
+        this.currentSessionId = sessionId;
 
         const userIds = [...new Set(this.comments.map(comment => comment.userId))];
-
-        // GEÄNDERT: Ruft die neue Action zum Laden der Benutzerdetails auf.
         await this.loadUserDetailsForUserIds(userIds);
+
+        // NEU: WebSocket initialisieren, nachdem die Session-Daten geladen sind.
+        this.initWebSocket();
+
       } catch (error) {
         console.error("Fehler beim Laden der Kommentare:", error);
       }
@@ -190,17 +232,32 @@ export const useCommentStore = defineStore("commentStore", {
       }
     },
 
-    async addComment({ sessionId, fieldId, userId, text }: { sessionId: number, fieldId: string, userId: number, text: string }) {
+    async addComment({ sessionId, fieldId, userId, text }: { sessionId: number, fieldId: string, userId: number, text: string }): Promise<Comment | null> {
       const timeStamp = new Date().toISOString();
       try {
         const response = await axios.post<Comment>(
           `http://localhost:3000/api/v1/comments/`,
           { sessionId, fieldId, userId, text, timeStamp }
         );
-        this.comments.push(response.data);
+        const newComment = response.data;
+        this.comments.push(newComment);
+
+        // NEU: Sende den neuen Kommentar über den WebSocket an andere.
+        if (this.socket?.readyState === WebSocket.OPEN) {
+          this.socket.send(JSON.stringify({
+            type: "newComment",
+            groupId: this.currentSessionId?.toString(),
+            userId: userId,
+            comment: newComment,
+          }));
+        }
+
+        return newComment;
+
       } catch (error) {
         console.error("Fehler beim Hinzufügen des Kommentars:", error);
+        return null;
       }
-    }
+    },
   }
 });

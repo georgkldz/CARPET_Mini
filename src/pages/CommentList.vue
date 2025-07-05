@@ -91,6 +91,7 @@ import { computed, ref, watch } from "vue";
 import { useCommentStore } from "src/stores/commentStore";
 import { useTaskGraphStore } from "src/stores/taskGraphStore";
 
+
 interface Props {
   sessionId: number;
   selectedFieldId: string | null;
@@ -107,10 +108,6 @@ const taskGraphStore = useTaskGraphStore();
 const open = ref<Record<string, boolean>>({});
 const newText = ref("");
 
-// Hilfsfunktionen
-// function getNick(id: number): string {
-//   return commentStore.getNicknameByUserId(id);
-// }
 
 function formatDate(ts: string): string {
   return new Date(ts).toLocaleString("de-DE", {
@@ -162,13 +159,13 @@ async function saveComment(): Promise<void> {
     sessionId: props.sessionId,
     fieldId: props.selectedFieldId,
     userId,
-    text: newText.value.trim()
+    text: newText.value.trim(),
   });
+
 
   newText.value = "";
   emit("selectField", "");
 }
-
 // ExpansionItem öffnen wenn Feld ausgewählt
 watch(
   () => props.selectedFieldId,

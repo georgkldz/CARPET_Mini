@@ -21,8 +21,7 @@
           :session-id="sessionId"
           :selected-field-id="selectedField"
           @highlightField="highlightField"
-          @selectField="setSelectedField"
-        />
+          @selectField="setSelectedField"/>
       </div>
     </div>
 
@@ -33,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import {ref, onMounted, computed, onUnmounted} from "vue";
 import { useRoute } from "vue-router";
 import { useTaskGraphStore } from "src/stores/taskGraphStore";
 import { useCommentStore } from "src/stores/commentStore";
@@ -69,19 +68,25 @@ const storeObject = {
   setProperty: taskGraphStore.setProperty
 };
 
+
 // Lifecycle
 onMounted(async () => {
   try {
     // Session laden
     await taskGraphStore.loadSessionForCommentMode(sessionId);
     await commentStore.fetchCommentsForSession(sessionId);
-
     currentNodeId.value = taskGraphStore.currentNode as number;
+
     isLoading.value = false;
+
   } catch (error) {
     console.error("Fehler beim Laden der Session:", error);
     isLoading.value = false;
   }
+});
+
+onUnmounted(() => {
+  commentStore.disconnectWebSocket()
 });
 
 // Methods
