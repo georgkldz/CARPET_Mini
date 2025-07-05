@@ -17,7 +17,7 @@ import type { WebSocketMockInstance } from "../../../helpers/wsMock";
  * - prüfe, ob previousNode und currentNode korrekt gesetzt wurden
  */
 
-describe("Voting-Flow – Minimal", () => {
+describe("Voting-Flow ", () => {
   let ws: WebSocketMockInstance;
 
   beforeEach(async () => {

@@ -2967,7 +2967,7 @@
       "colorHex": "#bfdbfe"
     },
     "1": {
-      "name": "Kommentarprotokoll",
+      "name": "Kommentar-Protokollant",
       "description": "Erklärt den Lösungsweg im Explanation-Feld.",
       "writeAccess": ["explanation"],
       "colorHex": "#bbf7d0"
