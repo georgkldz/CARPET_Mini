@@ -194,28 +194,32 @@ export default defineComponent({
 
     // Eingegebene Session-ID validieren
     async function validateAndSelect() {
-      if (manualSessionId.value === null) return
+      if (manualSessionId.value === null) return;
 
-      validating.value = true
-      hasValidationError.value = false
+      validating.value = true;
+      hasValidationError.value = false;
 
       try {
-        const isValid = await commentStore.validateSessionId(manualSessionId.value)
+        const isValid = await commentStore.validateSessionId(
+          manualSessionId.value
+        );
         if (isValid) {
-          commentStore.setCurrentSessionId(manualSessionId.value)
-          Notify.create({ type: "positive", message: `Aufzeichnung ${manualSessionId.value} ausgewählt` })
+          // NEU: Rufe die bestehende selectSession-Funktion auf,
+          // die die Navigation bereits korrekt handhabt.
+          await selectSession(manualSessionId.value);
         } else {
-          hasValidationError.value = true
-          Notify.create({ type: "negative", message: "Diese Aufzeichnung existiert nicht" })
+          hasValidationError.value = true;
+          // Die Benachrichtigung wurde entfernt, da die Validierung jetzt über die :rules des Inputs läuft
         }
-      }
-      catch (err) {
+      } catch (err) {
         // z. B. Netzwerkfehler
-        hasValidationError.value = true
-        Notify.create({ type: "negative", message: "Fehler beim Prüfen der Aufzeichnungsnummer" })
-      }
-      finally {
-        validating.value = false
+        hasValidationError.value = true;
+        Notify.create({
+          type: "negative",
+          message: "Fehler beim Prüfen der Aufzeichnungsnummer",
+        });
+      } finally {
+        validating.value = false;
       }
     }
 
