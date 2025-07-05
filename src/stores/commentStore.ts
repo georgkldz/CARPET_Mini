@@ -35,6 +35,12 @@ interface Comment {
   nickname?: string;
 }
 
+// NEU: Eine Schnittstelle für die Benutzerdetails, die Rolle und Nickname enthält.
+interface UserDetails {
+  nickname: string;
+  role: number;
+}
+
 export const useCommentStore = defineStore("commentStore", {
   state: () => ({
     currentSessionId: null as number | null,
@@ -43,7 +49,8 @@ export const useCommentStore = defineStore("commentStore", {
     isLoading: false,
     error: null as string | null,
     comments: [] as Comment[],
-    userNicknames: {} as Record<number, string>,
+    // GEÄNDERT: Statt userNicknames wird userDetails verwendet, um das Objekt zu speichern.
+    userDetails: {} as Record<number, UserDetails>,
   }),
 
   getters: {
@@ -54,7 +61,6 @@ export const useCommentStore = defineStore("commentStore", {
       );
     },
 
-    // Hilfsfunktion um ein Mitglied anhand der Rolle zu finden
     getMemberByRole: (state) => (sessionId: number, roleId: number) => {
       const session = state.availableSessions.find(s => s.sessionId === sessionId);
       if (!session) return null;
@@ -68,15 +74,25 @@ export const useCommentStore = defineStore("commentStore", {
     commentsForSession: (state) => {
       return state.comments.filter(c => c.sessionId === state.currentSessionId);
     },
+    // GEÄNDERT: Dieser Getter gibt weiterhin nur den Nickname zurück, greift aber auf die neue Struktur zu.
     getNicknameByUserId: (state) => (userId: number) => {
-      return state.userNicknames[userId] || `User ${userId}`;
+      return state.userDetails[userId]?.nickname || `User ${userId}`;
+    },
+    // NEU: Dieser Getter liefert den formatierten String mit Nickname und Rolle.
+    getFormattedNicknameByUserId: (state) => (userId: number) => {
+      const details = state.userDetails[userId];
+      if (!details) {
+        return `User ${userId}`;
+      }
+      // Annahme: role 0 = Lehrender, andere Werte (z.B. 1) = Studierender
+      const roleText = details.role === 1 ? "Studierender" : "Lehrender";
+      return `${details.nickname} (${roleText})`;
     },
   },
 
   actions: {
     setCurrentSessionId(sessionId: number) {
       this.currentSessionId = sessionId;
-      // Optional: Lade Details, wenn Session gesetzt wird
       this.fetchSessionDetails(sessionId);
     },
 
@@ -94,8 +110,6 @@ export const useCommentStore = defineStore("commentStore", {
 
       try {
         const response = await axios.get<SessionData[]>(`http://localhost:3000/api/v1/userSessionsData/${userId}`);
-        console.debug("Vom Backend erhaltene Sessions:", response.data);
-
         this.availableSessions = response.data;
       } catch (error) {
         console.error("Fehler beim Abrufen der Sessions:", error);
@@ -107,7 +121,6 @@ export const useCommentStore = defineStore("commentStore", {
 
     async fetchSessionDetails(sessionId: number) {
       if (!sessionId) return;
-
       try {
         const response = await axios.get<SessionDetails>(`http://localhost:3000/api/v1/sessionData/${sessionId}`);
         this.currentSessionDetails = response.data;
@@ -116,7 +129,6 @@ export const useCommentStore = defineStore("commentStore", {
         console.error(`Fehler beim Laden der Session-Details für ID ${sessionId}:`, error);
         return null;
       }
-
     },
 
     async validateSessionId(sessionId: number): Promise<boolean> {
@@ -125,12 +137,12 @@ export const useCommentStore = defineStore("commentStore", {
         return true;
         // eslint-disable-next-line  @typescript-eslint/no-explicit-any
       } catch (err: any) {
-          if (err.response?.status === 404) {
-            return false
-          }
-          console.error("validateSessionId-Netzwerkfehler:", err)
+        if (err.response?.status === 404) {
           return false
         }
+        console.error("validateSessionId-Netzwerkfehler:", err)
+        return false
+      }
     },
 
     async fetchCommentsForSession(sessionId: number) {
@@ -138,64 +150,57 @@ export const useCommentStore = defineStore("commentStore", {
         const response = await axios.get<Comment[]>(`http://localhost:3000/api/v1/comments/${sessionId}`);
         this.comments = response.data;
 
-        // Erzeuge Menge aller userIds aus den Kommentaren
-        const userIds = [
-          ...new Set(this.comments.map(comment => comment.userId))
-        ];
+        const userIds = [...new Set(this.comments.map(comment => comment.userId))];
 
-        // Lade alle fehlenden Nicknames
-        await this.loadNicknamesForUserIds(userIds);
+        // GEÄNDERT: Ruft die neue Action zum Laden der Benutzerdetails auf.
+        await this.loadUserDetailsForUserIds(userIds);
       } catch (error) {
         console.error("Fehler beim Laden der Kommentare:", error);
       }
     },
 
-    async loadNicknamesForUserIds(userIds: number[]) {
-      // Nur UserIds laden, die noch nicht im Mapping stehen:
-      const idsToFetch = userIds.filter(id => !(id in this.userNicknames));
+    // GEÄNDERT: Lädt die Details (Nickname + Rolle) und speichert sie im neuen State.
+    async loadUserDetailsForUserIds(userIds: number[]) {
+      const idsToFetch = userIds.filter(id => !(id in this.userDetails));
       if (idsToFetch.length === 0) return;
 
       try {
-        const nicknames = await this.getMultipleUserNicknames(idsToFetch);
-        // nicknames ist ein Mapping { "1": "Charlie", ... }
-        Object.entries(nicknames).forEach(([id, nickname]) => {
-          this.userNicknames[Number(id)] = nickname;
+        const userDetails = await this.getMultipleUserDetails(idsToFetch);
+        Object.entries(userDetails).forEach(([id, details]) => {
+          this.userDetails[Number(id)] = details;
         });
       } catch (error) {
-        console.error("Fehler beim Abrufen der Nicknames:", error);
+        console.error("Fehler beim Abrufen der Benutzerdetails:", error);
       }
     },
 
-    // Deine Methoden für Backend-Requests (kannst du auch separat halten)
-    async getMultipleUserNicknames(userIds: number[]): Promise<Record<number, string>> {
+    // GEÄNDERT: Holt die erweiterte Datenstruktur vom Backend.
+    async getMultipleUserDetails(userIds: number[]): Promise<Record<number, UserDetails>> {
       if (userIds.length === 0) return {};
       try {
         const userIdsString = userIds.join(",");
-        const response = await axios.get<Record<number, string>>(
+        // WICHTIG: Das Backend muss hier ein Objekt wie { "1": { "nickname": "Alice", "role": 1 } } zurückgeben.
+        const response = await axios.get<Record<number, UserDetails>>(
           `http://localhost:3000/api/v1/users/nicknames?userIds=${userIdsString}`
         );
         return response.data;
       } catch (error) {
-        console.error("Fehler beim Abrufen der Nicknames:", error);
+        console.error("Fehler beim Abrufen der Benutzerdetails:", error);
         return {};
       }
     },
 
     async addComment({ sessionId, fieldId, userId, text }: { sessionId: number, fieldId: string, userId: number, text: string }) {
-      // timeStamp vom Backend oder hier erzeugen:
       const timeStamp = new Date().toISOString();
       try {
         const response = await axios.post<Comment>(
           `http://localhost:3000/api/v1/comments/`,
           { sessionId, fieldId, userId, text, timeStamp }
         );
-        // Falls das Backend den endgültigen Kommentar mit id zurückgibt:
         this.comments.push(response.data);
       } catch (error) {
         console.error("Fehler beim Hinzufügen des Kommentars:", error);
-        // this.error = "Fehler beim Speichern des Kommentars";
       }
     }
-
   }
 });

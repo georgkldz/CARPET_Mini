@@ -45,7 +45,7 @@
               <div>{{ comment.text }}</div>
               <div class="text-caption text-grey">
                 {{ formatDate(comment.timestamp) }} |
-                {{ getNick(comment.userId) }}
+                {{ commentStore.getFormattedNicknameByUserId(comment.userId)}}
               </div>
             </q-item-section>
           </q-item>
@@ -108,9 +108,9 @@ const open = ref<Record<string, boolean>>({});
 const newText = ref("");
 
 // Hilfsfunktionen
-function getNick(id: number): string {
-  return commentStore.getNicknameByUserId(id);
-}
+// function getNick(id: number): string {
+//   return commentStore.getNicknameByUserId(id);
+// }
 
 function formatDate(ts: string): string {
   return new Date(ts).toLocaleString("de-DE", {
